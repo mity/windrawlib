@@ -144,10 +144,11 @@ void wdTerminate(DWORD dwFlags);
  ***  Opaque Object Handles  ***
  *******************************/
 
+typedef struct WD_BRUSH_tag *WD_HBRUSH;
 typedef struct WD_CANVAS_tag *WD_HCANVAS;
+typedef struct WD_FONT_tag *WD_HFONT;
 typedef struct WD_IMAGE_tag *WD_HIMAGE;
 typedef struct WD_PATH_tag *WD_HPATH;
-typedef struct WD_FONT_tag *WD_HFONT;
 
 
 /***************************
@@ -238,8 +239,6 @@ void wdGetImageSize(WD_HIMAGE hImage, UINT* puWidth, UINT* puHeight);
 
 /* Brush is an object used for drawing operations. Note the brush can only
  * be used for the canvas it has been created for. */
-
-typedef struct WD_BRUSH_tag *WD_HBRUSH;
 
 WD_HBRUSH wdCreateSolidBrush(WD_HCANVAS hCanvas, WD_COLOR color);
 void wdDestroyBrush(WD_HBRUSH hBrush);
