@@ -55,7 +55,7 @@ typedef DWORD WD_COLOR;
 
 /* Create WD_COLOR from GDI's COLORREF. */
 #define WD_COLOR_FROM_GDI_EX(a, cref)                                        \
-        ((((WD_COLOR)(a) & 0xff) << 24) | ((WD_COLOR)(color) & 0x00ffffffU))
+        ((((WD_COLOR)(a) & 0xff) << 24) | ((WD_COLOR)(cref) & 0x00ffffffU))
 #define WD_COLOR_FROM_GDI(cref)     WD_COLOR_FROM_GDI_EX(255,(cref))
 
 /* Get GDI's COLORREF from WD_COLOR. */
@@ -155,6 +155,7 @@ typedef struct WD_BRUSH_tag *WD_HBRUSH;
 typedef struct WD_CANVAS_tag *WD_HCANVAS;
 typedef struct WD_FONT_tag *WD_HFONT;
 typedef struct WD_IMAGE_tag *WD_HIMAGE;
+typedef struct WD_CACHEDIMAGE_tag* WD_HCACHEDIMAGE;
 typedef struct WD_PATH_tag *WD_HPATH;
 
 
@@ -227,7 +228,8 @@ void wdResetWorld(WD_HCANVAS hCanvas);
 /* All these functions are usable only if the library has been initialized with
  * the flag WD_INIT_IMAGEAPI.
  *
- * Note that unlike most other resources, WD_HIMAGE is not canvas-specific
+ * Note that unlike most other resources (including WD_HCACHEDIMAGE), WD_HIMAGE
+ * is not canvas-specific and can be used for painting on any canvas.
  */
 
 WD_HIMAGE wdCreateImageFromHBITMAP(HBITMAP hBmp);
@@ -238,6 +240,33 @@ WD_HIMAGE wdLoadImageFromResource(HINSTANCE hInstance,
 void wdDestroyImage(WD_HIMAGE hImage);
 
 void wdGetImageSize(WD_HIMAGE hImage, UINT* puWidth, UINT* puHeight);
+
+
+/*********************************
+ ***  Cached Image Management  ***
+ *********************************/
+
+/* All these functions are usable only if the library has been initialized with
+ * the flag WD_INIT_IMAGEAPI.
+ *
+ * Cached image is an image which is converted to the right pixel format for
+ * faster rendering on the given canvas. It can only be used for the canvas
+ * it has been created for.
+ *
+ * In other words, you may see WD_HCACHEDIMAGE as a counterpart to device
+ * dependent bitmap, and WD_HIMAGE as a counterpart to device-independent
+ * bitmap.
+ *
+ * In short WD_HIMAGE is more flexible and easier to use, while WD_HCACHEDIMAGE
+ * requires more care from the developer but provides better performance,
+ * especially when used repeatedly.
+ *
+ * All these functions are usable only if the library has been initialized with
+ * the flag WD_INIT_IMAGEAPI.
+ */
+
+WD_HCACHEDIMAGE wdCreateCachedImage(WD_HCANVAS hCanvas, WD_HIMAGE hImage);
+void wdDestroyCachedImage(WD_HCACHEDIMAGE hCachedImage);
 
 
 /**************************
@@ -356,6 +385,8 @@ void wdFillRect(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_RECT* pRect);
  */
 void wdBitBltImage(WD_HCANVAS hCanvas, const WD_HIMAGE hImage,
                 const WD_RECT* pDestRect, const WD_RECT* pSourceRect);
+void wdBitBltCachedImage(WD_HCANVAS hCanvas, const WD_HCACHEDIMAGE hCachedImage,
+                int x, int y);
 void wdBitBltHICON(WD_HCANVAS hCanvas, HICON hIcon,
                 const WD_RECT* pDestRect, const WD_RECT* pSourceRect);
 

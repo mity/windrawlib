@@ -148,6 +148,11 @@ gdix_init(void)
     GPA(GetImageWidth, (dummy_GpImage*, UINT*));
     GPA(GetImageHeight, (dummy_GpImage*, UINT*));
 
+    /* Cached bitmap functions */
+    GPA(CreateCachedBitmap, (dummy_GpBitmap*, dummy_GpGraphics*, dummy_GpCachedBitmap**));
+    GPA(DeleteCachedBitmap, (dummy_GpCachedBitmap*));
+    GPA(DrawCachedBitmap, (dummy_GpGraphics*, dummy_GpCachedBitmap*, INT, INT));
+
     /* String format functions */
     GPA(CreateStringFormat, (int, LANGID, dummy_GpStringFormat**));
     GPA(DeleteStringFormat, (dummy_GpStringFormat*));

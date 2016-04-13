@@ -88,6 +88,39 @@ wdBitBltImage(WD_HCANVAS hCanvas, const WD_HIMAGE hImage,
 }
 
 void
+wdBitBltCachedImage(WD_HCANVAS hCanvas, const WD_HCACHEDIMAGE hCachedImage,
+                    int x, int y)
+{
+    if(d2d_enabled()) {
+        d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
+        ID2D1Bitmap* b = (ID2D1Bitmap*) hCachedImage;
+        D2D1_SIZE_U sz;
+        D2D1_RECT_F src;
+        D2D1_RECT_F dest;
+
+        sz = ID2D1Bitmap_GetPixelSize(b);
+
+        src.left = 0.0f;
+        src.top = 0.0f;
+        src.right = (float) sz.width;
+        src.bottom = (float) sz.height;
+
+        dest.left = (float) x;
+        dest.top = (float) y;
+        dest.right = (float) (x + sz.width);
+        dest.bottom = (float) (y + sz.height);
+
+        ID2D1RenderTarget_DrawBitmap(c->target, b, &dest, 1.0f,
+                D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, &src);
+    } else {
+        gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
+        dummy_GpCachedBitmap* cb = (dummy_GpCachedBitmap*) hCachedImage;
+
+        gdix_vtable->fn_DrawCachedBitmap(c->graphics, cb, x, y);
+    }
+}
+
+void
 wdBitBltHICON(WD_HCANVAS hCanvas, HICON hIcon,
               const WD_RECT* pDestRect, const WD_RECT* pSourceRect)
 {
