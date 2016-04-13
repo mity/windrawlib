@@ -148,7 +148,7 @@ wdDestroyFont(WD_HFONT hFont)
 }
 
 void
-wdFontMetrics(WD_HFONT hFont, WD_FONT_METRICS* pMetrics)
+wdFontMetrics(WD_HFONT hFont, WD_FONTMETRICS* pMetrics)
 {
     if(hFont == NULL) {
         /* Treat NULL as "no font". This simplifies paint code when font

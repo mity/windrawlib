@@ -299,8 +299,8 @@ void wdDestroyFont(WD_HFONT hFont);
 
 
 /* Structure describing metrics of the font. */
-typedef struct WD_FONT_METRICS_tag WD_FONT_METRICS;
-struct WD_FONT_METRICS_tag {
+typedef struct WD_FONTMETRICS_tag WD_FONTMETRICS;
+struct WD_FONTMETRICS_tag {
     float fEmHeight;        /* Typically height of letter 'M' or 'H' */
     float fAscent;          /* Height of char cell above the base line. */
     float fDescent;         /* Height of char cell below the base line. */
@@ -309,7 +309,7 @@ struct WD_FONT_METRICS_tag {
     /* Usually: fEmHeight < fAscent + fDescent <= fLeading */
 };
 
-void wdFontMetrics(WD_HFONT hFont, WD_FONT_METRICS* pMetrics);
+void wdFontMetrics(WD_HFONT hFont, WD_FONTMETRICS* pMetrics);
 
 
 /*************************
