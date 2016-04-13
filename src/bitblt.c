@@ -73,8 +73,8 @@ wdBitBltImage(WD_HCANVAS hCanvas, const WD_HIMAGE hImage,
         } else {
             UINT w, h;
 
-            gdix_GetImageWidth(b, &w);
-            gdix_GetImageHeight(b, &h);
+            gdix_vtable->fn_GetImageWidth(b, &w);
+            gdix_vtable->fn_GetImageHeight(b, &h);
 
             sx = 0.0f;
             sy = 0.0f;
@@ -82,8 +82,8 @@ wdBitBltImage(WD_HCANVAS hCanvas, const WD_HIMAGE hImage,
             sh = (float) h;
         }
 
-        gdix_DrawImageRectRect(c->graphics, b, dx, dy, dw, dh, sx, sy, sw, sh,
-                dummy_UnitPixel, NULL, NULL, NULL);
+        gdix_vtable->fn_DrawImageRectRect(c->graphics, b, dx, dy, dw, dh,
+                 sx, sy, sw, sh, dummy_UnitPixel, NULL, NULL, NULL);
     }
 }
 
@@ -131,14 +131,14 @@ err_CreateBitmapFromHICON:
         dummy_GpBitmap* b;
         int status;
 
-        status = gdix_CreateBitmapFromHICON(hIcon, &b);
+        status = gdix_vtable->fn_CreateBitmapFromHICON(hIcon, &b);
         if(status != 0) {
             WD_TRACE("wdBitBltHICON: GdipCreateBitmapFromHICON() failed. "
                      "[%d]", status);
             return;
         }
         wdBitBltImage(hCanvas, (WD_HIMAGE) b, pDestRect, pSourceRect);
-        gdix_DisposeImage(b);
+        gdix_vtable->fn_DisposeImage(b);
     }
 }
 
