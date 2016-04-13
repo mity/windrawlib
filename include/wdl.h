@@ -93,8 +93,7 @@ struct WD_CIRCLE_tag {
  ************************/
 
 /* If the library is to be used in a context of multiple threads concurrently,
- * application has to provide a critical section to protect its internal
- * globals.
+ * application has to provide pointers to synchronization functions.
  *
  * Note that even then, object instances (like e.g. canvas, brushes, images)
  * cannot be used concurrently, each thread must work with its own objects.
@@ -118,11 +117,11 @@ struct WD_CIRCLE_tag {
 #define WD_DISABLE_D2D              0x0001
 #define WD_DISABLE_GDIPLUS          0x0002
 
-void wdPreInitialize(CRITICAL_SECTION* pCritSection, DWORD dwFlags);
+void wdPreInitialize(void (*fnLock)(void), void (*fnUnlock)(void), DWORD dwFlags);
 
 
 /* Initialization functions may be called multiple times, even concurrently
- * (assuming a critical section has been provided via wdPreInitialize()).
+ * (assuming a synchronization function have been provided via wdPreInitialize()).
  *
  * The library maintains a counter for each module and it gets really
  * uninitialized when the respective counter drops back to zero.
