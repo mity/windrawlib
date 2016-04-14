@@ -16,10 +16,21 @@ PaintToCanvas(WD_HCANVAS hCanvas)
     struct {
         WD_RECT rect;
         WD_COLOR color;
+        WD_COLOR fill_color;
     } r[] = {
-        { { 10.0f, 10.0f, 110.0f, 110.0f }, WD_RGB(255,0,0) },
-        { { 20.0f, 20.0f, 120.0f, 120.0f }, WD_RGB(0,255,0) },
-        { { 30.0f, 30.0f, 130.0f, 130.0f }, WD_RGB(0,0,255) }
+        { { 10.0f, 10.0f, 110.0f, 110.0f }, WD_RGB(255,0,0), WD_ARGB(63,255,0,0) },
+        { { 30.0f, 30.0f, 130.0f, 130.0f }, WD_RGB(0,255,0), WD_ARGB(63,0,255,0) },
+        { { 50.0f, 50.0f, 150.0f, 150.0f }, WD_RGB(0,0,255), WD_ARGB(63,0,0,255) }
+    };
+
+    struct {
+        WD_CIRCLE circle;
+        WD_COLOR color;
+        WD_COLOR fill_color;
+    } c[] = {
+        { { 250.0f,  60.0f, 55.0f }, WD_RGB(255,0,0), WD_ARGB(63,255,0,0) },
+        { { 270.0f,  80.0f, 55.0f }, WD_RGB(0,255,0), WD_ARGB(63,0,255,0) },
+        { { 290.0f, 100.0f, 55.0f }, WD_RGB(0,0,255), WD_ARGB(63,0,0,255) }
     };
 
     int i;
@@ -31,6 +42,17 @@ PaintToCanvas(WD_HCANVAS hCanvas)
     for(i = 0; i < sizeof(r) / sizeof(r[0]); i++) {
         wdSetSolidBrushColor(hBrush, r[i].color);
         wdDrawRect(hCanvas, hBrush, &r[i].rect, 3.0f);
+
+        wdSetSolidBrushColor(hBrush, r[i].fill_color);
+        wdFillRect(hCanvas, hBrush, &r[i].rect);
+    }
+
+    for(i = 0; i < sizeof(c) / sizeof(c[0]); i++) {
+        wdSetSolidBrushColor(hBrush, c[i].color);
+        wdDrawCircle(hCanvas, hBrush, &c[i].circle, 3.0f);
+
+        wdSetSolidBrushColor(hBrush, c[i].fill_color);
+        wdFillCircle(hCanvas, hBrush, &c[i].circle);
     }
 
     wdDestroyBrush(hBrush);
