@@ -347,6 +347,8 @@ void wdFontMetrics(WD_HFONT hFont, WD_FONTMETRICS* pMetrics);
 
 void wdDrawArc(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_CIRCLE* pCircle,
                 float fBaseAngle, float fSweepAngle, float fStrokeWidth);
+void wdDrawCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_CIRCLE* pCircle,
+                float fStrokeWidth);
 void wdDrawLine(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_LINE* pLine,
                 float fStrokeWidth);
 void wdDrawPath(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_HPATH hPath,

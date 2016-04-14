@@ -51,6 +51,27 @@ wdDrawArc(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_CIRCLE* pCircle,
 }
 
 void
+wdDrawCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_CIRCLE* pCircle,
+             float fStrokeWidth)
+{
+    if(d2d_enabled()) {
+        d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
+        ID2D1Brush* b = (ID2D1Brush*) hBrush;
+        D2D1_ELLIPSE e = { { pCircle->x, pCircle->y }, pCircle->r, pCircle->r };
+
+        ID2D1RenderTarget_DrawEllipse(c->target, &e, b, fStrokeWidth, NULL);
+    } else {
+        gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
+        float d = 2.0f * pCircle->r;
+
+        gdix_vtable->fn_SetPenBrushFill(c->pen, (void*) hBrush);
+        gdix_vtable->fn_SetPenWidth(c->pen, fStrokeWidth);
+        gdix_vtable->fn_DrawEllipse(c->graphics, (void*) c->pen,
+                pCircle->x - pCircle->r, pCircle->y - pCircle->r, d, d);
+    }
+}
+
+void
 wdDrawLine(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_LINE* pLine,
            float fStrokeWidth)
 {
