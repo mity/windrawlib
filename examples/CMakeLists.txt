@@ -26,5 +26,5 @@ target_link_libraries("draw-cached" "windrawlib")
 add_executable("draw-simple" "draw-simple.c")
 target_link_libraries("draw-simple" "windrawlib")
 
-add_executable("image-load" "image-load.c" "image-load.rc")
-target_link_libraries("image-load" "windrawlib")
+add_executable("load-image" "load-image.c" "load-image.rc")
+target_link_libraries("load-image" "windrawlib")

@@ -105,7 +105,7 @@ _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nC
 
     /* Create main window */
     hwndMain = CreateWindow(
-        _T("main_window"), _T("LibWinDraw Example: Image Load"),
+        _T("main_window"), _T("LibWinDraw Example: Load Image"),
         WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 550, 350,
         NULL, NULL, hInstance, NULL
     );
