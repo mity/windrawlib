@@ -54,12 +54,13 @@ typedef DWORD WD_COLOR;
 #define WD_BVALUE(color)            (((WD_COLOR)(color) & 0x000000ffU) >> 0)
 
 /* Create WD_COLOR from GDI's COLORREF. */
-#define WD_COLOR_FROM_GDI_EX(a, cref)                                        \
-        ((((WD_COLOR)(a) & 0xff) << 24) | ((WD_COLOR)(cref) & 0x00ffffffU))
+#define WD_COLOR_FROM_GDI_EX(a, cref)                                       \
+        WD_ARGB((a), GetRValue(cref), GetGValue(cref), GetBValue(cref))
 #define WD_COLOR_FROM_GDI(cref)     WD_COLOR_FROM_GDI_EX(255,(cref))
 
 /* Get GDI's COLORREF from WD_COLOR. */
-#define WD_COLOR_TO_GDI(color)      ((COLORREF)(color) & 0x00ffffffU)
+#define WD_COLOR_TO_GDI(color)                                              \
+        RGB(WD_RVALUE(color), WD_GVALUE(color), WD_BVALUE(color))
 
 
 /*****************************
