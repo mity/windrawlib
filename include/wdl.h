@@ -16,8 +16,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef WDL_DRAW_H
-#define WDL_DRAW_H
+#ifndef WDL_H
+#define WDL_H
 
 #include <windows.h>
 #include <objidl.h>     /* IStream */
@@ -433,4 +433,4 @@ float wdStringWidth(WD_HCANVAS hCanvas, WD_HFONT hFont, const WCHAR* pszText);
 }  /* extern "C" */
 #endif
 
-#endif  /* WDL_DRAW_H */
+#endif  /* WDL_H */
