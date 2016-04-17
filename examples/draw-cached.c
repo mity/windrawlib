@@ -9,38 +9,47 @@ static HWND hwndMain = NULL;
 static WD_HCANVAS hCachedCanvas = NULL;
 
 
+static const WD_COLOR drawColors[3] =
+        { WD_RGB(255,0,0), WD_RGB(0,255,0), WD_RGB(0,0,255) };
+static const WD_COLOR fillColors[3] =
+        { WD_ARGB(63,255,0,0), WD_ARGB(63,0,255,0), WD_ARGB(63,0,0,255) };
+
 static void
-MainWinPaintToCanvas(WD_HCANVAS hCanvas, BOOL* pbCanCache)
+MainWinPaintToCanvas(WD_HCANVAS hCanvas, BOOL* pCanCache)
 {
-    BOOL bCanCache;
     WD_HBRUSH hBrush;
-
-    struct {
-        WD_RECT rect;
-        WD_COLOR color;
-    } r[] = {
-        { { 10.0f, 10.0f, 110.0f, 110.0f }, WD_RGB(255,0,0) },
-        { { 20.0f, 20.0f, 120.0f, 120.0f }, WD_RGB(0,255,0) },
-        { { 30.0f, 30.0f, 130.0f, 130.0f }, WD_RGB(0,0,255) }
-    };
-
     int i;
 
     wdBeginPaint(hCanvas);
     wdClear(hCanvas, WD_RGB(255,255,255));
     hBrush = wdCreateSolidBrush(hCanvas, 0);
 
-    for(i = 0; i < sizeof(r) / sizeof(r[0]); i++) {
-        wdSetSolidBrushColor(hBrush, r[i].color);
-        wdDrawRect(hCanvas, hBrush, &r[i].rect, 1.0f);
+    for(i = 0; i < 3; i++) {
+        float x = 10.0f + i * 20.0f;
+        float y = 10.0f + i * 20.0f;
+
+        wdSetSolidBrushColor(hBrush, fillColors[i]);
+        wdFillRect(hCanvas, hBrush, x, y, x + 100.0f, y + 100.0f);
+
+        wdSetSolidBrushColor(hBrush, drawColors[i]);
+        wdDrawRect(hCanvas, hBrush, x, y, x + 100.0f, y + 100.0f, 3.0f);
+    }
+
+    for(i = 0; i < 3; i++) {
+        float x = 250.0f + i * 20.0f;
+        float y = 60.0f + i * 20.0f;
+
+        wdSetSolidBrushColor(hBrush, fillColors[i]);
+        wdFillCircle(hCanvas, hBrush, x, y, 55.0f);
+
+        wdSetSolidBrushColor(hBrush, drawColors[i]);
+        wdDrawCircle(hCanvas, hBrush, x, y, 55.0f, 3.0f);
     }
 
     wdDestroyBrush(hBrush);
-    bCanCache = wdEndPaint(hCanvas);
-
-    if(pbCanCache != NULL)
-        *pbCanCache = bCanCache;
+    *pCanCache = wdEndPaint(hCanvas);
 }
+
 
 static void
 MainWinPaint(void)

@@ -8,56 +8,47 @@
 static HWND hwndMain = NULL;
 
 
+static const WD_COLOR drawColors[3] =
+        { WD_RGB(255,0,0), WD_RGB(0,255,0), WD_RGB(0,0,255) };
+static const WD_COLOR fillColors[3] =
+        { WD_ARGB(63,255,0,0), WD_ARGB(63,0,255,0), WD_ARGB(63,0,0,255) };
+
 static void
-PaintToCanvas(WD_HCANVAS hCanvas)
+MainWinPaintToCanvas(WD_HCANVAS hCanvas)
 {
     WD_HBRUSH hBrush;
-
-    struct {
-        WD_RECT rect;
-        WD_COLOR color;
-        WD_COLOR fill_color;
-    } r[] = {
-        { { 10.0f, 10.0f, 110.0f, 110.0f }, WD_RGB(255,0,0), WD_ARGB(63,255,0,0) },
-        { { 30.0f, 30.0f, 130.0f, 130.0f }, WD_RGB(0,255,0), WD_ARGB(63,0,255,0) },
-        { { 50.0f, 50.0f, 150.0f, 150.0f }, WD_RGB(0,0,255), WD_ARGB(63,0,0,255) }
-    };
-
-    struct {
-        WD_CIRCLE circle;
-        WD_COLOR color;
-        WD_COLOR fill_color;
-    } c[] = {
-        { { 250.0f,  60.0f, 55.0f }, WD_RGB(255,0,0), WD_ARGB(63,255,0,0) },
-        { { 270.0f,  80.0f, 55.0f }, WD_RGB(0,255,0), WD_ARGB(63,0,255,0) },
-        { { 290.0f, 100.0f, 55.0f }, WD_RGB(0,0,255), WD_ARGB(63,0,0,255) }
-    };
-
     int i;
 
     wdBeginPaint(hCanvas);
     wdClear(hCanvas, WD_RGB(255,255,255));
     hBrush = wdCreateSolidBrush(hCanvas, 0);
 
-    for(i = 0; i < sizeof(r) / sizeof(r[0]); i++) {
-        wdSetSolidBrushColor(hBrush, r[i].color);
-        wdDrawRect(hCanvas, hBrush, &r[i].rect, 3.0f);
+    for(i = 0; i < 3; i++) {
+        float x = 10.0f + i * 20.0f;
+        float y = 10.0f + i * 20.0f;
 
-        wdSetSolidBrushColor(hBrush, r[i].fill_color);
-        wdFillRect(hCanvas, hBrush, &r[i].rect);
+        wdSetSolidBrushColor(hBrush, fillColors[i]);
+        wdFillRect(hCanvas, hBrush, x, y, x + 100.0f, y + 100.0f);
+
+        wdSetSolidBrushColor(hBrush, drawColors[i]);
+        wdDrawRect(hCanvas, hBrush, x, y, x + 100.0f, y + 100.0f, 3.0f);
     }
 
-    for(i = 0; i < sizeof(c) / sizeof(c[0]); i++) {
-        wdSetSolidBrushColor(hBrush, c[i].color);
-        wdDrawCircle(hCanvas, hBrush, &c[i].circle, 3.0f);
+    for(i = 0; i < 3; i++) {
+        float x = 250.0f + i * 20.0f;
+        float y = 60.0f + i * 20.0f;
 
-        wdSetSolidBrushColor(hBrush, c[i].fill_color);
-        wdFillCircle(hCanvas, hBrush, &c[i].circle);
+        wdSetSolidBrushColor(hBrush, fillColors[i]);
+        wdFillCircle(hCanvas, hBrush, x, y, 55.0f);
+
+        wdSetSolidBrushColor(hBrush, drawColors[i]);
+        wdDrawCircle(hCanvas, hBrush, x, y, 55.0f, 3.0f);
     }
 
     wdDestroyBrush(hBrush);
     wdEndPaint(hCanvas);
- }
+}
+
 
 /* Main window procedure */
 static LRESULT CALLBACK
@@ -71,7 +62,7 @@ MainWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
             BeginPaint(hwndMain, &ps);
             hCanvas = wdCreateCanvasWithPaintStruct(hwndMain, &ps, 0);
-            PaintToCanvas(hCanvas);
+            MainWinPaintToCanvas(hCanvas);
             wdDestroyCanvas(hCanvas);
             EndPaint(hwndMain, &ps);
             return 0;
@@ -83,7 +74,7 @@ MainWinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             WD_HCANVAS hCanvas;
 
             hCanvas = wdCreateCanvasWithHDC(dc, NULL, 0);
-            PaintToCanvas(hCanvas);
+            MainWinPaintToCanvas(hCanvas);
             wdDestroyCanvas(hCanvas);
             return 0;
         }
@@ -103,6 +94,7 @@ _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nC
     WNDCLASS wc = { 0 };
     MSG msg;
 
+    wdPreInitialize(NULL, NULL, WD_DISABLE_D2D);
     wdInitialize(0);
 
     /* Register main window class */

@@ -72,27 +72,12 @@ struct WD_POINT_tag {
     float y;
 };
 
-typedef struct WD_LINE_tag WD_LINE;
-struct WD_LINE_tag {
-    float x0;
-    float y0;
-    float x1;
-    float y1;
-};
-
 typedef struct WD_RECT_tag WD_RECT;
 struct WD_RECT_tag {
     float x0;
     float y0;
     float x1;
     float y1;
-};
-
-typedef struct WD_CIRCLE_tag WD_CIRCLE;
-struct WD_CIRCLE_tag {
-    float x;
-    float y;
-    float r;
 };
 
 
@@ -304,11 +289,11 @@ struct WD_PATHSINK_tag {
 BOOL wdOpenPathSink(WD_PATHSINK* pSink, WD_HPATH hPath);
 void wdClosePathSink(WD_PATHSINK* pSink);
 
-void wdBeginFigure(WD_PATHSINK* pSink, const WD_POINT* pStartPoint);
+void wdBeginFigure(WD_PATHSINK* pSink, float x, float y);
 void wdEndFigure(WD_PATHSINK* pSink, BOOL bCloseFigure);
 
-void wdAddLine(WD_PATHSINK* pSink, const WD_POINT* pEndPoint);
-void wdAddArc(WD_PATHSINK* pSink, const WD_POINT* pCenter, float fSweepAngle);
+void wdAddLine(WD_PATHSINK* pSink, float x, float y);
+void wdAddArc(WD_PATHSINK* pSink, float cx, float cy, float fSweepAngle);
 
 
 /*************************
@@ -345,29 +330,34 @@ void wdFontMetrics(WD_HFONT hFont, WD_FONTMETRICS* pMetrics);
  ***  Draw Operations  ***
  *************************/
 
-void wdDrawArc(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_CIRCLE* pCircle,
+void wdDrawArc(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float cx, float cy, float r,
                 float fBaseAngle, float fSweepAngle, float fStrokeWidth);
-void wdDrawCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_CIRCLE* pCircle,
-                float fStrokeWidth);
-void wdDrawLine(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_LINE* pLine,
-                float fStrokeWidth);
-void wdDrawPath(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_HPATH hPath,
-                float fStrokeWidth);
-void wdDrawPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_CIRCLE* pCircle,
+void wdDrawCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float cx, float cy, float r, float fStrokeWidth);
+void wdDrawLine(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float x0, float y0, float x1, float y1, float fStrokeWidth);
+void wdDrawPath(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                const WD_HPATH hPath, float fStrokeWidth);
+void wdDrawPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float cx, float cy, float r,
                 float fBaseAngle, float fSweepAngle, float fStrokeWidth);
-void wdDrawRect(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_RECT* pRect,
-                float fStrokeWidth);
+void wdDrawRect(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float x0, float y0, float x1, float y1, float fStrokeWidth);
 
 
 /*************************
  ***  Fill Operations  ***
  *************************/
 
-void wdFillCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_CIRCLE* pCircle);
+void wdFillCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float cx, float cy, float r);
 void wdFillPath(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_HPATH hPath);
-void wdFillPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_CIRCLE* pCircle,
+void wdFillPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float cx, float cy, float r,
                 float fBaseAngle, float fSweepAngle);
-void wdFillRect(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_RECT* pRect);
+void wdFillRect(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float x0, float y0, float x1, float y1);
 
 
 /*****************************
