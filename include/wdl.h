@@ -395,7 +395,11 @@ void wdBitBltHICON(WD_HCANVAS hCanvas, HICON hIcon,
  * the flag WD_INIT_DRAWSTRINGAPI.
  */
 
-/* Flags specifying alignment and various rendering options. */
+/* Flags specifying alignment and various rendering options.
+ *
+ * Note GDI+ back-end does not support ellipses in case of multi-line string,
+ * so the ellipsis flags should be only used together with WD_STR_NOWRAP.
+ */
 #define WD_STR_LEFTALIGN        0x0000
 #define WD_STR_CENTERALIGN      0x0001
 #define WD_STR_RIGHTALIGN       0x0002
