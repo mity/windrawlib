@@ -49,56 +49,42 @@ wdCreateFont(const LOGFONTW* pLogFont)
         WCHAR user_locale[LOCALE_NAME_MAX_LENGTH];
         WCHAR* locales[] = { user_locale, no_locale, enus_locale };
         WCHAR default_fontface[LF_FACESIZE];
-        int i;
         dummy_IDWriteTextFormat* tf;
-        float size;
-        dummy_DWRITE_FONT_STYLE style;
-        dummy_DWRITE_FONT_WEIGHT weight;
-        HRESULT hr;
+        dummy_DWRITE_FONT_METRICS metrics;
+        int i;
 
         dwrite_default_user_locale(user_locale);
 
-        /* DirectWrite does not support "default" font size. */
-        size = (pLogFont->lfHeight != 0 ? WD_ABS(pLogFont->lfHeight) : 12.0f);
-
-        if(pLogFont->lfItalic)
-            style = dummy_DWRITE_FONT_STYLE_ITALIC;
-        else
-            style = dummy_DWRITE_FONT_STYLE_NORMAL;
-
-        /* FIXME: Right now, we ignore some LOGFONT members here.
-         *        For example:
-         *          -- LOGFONT::lfUnderline should propagate into
-         *             dummy_IDWriteTextLayout::SetUnderline()
-         *          -- LOGFONT::lfStrikeOut should propagate into
-         *             dummy_IDWriteTextLayout::SetStrikethrough()
-         */
-
-        /* DirectWrite does not support FW_DONTCARE */
-        weight = (pLogFont->lfWeight != FW_DONTCARE ? pLogFont->lfWeight : FW_REGULAR);
-
-        for(i = 0; i < WD_SIZEOF_ARRAY(locales); i++) {
-            hr = dummy_IDWriteFactory_CreateTextFormat(dwrite_factory,
-                    pLogFont->lfFaceName, NULL, weight, style,
-                    dummy_DWRITE_FONT_STRETCH_NORMAL, size, locales[i], &tf);
-            if(SUCCEEDED(hr))
-                return (WD_HFONT) tf;
+        /* Direct 2D seems to not understand "MS Shell Dlg" and "MS Shell Dlg 2"
+         * so we skip the attempts to use it. */
+        if(wcscmp(pLogFont->lfFaceName, L"MS Shell Dlg") != 0  &&
+           wcscmp(pLogFont->lfFaceName, L"MS Shell Dlg 2") != 0) {
+            for(i = 0; i < WD_SIZEOF_ARRAY(locales); i++) {
+                tf = dwrite_create_text_format(locales[i], pLogFont, &metrics);
+                if(tf != NULL)
+                    return (WD_HFONT) tf;
+            }
         }
 
-        /* In case of a failure, try to fall back to a reasonable the default
-         * font. */
+        /* In case of a failure, we retry with a default GUI font face. */
         wd_get_default_gui_fontface(default_fontface);
-        for(i = 0; i < WD_SIZEOF_ARRAY(locales); i++) {
-            hr = dummy_IDWriteFactory_CreateTextFormat(dwrite_factory,
-                    default_fontface, NULL, weight, style,
-                    dummy_DWRITE_FONT_STRETCH_NORMAL, size, locales[i], &tf);
-            if(SUCCEEDED(hr))
-                return (WD_HFONT) tf;
+        if(wcscmp(default_fontface, pLogFont->lfFaceName) != 0) {
+            /* Make a temporary copy of pLogFont to not overwrite caller's
+             * data. */
+            LOGFONTW tmp;
+
+            memcpy(&tmp, pLogFont, sizeof(LOGFONTW));
+            wcsncpy(tmp.lfFaceName, default_fontface, LF_FACESIZE);
+
+            for(i = 0; i < WD_SIZEOF_ARRAY(locales); i++) {
+                tf = dwrite_create_text_format(locales[i], &tmp, &metrics);
+                if(tf != NULL)
+                    return (WD_HFONT) tf;
+            }
         }
 
-        WD_TRACE("wdCreateFont: "
-                 "IDWriteFactory::CreateTextFormat(%S, %S) failed. [0x%lx]",
-                 pLogFont->lfFaceName, user_locale, hr);
+        WD_TRACE("wdCreateFont: dwrite_create_text_format(%S, %S) failed.",
+                 pLogFont->lfFaceName, user_locale);
         return NULL;
     } else {
         HDC dc;

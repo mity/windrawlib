@@ -36,6 +36,9 @@ void dwrite_fini(void);
 
 void dwrite_default_user_locale(WCHAR buffer[LOCALE_NAME_MAX_LENGTH]);
 
+dummy_IDWriteTextFormat* dwrite_create_text_format(const WCHAR* locale_name,
+            const LOGFONTW* logfont, dummy_DWRITE_FONT_METRICS* metrics);
+
 dummy_IDWriteTextLayout* dwrite_create_text_layout(dummy_IDWriteTextFormat* tf,
             const WD_RECT* rect, const WCHAR* str, int len, DWORD flags);
 

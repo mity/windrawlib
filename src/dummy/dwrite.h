@@ -149,13 +149,15 @@ struct dummy_DWRITE_TEXT_METRICS_tag {
  ***  Forward declarations  ***
  ******************************/
 
-typedef struct dummy_IDWriteFactory_tag         dummy_IDWriteFactory;
-typedef struct dummy_IDWriteFont_tag            dummy_IDWriteFont;
-typedef struct dummy_IDWriteFontCollection_tag  dummy_IDWriteFontCollection;
-typedef struct dummy_IDWriteFontFamily_tag      dummy_IDWriteFontFamily;
-typedef struct dummy_IDWriteInlineObject_tag    dummy_IDWriteInlineObject;
-typedef struct dummy_IDWriteTextFormat_tag      dummy_IDWriteTextFormat;
-typedef struct dummy_IDWriteTextLayout_tag      dummy_IDWriteTextLayout;
+typedef struct dummy_IDWriteFactory_tag             dummy_IDWriteFactory;
+typedef struct dummy_IDWriteFont_tag                dummy_IDWriteFont;
+typedef struct dummy_IDWriteFontCollection_tag      dummy_IDWriteFontCollection;
+typedef struct dummy_IDWriteFontFamily_tag          dummy_IDWriteFontFamily;
+typedef struct dummy_IDWriteGdiInterop_tag          dummy_IDWriteGdiInterop;
+typedef struct dummy_IDWriteInlineObject_tag        dummy_IDWriteInlineObject;
+typedef struct dummy_IDWriteLocalizedStrings_tag    dummy_IDWriteLocalizedStrings;
+typedef struct dummy_IDWriteTextFormat_tag          dummy_IDWriteTextFormat;
+typedef struct dummy_IDWriteTextLayout_tag          dummy_IDWriteTextLayout;
 
 
 /**********************************
@@ -185,7 +187,7 @@ struct dummy_IDWriteFactoryVtbl_tag {
     STDMETHOD(CreateTextFormat)(dummy_IDWriteFactory*, WCHAR const*, void*, dummy_DWRITE_FONT_WEIGHT,
             dummy_DWRITE_FONT_STYLE, dummy_DWRITE_FONT_STRETCH, FLOAT, WCHAR const*, dummy_IDWriteTextFormat**);
     STDMETHOD(dummy_CreateTypography)(void);
-    STDMETHOD(dummy_GetGdiInterop)(void);
+    STDMETHOD(GetGdiInterop)(dummy_IDWriteFactory*, dummy_IDWriteGdiInterop**);
     STDMETHOD(CreateTextLayout)(dummy_IDWriteFactory*, WCHAR const*, UINT32, dummy_IDWriteTextFormat*,
             FLOAT, FLOAT, dummy_IDWriteTextLayout**);
     STDMETHOD(dummy_CreateGdiCompatibleTextLayout)(void);
@@ -199,13 +201,14 @@ struct dummy_IDWriteFactory_tag {
     dummy_IDWriteFactoryVtbl* vtbl;
 };
 
-#define dummy_IDWriteFactory_QueryInterface(self,a,b)                 (self)->vtbl->QueryInterface(self,a,b)
-#define dummy_IDWriteFactory_AddRef(self)                             (self)->vtbl->AddRef(self)
-#define dummy_IDWriteFactory_Release(self)                            (self)->vtbl->Release(self)
-#define dummy_IDWriteFactory_GetSystemFontCollection(self,a,b)        (self)->vtbl->GetSystemFontCollection(self,a,b)
-#define dummy_IDWriteFactory_CreateTextFormat(self,a,b,c,d,e,f,g,h)   (self)->vtbl->CreateTextFormat(self,a,b,c,d,e,f,g,h)
-#define dummy_IDWriteFactory_CreateTextLayout(self,a,b,c,d,e,f)       (self)->vtbl->CreateTextLayout(self,a,b,c,d,e,f)
-#define dummy_IDWriteFactory_CreateEllipsisTrimmingSign(self,a,b)     (self)->vtbl->CreateEllipsisTrimmingSign(self,a,b)
+#define dummy_IDWriteFactory_QueryInterface(self,a,b)                   (self)->vtbl->QueryInterface(self,a,b)
+#define dummy_IDWriteFactory_AddRef(self)                               (self)->vtbl->AddRef(self)
+#define dummy_IDWriteFactory_Release(self)                              (self)->vtbl->Release(self)
+#define dummy_IDWriteFactory_GetSystemFontCollection(self,a,b)          (self)->vtbl->GetSystemFontCollection(self,a,b)
+#define dummy_IDWriteFactory_GetGdiInterop(self,a)                      (self)->vtbl->GetGdiInterop(self,a)
+#define dummy_IDWriteFactory_CreateTextFormat(self,a,b,c,d,e,f,g,h)     (self)->vtbl->CreateTextFormat(self,a,b,c,d,e,f,g,h)
+#define dummy_IDWriteFactory_CreateTextLayout(self,a,b,c,d,e,f)         (self)->vtbl->CreateTextLayout(self,a,b,c,d,e,f)
+#define dummy_IDWriteFactory_CreateEllipsisTrimmingSign(self,a,b)       (self)->vtbl->CreateEllipsisTrimmingSign(self,a,b)
 
 
 /*******************************
@@ -220,10 +223,10 @@ struct dummy_IDWriteFontVtbl_tag {
     STDMETHOD_(ULONG, Release)(dummy_IDWriteFont*);
 
     /* IDWriteFont methods */
-    STDMETHOD(dummy_GetFontFamily)(void);
-    STDMETHOD(dummy_GetWeight)(void);
-    STDMETHOD(dummy_GetStretch)(void);
-    STDMETHOD(dummy_GetStyle)(void);
+    STDMETHOD(GetFontFamily)(dummy_IDWriteFont*, dummy_IDWriteFontFamily**);
+    STDMETHOD_(dummy_DWRITE_FONT_WEIGHT, GetWeight)(dummy_IDWriteFont*);
+    STDMETHOD_(dummy_DWRITE_FONT_STRETCH, GetStretch)(dummy_IDWriteFont*);
+    STDMETHOD_(dummy_DWRITE_FONT_STYLE, GetStyle)(dummy_IDWriteFont*);
     STDMETHOD(dummy_IsSymbolFont)(void);
     STDMETHOD(dummy_GetFaceNames)(void);
     STDMETHOD(dummy_GetInformationalStrings)(void);
@@ -240,7 +243,11 @@ struct dummy_IDWriteFont_tag {
 #define dummy_IDWriteFont_QueryInterface(self,a,b)  (self)->vtbl->QueryInterface(self,a,b)
 #define dummy_IDWriteFont_AddRef(self)              (self)->vtbl->AddRef(self)
 #define dummy_IDWriteFont_Release(self)             (self)->vtbl->Release(self)
+#define dummy_IDWriteFont_GetWeight(self)           (self)->vtbl->GetWeight(self)
+#define dummy_IDWriteFont_GetStretch(self)          (self)->vtbl->GetStretch(self)
+#define dummy_IDWriteFont_GetStyle(self)            (self)->vtbl->GetStyle(self)
 #define dummy_IDWriteFont_GetMetrics(self,a)        (self)->vtbl->GetMetrics(self,a)
+#define dummy_IDWriteFont_GetFontFamily(self,a)     (self)->vtbl->GetFontFamily(self,a)
 
 
 /*****************************************
@@ -290,7 +297,7 @@ struct dummy_IDWriteFontFamilyVtbl_tag {
     STDMETHOD(dummy_GetFont)(void);
 
     /* IDWriteFontFamily methods */
-    STDMETHOD(dummy_GetFamilyNames)(void);
+    STDMETHOD(GetFamilyNames)(dummy_IDWriteFontFamily*, dummy_IDWriteLocalizedStrings**);
     STDMETHOD(GetFirstMatchingFont)(dummy_IDWriteFontFamily*, dummy_DWRITE_FONT_WEIGHT,
             dummy_DWRITE_FONT_STRETCH, dummy_DWRITE_FONT_STYLE, dummy_IDWriteFont**);
     STDMETHOD(dummy_GetMatchingFonts)(void);
@@ -304,6 +311,67 @@ struct dummy_IDWriteFontFamily_tag {
 #define dummy_IDWriteFontFamily_AddRef(self)                        (self)->vtbl->AddRef(self)
 #define dummy_IDWriteFontFamily_Release(self)                       (self)->vtbl->Release(self)
 #define dummy_IDWriteFontFamily_GetFirstMatchingFont(self,a,b,c,d)  (self)->vtbl->GetFirstMatchingFont(self,a,b,c,d)
+#define dummy_IDWriteFontFamily_GetFamilyNames(self,a)              (self)->vtbl->GetFamilyNames(self,a)
+
+
+/*************************************
+ ***  Interface IDWriteGdiInterop  ***
+ *************************************/
+
+typedef struct dummy_IDWriteGdiInteropVtbl_tag dummy_IDWriteGdiInteropVtbl;
+struct dummy_IDWriteGdiInteropVtbl_tag {
+    /* IUnknown methods */
+    STDMETHOD(QueryInterface)(dummy_IDWriteGdiInterop*, REFIID, void**);
+    STDMETHOD_(ULONG, AddRef)(dummy_IDWriteGdiInterop*);
+    STDMETHOD_(ULONG, Release)(dummy_IDWriteGdiInterop*);
+
+    /* IDWriteGdiInterop methods */
+    STDMETHOD(CreateFontFromLOGFONT)(dummy_IDWriteGdiInterop*, LOGFONTW const*, dummy_IDWriteFont**);
+    STDMETHOD(dummy_ConvertFontToLOGFONT)(void);
+    STDMETHOD(dummy_ConvertFontFaceToLOGFONT)(void);
+    STDMETHOD(dummy_CreateFontFaceFromHdc)(void);
+    STDMETHOD(dummy_CreateBitmapRenderTarget)(void);
+};
+
+struct dummy_IDWriteGdiInterop_tag {
+    dummy_IDWriteGdiInteropVtbl* vtbl;
+};
+
+#define dummy_IDWriteGdiInterop_QueryInterface(self,a,b)            (self)->vtbl->QueryInterface(self,a,b)
+#define dummy_IDWriteGdiInterop_AddRef(self)                        (self)->vtbl->AddRef(self)
+#define dummy_IDWriteGdiInterop_Release(self)                       (self)->vtbl->Release(self)
+#define dummy_IDWriteGdiInterop_CreateFontFromLOGFONT(self,a,b)     (self)->vtbl->CreateFontFromLOGFONT(self,a,b)
+
+
+/*******************************************
+ ***  Interface IDWriteLocalizedStrings  ***
+ *******************************************/
+
+typedef struct dummy_IDWriteLocalizedStringsVtbl_tag dummy_IDWriteLocalizedStringsVtbl;
+struct dummy_IDWriteLocalizedStringsVtbl_tag {
+    /* IUnknown methods */
+    STDMETHOD(QueryInterface)(dummy_IDWriteLocalizedStrings*, REFIID, void**);
+    STDMETHOD_(ULONG, AddRef)(dummy_IDWriteLocalizedStrings*);
+    STDMETHOD_(ULONG, Release)(dummy_IDWriteLocalizedStrings*);
+
+    /* IDWriteLocalizedStrings methods */
+    STDMETHOD(dummy_GetCount)(void);
+    STDMETHOD(dummy_FindLocaleName)(void);
+    STDMETHOD(dummy_GetLocaleNameLength)(void);
+    STDMETHOD(dummy_GetLocaleName)(void);
+    STDMETHOD(GetStringLength)(dummy_IDWriteLocalizedStrings*, UINT32, UINT32*);
+    STDMETHOD(GetString)(dummy_IDWriteLocalizedStrings*, UINT32, WCHAR*, UINT32);
+};
+
+struct dummy_IDWriteLocalizedStrings_tag {
+    dummy_IDWriteLocalizedStringsVtbl* vtbl;
+};
+
+#define dummy_IDWriteLocalizedStrings_QueryInterface(self,a,b)      (self)->vtbl->QueryInterface(self,a,b)
+#define dummy_IDWriteLocalizedStrings_AddRef(self)                  (self)->vtbl->AddRef(self)
+#define dummy_IDWriteLocalizedStrings_Release(self)                 (self)->vtbl->Release(self)
+#define dummy_IDWriteLocalizedStrings_GetStringLength(self,a,b)     (self)->vtbl->GetStringLength(self,a,b)
+#define dummy_IDWriteLocalizedStrings_GetString(self,a,b,c)         (self)->vtbl->GetString(self,a,b,c)
 
 
 /***************************************
