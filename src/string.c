@@ -34,13 +34,13 @@ wdDrawString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
              DWORD dwFlags)
 {
     if(d2d_enabled()) {
+        dwrite_font_t* font = (dwrite_font_t*) hFont;
         D2D1_POINT_2F origin = { pRect->x0, pRect->y0 };
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
         ID2D1Brush* b = (ID2D1Brush*) hBrush;
-        dummy_IDWriteTextFormat* tf = (dummy_IDWriteTextFormat*) hFont;
         dummy_IDWriteTextLayout* layout;
 
-        layout = dwrite_create_text_layout(tf, pRect, pszText, iTextLength, dwFlags);
+        layout = dwrite_create_text_layout(font->tf, pRect, pszText, iTextLength, dwFlags);
         if(layout == NULL) {
             WD_TRACE("wdDrawString: dwrite_create_text_layout() failed.");
             return;
@@ -74,11 +74,11 @@ wdMeasureString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
                 DWORD dwFlags)
 {
     if(d2d_enabled()) {
-        dummy_IDWriteTextFormat* tf = (dummy_IDWriteTextFormat*) hFont;
+        dwrite_font_t* font = (dwrite_font_t*) hFont;
         dummy_IDWriteTextLayout* layout;
         dummy_DWRITE_TEXT_METRICS tm;
 
-        layout = dwrite_create_text_layout(tf, pRect, pszText, iTextLength, dwFlags);
+        layout = dwrite_create_text_layout(font->tf, pRect, pszText, iTextLength, dwFlags);
         if(layout == NULL) {
             WD_TRACE("wdMeasureString: dwrite_create_text_layout() failed.");
             return;

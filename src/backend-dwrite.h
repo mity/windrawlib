@@ -31,6 +31,13 @@
 extern dummy_IDWriteFactory* dwrite_factory;
 
 
+typedef struct dwrite_font_tag dwrite_font_t;
+struct dwrite_font_tag {
+    dummy_IDWriteTextFormat* tf;
+    dummy_DWRITE_FONT_METRICS metrics;
+};
+
+
 int dwrite_init(void);
 void dwrite_fini(void);
 

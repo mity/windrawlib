@@ -49,9 +49,14 @@ wdCreateFont(const LOGFONTW* pLogFont)
         WCHAR user_locale[LOCALE_NAME_MAX_LENGTH];
         WCHAR* locales[] = { user_locale, no_locale, enus_locale };
         WCHAR default_fontface[LF_FACESIZE];
-        dummy_IDWriteTextFormat* tf;
-        dummy_DWRITE_FONT_METRICS metrics;
+        dwrite_font_t* font;
         int i;
+
+        font = (dwrite_font_t*) malloc(sizeof(dwrite_font_t));
+        if(font == NULL) {
+            WD_TRACE("wdCreateFont: malloc() failed.");
+            return NULL;
+        }
 
         dwrite_default_user_locale(user_locale);
 
@@ -60,9 +65,9 @@ wdCreateFont(const LOGFONTW* pLogFont)
         if(wcscmp(pLogFont->lfFaceName, L"MS Shell Dlg") != 0  &&
            wcscmp(pLogFont->lfFaceName, L"MS Shell Dlg 2") != 0) {
             for(i = 0; i < WD_SIZEOF_ARRAY(locales); i++) {
-                tf = dwrite_create_text_format(locales[i], pLogFont, &metrics);
-                if(tf != NULL)
-                    return (WD_HFONT) tf;
+                font->tf = dwrite_create_text_format(locales[i], pLogFont, &font->metrics);
+                if(font->tf != NULL)
+                    return (WD_HFONT) font;
             }
         }
 
@@ -77,14 +82,15 @@ wdCreateFont(const LOGFONTW* pLogFont)
             wcsncpy(tmp.lfFaceName, default_fontface, LF_FACESIZE);
 
             for(i = 0; i < WD_SIZEOF_ARRAY(locales); i++) {
-                tf = dwrite_create_text_format(locales[i], &tmp, &metrics);
-                if(tf != NULL)
-                    return (WD_HFONT) tf;
+                font->tf = dwrite_create_text_format(locales[i], &tmp, &font->metrics);
+                if(font->tf != NULL)
+                    return (WD_HFONT) font;
             }
         }
 
         WD_TRACE("wdCreateFont: dwrite_create_text_format(%S, %S) failed.",
                  pLogFont->lfFaceName, user_locale);
+        free(font);
         return NULL;
     } else {
         HDC dc;
@@ -131,8 +137,10 @@ void
 wdDestroyFont(WD_HFONT hFont)
 {
     if(d2d_enabled()) {
-        dummy_IDWriteTextFormat* tf = (dummy_IDWriteTextFormat*) hFont;
-        dummy_IDWriteTextFormat_Release(tf);
+        dwrite_font_t* font = (dwrite_font_t*) hFont;
+
+        dummy_IDWriteTextFormat_Release(font->tf);
+        free(font);
     } else {
         gdix_vtable->fn_DeleteFont((dummy_GpFont*) hFont);
     }
@@ -149,102 +157,17 @@ wdFontMetrics(WD_HFONT hFont, WD_FONTMETRICS* pMetrics)
     }
 
     if(d2d_enabled()) {
-        dummy_IDWriteTextFormat* tf = (dummy_IDWriteTextFormat*) hFont;
-        dummy_IDWriteFontCollection* fc;
-        dummy_IDWriteFontFamily* ff;
-        dummy_IDWriteFont* f;
-        WCHAR* name;
-        UINT32 name_len;
-        dummy_DWRITE_FONT_WEIGHT weight;
-        dummy_DWRITE_FONT_STRETCH stretch;
-        dummy_DWRITE_FONT_STYLE style;
-        UINT32 ix;
-        BOOL exists;
-        dummy_DWRITE_FONT_METRICS fm;
+        dwrite_font_t* font = (dwrite_font_t*) hFont;
         float factor;
-        HRESULT hr;
-        BOOL ok = FALSE;
 
-        /* Getting DWRITE_FONT_METRICS.
-         * (Based on http://stackoverflow.com/a/5610139/917880) */
-        name_len = dummy_IDWriteTextFormat_GetFontFamilyNameLength(tf) + 1;
-        name = _malloca(name_len * sizeof(WCHAR));
-        if(name == NULL) {
-            WD_TRACE("wdFontMetrics: _malloca() failed.");
-            goto err_malloca;
-        }
-        hr = dummy_IDWriteTextFormat_GetFontFamilyName(tf, name, name_len);
-        if(FAILED(hr)) {
-            WD_TRACE_HR("wdFontMetrics: "
-                        "IDWriteTextFormat::GetFontFamilyName() failed.");
-            goto err_GetFontFamilyName;
-        }
+        pMetrics->fEmHeight = dummy_IDWriteTextFormat_GetFontSize(font->tf);
 
-        weight = dummy_IDWriteTextFormat_GetFontWeight(tf);
-        stretch = dummy_IDWriteTextFormat_GetFontStretch(tf);
-        style = dummy_IDWriteTextFormat_GetFontStyle(tf);
+        factor = (pMetrics->fEmHeight / (float)font->metrics.designUnitsPerEm);
 
-        hr = dummy_IDWriteTextFormat_GetFontCollection(tf, &fc);
-        if(FAILED(hr)) {
-            WD_TRACE_HR("wdFontMetrics: "
-                        "IDWriteTextFormat::GetFontCollection() failed.");
-            goto err_GetFontCollection;
-        }
-
-        hr = dummy_IDWriteFontCollection_FindFamilyName(fc, name, &ix, &exists);
-        if(FAILED(hr)) {
-            WD_TRACE_HR("wdFontMetrics: "
-                        "IDWriteFontCollection::FindFamilyName() failed.");
-            goto err_FindFamilyName;
-        }
-
-        if(!exists) {
-            /* For some reason, this happens for "SYSTEM" font family on Win7. */
-            WD_TRACE("wdFontMetrics: WTF? Font does not exist? (%S)", name);
-            goto err_exists;
-        }
-
-        hr = dummy_IDWriteFontCollection_GetFontFamily(fc, ix, &ff);
-        if(FAILED(hr)) {
-            WD_TRACE_HR("wdFontMetrics: "
-                        "IDWriteFontCollection::GetFontFamily() failed.");
-            goto err_GetFontFamily;
-        }
-
-        hr = dummy_IDWriteFontFamily_GetFirstMatchingFont(ff, weight, stretch, style, &f);
-        if(FAILED(hr)) {
-            WD_TRACE_HR("wdFontMetrics: "
-                        "IDWriteFontFamily::GetFirstMatchingFont() failed.");
-            goto err_GetFirstMatchingFont;
-        }
-
-        dummy_IDWriteFont_GetMetrics(f, &fm);
-        ok = TRUE;
-
-        dummy_IDWriteFont_Release(f);
-err_GetFirstMatchingFont:
-        dummy_IDWriteFontFamily_Release(ff);
-err_GetFontFamily:
-err_exists:
-err_FindFamilyName:
-        dummy_IDWriteFontCollection_Release(fc);
-err_GetFontCollection:
-err_GetFontFamilyName:
-        _freea(name);
-err_malloca:
-
-        pMetrics->fEmHeight = dummy_IDWriteTextFormat_GetFontSize(tf);
-        if(ok) {
-            factor = (pMetrics->fEmHeight / fm.designUnitsPerEm);
-            pMetrics->fAscent = fm.ascent * factor;
-            pMetrics->fDescent = WD_ABS(fm.descent * factor);
-            pMetrics->fLeading = (fm.ascent + fm.descent + fm.lineGap) * factor;
-        } else {
-            /* Something above failed. Lets invent some sane defaults. */
-            pMetrics->fAscent = 0.9f * pMetrics->fEmHeight;
-            pMetrics->fDescent = 0.1f * pMetrics->fEmHeight;
-            pMetrics->fLeading = 1.1f * pMetrics->fEmHeight;
-        }
+        pMetrics->fAscent = factor * (float)font->metrics.ascent;
+        pMetrics->fDescent = factor * (float)WD_ABS(font->metrics.descent);
+        pMetrics->fLeading = factor * (float)(font->metrics.ascent +
+                WD_ABS(font->metrics.descent) + font->metrics.lineGap);
     } else {
         int font_style;
         float font_size;
