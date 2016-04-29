@@ -103,14 +103,15 @@ gdix_init(void)
     GPA(GraphicsClear, (dummy_GpGraphics*, dummy_ARGB));
     GPA(GetDC, (dummy_GpGraphics*, HDC*));
     GPA(ReleaseDC, (dummy_GpGraphics*, HDC));
+    GPA(ResetClip, (dummy_GpGraphics*));
     GPA(ResetWorldTransform, (dummy_GpGraphics*));
     GPA(RotateWorldTransform, (dummy_GpGraphics*, float, dummy_GpMatrixOrder));
+    GPA(ScaleWorldTransform, (dummy_GpGraphics*, float, float, dummy_GpMatrixOrder));
+    GPA(SetClipPath, (dummy_GpGraphics*, dummy_GpPath*, dummy_GpCombineMode));
+    GPA(SetClipRect, (dummy_GpGraphics*, float, float, float, float, dummy_GpCombineMode));
     GPA(SetPixelOffsetMode, (dummy_GpGraphics*, dummy_GpPixelOffsetMode));
     GPA(SetSmoothingMode, (dummy_GpGraphics*, dummy_GpSmoothingMode));
     GPA(TranslateWorldTransform, (dummy_GpGraphics*, float, float, dummy_GpMatrixOrder));
-    GPA(SetClipRect, (dummy_GpGraphics*, float, float, float, float, dummy_GpCombineMode));
-    GPA(SetClipPath, (dummy_GpGraphics*, dummy_GpPath*, dummy_GpCombineMode));
-    GPA(ResetClip, (dummy_GpGraphics*));
 
     /* Brush functions */
     GPA(CreateSolidFill, (dummy_ARGB, dummy_GpSolidFill**));
@@ -218,7 +219,7 @@ gdix_fini(void)
 }
 
 gdix_canvas_t*
-gdix_canvas_alloc(HDC dc, const RECT* doublebuffer_rect)
+gdix_canvas_alloc(HDC dc, const RECT* doublebuffer_rect, UINT width, BOOL rtl)
 {
     gdix_canvas_t* c;
     int status;
@@ -230,6 +231,8 @@ gdix_canvas_alloc(HDC dc, const RECT* doublebuffer_rect)
     }
 
     memset(c, 0, sizeof(gdix_canvas_t));
+    c->width = width;
+    c->rtl = (rtl ? TRUE : FALSE);
 
     if(doublebuffer_rect != NULL) {
         int cx = doublebuffer_rect->right - doublebuffer_rect->left;
@@ -296,6 +299,9 @@ no_doublebuffer:
         goto err_createstringformat;
     }
 
+    if(rtl)
+        gdix_reset_transform(c);
+
     return c;
 
     /* Error path */
@@ -312,6 +318,19 @@ err_creategraphics:
     free(c);
 err_malloc:
     return NULL;
+}
+
+void
+gdix_reset_transform(gdix_canvas_t* c)
+{
+    gdix_vtable->fn_ResetWorldTransform(c->graphics);
+
+    if(c->rtl) {
+        gdix_vtable->fn_ScaleWorldTransform(c->graphics,
+                -1.0f, 1.0f, dummy_MatrixOrderAppend);
+        gdix_vtable->fn_TranslateWorldTransform(c->graphics,
+                (float) c->width, 0.0f, dummy_MatrixOrderAppend);
+    }
 }
 
 void

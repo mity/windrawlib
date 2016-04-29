@@ -43,10 +43,10 @@ wdBitBltImage(WD_HCANVAS hCanvas, const WD_HIMAGE hImage,
          * when there is no custom transformation applied.
          */
         D2D1_RECT_F dest = {
-                pDestRect->x0 - d2d_base_transform._31,
-                pDestRect->y0 - d2d_base_transform._32,
-                pDestRect->x1 - d2d_base_transform._31,
-                pDestRect->y1 - d2d_base_transform._32
+                pDestRect->x0 - D2D_BASEDELTA_X,
+                pDestRect->y0 - D2D_BASEDELTA_Y,
+                pDestRect->x1 - D2D_BASEDELTA_X,
+                pDestRect->y1 - D2D_BASEDELTA_Y
         };
 
         hr = ID2D1RenderTarget_CreateBitmapFromWicBitmap(c->target, bitmap, NULL, &b);

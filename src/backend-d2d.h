@@ -33,12 +33,17 @@
 #define D2D_CANVASTYPE_DC           1
 #define D2D_CANVASTYPE_HWND         2
 
-#define D2D_CANVASFLAG_RECTCLIP   0x1
+#define D2D_CANVASFLAG_RECTCLIP     0x1
+#define D2D_CANVASFLAG_RTL          0x2
+
+#define D2D_BASEDELTA_X             0.5f
+#define D2D_BASEDELTA_Y             0.5f
 
 typedef struct d2d_canvas_tag d2d_canvas_t;
 struct d2d_canvas_tag {
     WORD type;
     WORD flags;
+    UINT width;
     union {
         ID2D1RenderTarget* target;
         ID2D1BitmapRenderTarget* bmp_target;
@@ -48,8 +53,6 @@ struct d2d_canvas_tag {
     ID2D1Layer* clip_layer;
 };
 
-
-extern const D2D1_MATRIX_3X2_F d2d_base_transform;
 
 extern ID2D1Factory* d2d_factory;
 
@@ -71,12 +74,12 @@ d2d_init_color(D2D_COLOR_F* c, WD_COLOR color)
 int d2d_init(void);
 void d2d_fini(void);
 
-d2d_canvas_t* d2d_canvas_alloc(ID2D1RenderTarget* target, WORD type);
+d2d_canvas_t* d2d_canvas_alloc(ID2D1RenderTarget* target, WORD type, UINT width, BOOL rtl);
 
 void d2d_reset_clip(d2d_canvas_t* c);
 
-void d2d_reset_transform(ID2D1RenderTarget* target);
-void d2d_apply_transform(ID2D1RenderTarget* target, D2D1_MATRIX_3X2_F* matrix);
+void d2d_reset_transform(d2d_canvas_t* c);
+void d2d_apply_transform(d2d_canvas_t* c, D2D1_MATRIX_3X2_F* matrix);
 
 void d2d_setup_arc_segment(D2D1_ARC_SEGMENT* arc_seg,
                     float cx, float cy, float r,

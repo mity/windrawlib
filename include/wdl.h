@@ -156,8 +156,24 @@ typedef struct WD_PATH_tag *WD_HPATH;
 
 /* Canvas is an abstract object which can be painted with this library. */
 
+/* The following flags modify default behavior of the canvas:
+ *
+ * WD_CANVAS_DOUBLEBUFFER: Enforces double-buffering. Note that Direct2D is
+ * implicitly double-buffering so this option actually changes only behavior
+ * of the GDI+ back-end.
+ *
+ * WD_CANVAS_NOGDICOMPAT: Disables GDI compatibility of the canvas. The canvas
+ * can save some work at the cost the application cannot safely call
+ * wdStartGdi().
+ *
+ * WD_CANVAS_LAYOUTRTL: By default, the canvas coordinate system has the
+ * origin in the left top corner of the device context or window it is created
+ * for. However with this flag the canvas shall have origin located in right
+ * top corner and the x-coordinate shall grow to the left from it.
+ */
 #define WD_CANVAS_DOUBLEBUFFER      0x0001
-#define WD_CANVAS_NOGDICOMPAT       0x0002      /* Disable GDI compatibility. */
+#define WD_CANVAS_NOGDICOMPAT       0x0002
+#define WD_CANVAS_LAYOUTRTL         0x0004
 
 WD_HCANVAS wdCreateCanvasWithPaintStruct(HWND hWnd, PAINTSTRUCT* pPS, DWORD dwFlags);
 WD_HCANVAS wdCreateCanvasWithHDC(HDC hDC, const RECT* pRect, DWORD dwFlags);
