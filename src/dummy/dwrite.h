@@ -85,6 +85,12 @@ enum dummy_DWRITE_FONT_STRETCH_tag {
     dummy_DWRITE_FONT_STRETCH_ULTRA_EXPANDED
 };
 
+typedef enum dummy_DWRITE_READING_DIRECTION_tag dummy_DWRITE_READING_DIRECTION;
+enum dummy_DWRITE_READING_DIRECTION_tag {
+    dummy_DWRITE_READING_DIRECTION_LEFT_TO_RIGHT = 0,
+    dummy_DWRITE_READING_DIRECTION_RIGHT_TO_LEFT
+};
+
 typedef enum dummy_DWRITE_WORD_WRAPPING_tag dummy_DWRITE_WORD_WRAPPING;
 enum dummy_DWRITE_WORD_WRAPPING_tag {
     dummy_DWRITE_WORD_WRAPPING_WRAP = 0,
@@ -471,7 +477,7 @@ struct dummy_IDWriteTextLayoutVtbl_tag {
     STDMETHOD(SetTextAlignment)(dummy_IDWriteTextLayout*, dummy_DWRITE_TEXT_ALIGNMENT);
     STDMETHOD(dummy_SetParagraphAlignment)(void);
     STDMETHOD(SetWordWrapping)(dummy_IDWriteTextLayout*, dummy_DWRITE_WORD_WRAPPING);
-    STDMETHOD(dummy_SetReadingDirection)(void);
+    STDMETHOD(SetReadingDirection)(dummy_IDWriteTextLayout*, dummy_DWRITE_READING_DIRECTION);
     STDMETHOD(dummy_SetFlowDirection)(void);
     STDMETHOD(dummy_SetIncrementalTabStop)(void);
     STDMETHOD(SetTrimming)(dummy_IDWriteTextLayout*, const dummy_DWRITE_TRIMMING*, dummy_IDWriteInlineObject*);
@@ -545,6 +551,7 @@ struct dummy_IDWriteTextLayout_tag {
 #define dummy_IDWriteTextLayout_Release(self)               (self)->vtbl->Release(self)
 #define dummy_IDWriteTextLayout_SetTextAlignment(self,a)    (self)->vtbl->SetTextAlignment(self,a)
 #define dummy_IDWriteTextLayout_SetWordWrapping(self,a)     (self)->vtbl->SetWordWrapping(self,a)
+#define dummy_IDWriteTextLayout_SetReadingDirection(self,a) (self)->vtbl->SetReadingDirection(self,a)
 #define dummy_IDWriteTextLayout_SetTrimming(self,a,b)       (self)->vtbl->SetTrimming(self,a,b)
 #define dummy_IDWriteTextLayout_GetMetrics(self,a)          (self)->vtbl->GetMetrics(self,a)
 

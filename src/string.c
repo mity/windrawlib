@@ -39,6 +39,7 @@ wdDrawString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
         ID2D1Brush* b = (ID2D1Brush*) hBrush;
         dummy_IDWriteTextLayout* layout;
+        D2D1_MATRIX_3X2_F old_matrix;
 
         layout = dwrite_create_text_layout(font->tf, pRect, pszText, iTextLength, dwFlags);
         if(layout == NULL) {
@@ -46,11 +47,23 @@ wdDrawString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
             return;
         }
 
+        if(c->flags & D2D_CANVASFLAG_RTL) {
+            d2d_disable_rtl_transform(c, &old_matrix);
+            origin.x = (float)c->width - pRect->x1;
+
+            dummy_IDWriteTextLayout_SetReadingDirection(layout,
+                    dummy_DWRITE_READING_DIRECTION_RIGHT_TO_LEFT);
+        }
+
         ID2D1RenderTarget_DrawTextLayout(c->target, origin,
                 (IDWriteTextLayout*) layout, b,
                 (dwFlags & WD_STR_NOCLIP) ? 0 : D2D1_DRAW_TEXT_OPTIONS_CLIP);
 
         dummy_IDWriteTextLayout_Release(layout);
+
+        if(c->flags & D2D_CANVASFLAG_RTL) {
+            ID2D1RenderTarget_SetTransform(c->target, &old_matrix);
+        }
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
         dummy_GpRectF r;

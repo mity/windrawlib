@@ -79,7 +79,11 @@ d2d_canvas_t* d2d_canvas_alloc(ID2D1RenderTarget* target, WORD type, UINT width,
 void d2d_reset_clip(d2d_canvas_t* c);
 
 void d2d_reset_transform(d2d_canvas_t* c);
-void d2d_apply_transform(d2d_canvas_t* c, D2D1_MATRIX_3X2_F* matrix);
+void d2d_apply_transform(d2d_canvas_t* c, const D2D1_MATRIX_3X2_F* matrix);
+
+/* Note: Can be called only if D2D_CANVASFLAG_RTL, and have to reinstall
+ * the original transformation then-after. */
+void d2d_disable_rtl_transform(d2d_canvas_t* c, D2D1_MATRIX_3X2_F* old_matrix);
 
 void d2d_setup_arc_segment(D2D1_ARC_SEGMENT* arc_seg,
                     float cx, float cy, float r,

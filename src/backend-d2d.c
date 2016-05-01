@@ -30,6 +30,18 @@ static HMODULE d2d_dll = NULL;
 ID2D1Factory* d2d_factory = NULL;
 
 
+static inline void
+d2d_matrix_mult(D2D1_MATRIX_3X2_F* res,
+                const D2D1_MATRIX_3X2_F* a, const D2D1_MATRIX_3X2_F* b)
+{
+    res->_11 = a->_11 * b->_11 + a->_12 * b->_21;
+    res->_12 = a->_11 * b->_12 + a->_12 * b->_22;
+    res->_21 = a->_21 * b->_11 + a->_22 * b->_21;
+    res->_22 = a->_21 * b->_12 + a->_22 * b->_22;
+    res->_31 = a->_31 * b->_11 + a->_32 * b->_21 + b->_31;
+    res->_32 = a->_31 * b->_12 + a->_32 * b->_22 + b->_32;
+}
+
 int
 d2d_init(void)
 {
@@ -43,6 +55,7 @@ d2d_init(void)
         WD_TRACE_ERR("d2d_init: wd_load_system_dll(D2D1.DLL) failed.");
         goto err_LoadLibrary;
     }
+
     fn_D2D1CreateFactory = (HRESULT (WINAPI*)(D2D1_FACTORY_TYPE, REFIID, const D2D1_FACTORY_OPTIONS*, void**))
                 GetProcAddress(d2d_dll, "D2D1CreateFactory");
     if(fn_D2D1CreateFactory == NULL) {
@@ -105,6 +118,8 @@ d2d_canvas_alloc(ID2D1RenderTarget* target, WORD type, UINT width, BOOL rtl)
      * So we enforce the render target to think we have this DPI. */
     ID2D1RenderTarget_SetDpi(c->target, 96.0f, 96.0f);
 
+    d2d_reset_transform(c);
+
     return c;
 }
 
@@ -143,23 +158,37 @@ d2d_reset_transform(d2d_canvas_t* c)
 }
 
 void
-d2d_apply_transform(d2d_canvas_t* c, D2D1_MATRIX_3X2_F* matrix)
+d2d_apply_transform(d2d_canvas_t* c, const D2D1_MATRIX_3X2_F* matrix)
 {
     D2D1_MATRIX_3X2_F res;
     D2D1_MATRIX_3X2_F old_matrix;
-    D2D1_MATRIX_3X2_F* a = matrix;
-    D2D1_MATRIX_3X2_F* b = &old_matrix;
 
-    ID2D1RenderTarget_GetTransform(c->target, b);
-
-    res._11 = a->_11 * b->_11 + a->_12 * b->_21;
-    res._12 = a->_11 * b->_12 + a->_12 * b->_22;
-    res._21 = a->_21 * b->_11 + a->_22 * b->_21;
-    res._22 = a->_21 * b->_12 + a->_22 * b->_22;
-    res._31 = a->_31 * b->_11 + a->_32 * b->_21 + b->_31;
-    res._32 = a->_31 * b->_12 + a->_32 * b->_22 + b->_32;
-
+    ID2D1RenderTarget_GetTransform(c->target, &old_matrix);
+    d2d_matrix_mult(&res, matrix, &old_matrix);
     ID2D1RenderTarget_SetTransform(c->target, &res);
+}
+
+void
+d2d_disable_rtl_transform(d2d_canvas_t* c, D2D1_MATRIX_3X2_F* old_matrix)
+{
+    D2D1_MATRIX_3X2_F r;    /* Reflection + transition for WD_CANVAS_LAYOUTRTL. */
+    D2D1_MATRIX_3X2_F ur;   /* R * user's transformation. */
+    D2D1_MATRIX_3X2_F u;    /* Only user's transformation. */
+
+    r._11 = -1.0f;     r._12 = 0.0f;
+    r._21 = 0.0f;      r._22 = 1.0f;
+    r._31 = c->width;  r._32 = 0.0f;
+
+    ID2D1RenderTarget_GetTransform(c->target, &ur);
+    if(old_matrix != NULL)
+        memcpy(old_matrix, &ur, sizeof(D2D1_MATRIX_3X2_F));
+    ur._31 += D2D_BASEDELTA_X;
+    ur._32 -= D2D_BASEDELTA_Y;
+
+    /* Note R is inverse to itself. */
+    d2d_matrix_mult(&u, &ur, &r);
+
+    ID2D1RenderTarget_SetTransform(c->target, &u);
 }
 
 void

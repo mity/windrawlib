@@ -184,11 +184,6 @@ wdBeginPaint(WD_HCANVAS hCanvas)
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-
-        /* We have to reset transform here and not during creation as the
-         * canvas may be cached. */
-        d2d_reset_transform(c);
-
         ID2D1RenderTarget_BeginDraw(c->target);
     } else {
         /* noop */
@@ -243,11 +238,10 @@ wdResizeCanvas(WD_HCANVAS hCanvas, UINT uWidth, UINT uHeight)
              * accordingly. */
             if(c->flags & D2D_CANVASFLAG_RTL) {
                 D2D1_MATRIX_3X2_F m;
-                float width_diff = (float)((int)uWidth - (int)c->width);
 
                 ID2D1RenderTarget_GetTransform(c->target, &m);
-                m._31 -= m._11 * width_diff;
-                m._32 -= m._21 * width_diff;
+                m._31 = m._11 * (float)(uWidth - c->width);
+                m._32 = m._12 * (float)(uWidth - c->width);
                 ID2D1RenderTarget_SetTransform(c->target, &m);
 
                 c->width = uWidth;
@@ -294,6 +288,10 @@ wdStartGdi(WD_HCANVAS hCanvas, BOOL bKeepContents)
         }
 
         c->gdi_interop = gdi_interop;
+
+        if(c->flags & D2D_CANVASFLAG_RTL)
+            SetLayout(dc, LAYOUT_RTL);
+
         return dc;
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
@@ -441,13 +439,13 @@ wdTranslateWorld(WD_HCANVAS hCanvas, float dx, float dy)
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
         D2D1_MATRIX_3X2_F m;
 
-        m._11 = 1.0f; m._12 = 0.0f;
-        m._21 = 0.0f; m._22 = 1.0f;
-        m._31 = dx;  m._32 = dy;
-        d2d_apply_transform(c, &m);
+        ID2D1RenderTarget_GetTransform(c->target, &m);
+        m._31 += dx;
+        m._32 += dy;
+        ID2D1RenderTarget_SetTransform(c->target, &m);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
-        gdix_vtable->fn_TranslateWorldTransform(c->graphics, dx, dy, dummy_MatrixOrderPrepend);
+        gdix_vtable->fn_TranslateWorldTransform(c->graphics, dx, dy, dummy_MatrixOrderAppend);
     }
 }
 
