@@ -70,7 +70,12 @@ wdDrawString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
         dummy_GpFont* f = (dummy_GpFont*) hFont;
         dummy_GpBrush* b = (dummy_GpBrush*) hBrush;
 
-        r.x = pRect->x0;
+        if(c->rtl) {
+            gdix_rtl_transform(c);
+            r.x = (float)(c->width-1) - pRect->x1;
+        } else {
+            r.x = pRect->x0;
+        }
         r.y = pRect->y0;
         r.w = pRect->x1 - pRect->x0;
         r.h = pRect->y1 - pRect->y0;
@@ -78,6 +83,9 @@ wdDrawString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
         gdix_canvas_apply_string_flags(c, dwFlags);
         gdix_vtable->fn_DrawString(c->graphics, pszText, iTextLength,
                 f, &r, c->string_format, b);
+
+        if(c->rtl)
+            gdix_rtl_transform(c);
     }
 }
 
@@ -111,7 +119,12 @@ wdMeasureString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
         dummy_GpFont* f = (dummy_GpFont*) hFont;
         dummy_GpRectF br;
 
-        r.x = pRect->x0;
+        if(c->rtl) {
+            gdix_rtl_transform(c);
+            r.x = (float)(c->width-1) - pRect->x1;
+        } else {
+            r.x = pRect->x0;
+        }
         r.y = pRect->y0;
         r.w = pRect->x1 - pRect->x0;
         r.h = pRect->y1 - pRect->y0;
@@ -119,6 +132,9 @@ wdMeasureString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
         gdix_canvas_apply_string_flags(c, dwFlags);
         gdix_vtable->fn_MeasureString(c->graphics, pszText, iTextLength, f, &r,
                                 c->string_format, &br, NULL, NULL);
+
+        if(c->rtl)
+            gdix_rtl_transform(c);
 
         pResult->x0 = br.x;
         pResult->y0 = br.y;
@@ -130,10 +146,10 @@ wdMeasureString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
 float
 wdStringWidth(WD_HCANVAS hCanvas, WD_HFONT hFont, const WCHAR* pszText)
 {
-    const WD_RECT rcClip = { 0, 0, FLT_MAX, FLT_MAX };
+    const WD_RECT rcClip = { 0.0f, 0.0f, 10000.0f, 10000.0f };
     WD_RECT rcResult;
 
     wdMeasureString(hCanvas, hFont, &rcClip, pszText, wcslen(pszText),
                 &rcResult, WD_STR_LEFTALIGN | WD_STR_NOWRAP);
-    return rcResult.x1;
+    return WD_ABS(rcResult.x1 - rcResult.x0);
 }

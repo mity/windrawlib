@@ -186,7 +186,8 @@ wdBeginPaint(WD_HCANVAS hCanvas)
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
         ID2D1RenderTarget_BeginDraw(c->target);
     } else {
-        /* noop */
+        gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
+        SetLayout(c->dc, 0);
     }
 }
 
@@ -212,6 +213,8 @@ wdEndPaint(WD_HCANVAS hCanvas)
         /* If double-buffering, blit the memory DC to the display DC. */
         if(c->real_dc != NULL)
             BitBlt(c->real_dc, c->x, c->y, c->cx, c->cy, c->dc, 0, 0, SRCCOPY);
+
+        SetLayout(c->real_dc, c->dc_layout);
 
         /* For GDI+, disable caching. */
         return FALSE;
@@ -304,6 +307,11 @@ wdStartGdi(WD_HCANVAS hCanvas, BOOL bKeepContents)
             return NULL;
         }
 
+        SetLayout(dc, c->dc_layout);
+
+        if(c->dc_layout & LAYOUT_RTL)
+            SetViewportOrgEx(dc, c->x + c->cx - (c->width-1), -c->y, NULL);
+
         return dc;
     }
 }
@@ -319,6 +327,9 @@ wdEndGdi(WD_HCANVAS hCanvas, HDC hDC)
         c->gdi_interop = NULL;
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
+
+        if(c->rtl)
+            SetLayout(hDC, 0);
         gdix_vtable->fn_ReleaseDC(c->graphics, hDC);
     }
 }

@@ -34,6 +34,7 @@ struct gdix_canvas_tag {
     dummy_GpGraphics* graphics;
     dummy_GpPen* pen;
     dummy_GpStringFormat* string_format;
+    int dc_layout;
     UINT width  : 31;
     UINT rtl    :  1;
 
@@ -60,6 +61,7 @@ struct gdix_vtable_tag {
     int (WINAPI* fn_ScaleWorldTransform)(dummy_GpGraphics*, float, float, dummy_GpMatrixOrder);
     int (WINAPI* fn_SetClipPath)(dummy_GpGraphics*, dummy_GpPath*, dummy_GpCombineMode);
     int (WINAPI* fn_SetClipRect)(dummy_GpGraphics*, float, float, float, float, dummy_GpCombineMode);
+    int (WINAPI* fn_SetPageUnit)(dummy_GpGraphics*, dummy_GpUnit);
     int (WINAPI* fn_SetPixelOffsetMode)(dummy_GpGraphics*, dummy_GpPixelOffsetMode);
     int (WINAPI* fn_SetSmoothingMode)(dummy_GpGraphics*, dummy_GpSmoothingMode);
     int (WINAPI* fn_TranslateWorldTransform)(dummy_GpGraphics*, float, float, dummy_GpMatrixOrder);
@@ -143,6 +145,7 @@ void gdix_fini(void);
 
 /* Helpers */
 gdix_canvas_t* gdix_canvas_alloc(HDC dc, const RECT* doublebuffer_rect, UINT width, BOOL rtl);
+void gdix_rtl_transform(gdix_canvas_t* c);
 void gdix_reset_transform(gdix_canvas_t* c);
 void gdix_canvas_apply_string_flags(gdix_canvas_t* c, DWORD flags);
 
