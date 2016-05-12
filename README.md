@@ -16,13 +16,22 @@ own.
 To build WinDrawLib you need to use CMake to generate MS Visual Studio solution
 or to generate Makefile. Then build that normally using your tool chain.
 
+For example, to build with MSYS + [mingw-w64](http://mingw-w64.org) + Make:
+```sh
+$ cd path/to/windrawlib
+$ mkdir build
+$ cd build
+$ cmake -G "MSYS Makefiles" ..
+$ make
+```
+
 Static lib of WinDrawLib is built as well as few examples using the library.
 
 
 ## Using WinDrawLib
 
 Use WinDrawLib as a normal static library. There is single public header file,
-`wtl.h` in the include directory which you need to #include in your sources.
+`wdl.h` in the include directory which you need to #include in your sources.
 
 API is documented directly in the public header.
 
