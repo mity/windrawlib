@@ -153,3 +153,14 @@ wdStringWidth(WD_HCANVAS hCanvas, WD_HFONT hFont, const WCHAR* pszText)
                 &rcResult, WD_STR_LEFTALIGN | WD_STR_NOWRAP);
     return WD_ABS(rcResult.x1 - rcResult.x0);
 }
+
+float
+wdStringHeight(WD_HCANVAS hCanvas, WD_HFONT hFont, const WCHAR* pszText)
+{
+	const WD_RECT rcClip = { 0.0f, 0.0f, 10000.0f, 10000.0f };
+	WD_RECT rcResult;
+
+	wdMeasureString(hCanvas, hFont, &rcClip, pszText, wcslen(pszText),
+		&rcResult, WD_STR_LEFTALIGN | WD_STR_NOWRAP);
+	return WD_ABS(rcResult.y1 - rcResult.y0);
+}
