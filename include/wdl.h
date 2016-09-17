@@ -300,6 +300,7 @@ void wdSetSolidBrushColor(WD_HBRUSH hBrush, WD_COLOR color);
 
 WD_HPATH wdCreatePath(WD_HCANVAS hCanvas);
 WD_HPATH wdCreatePolygonPath(WD_HCANVAS hCanvas, const WD_POINT* pPoints, UINT uCount);
+WD_HPATH wdCreateRoundedRectPath(WD_HCANVAS hCanvas, const WD_RECT* prc, float r);
 void wdDestroyPath(WD_HPATH hPath);
 
 typedef struct WD_PATHSINK_tag WD_PATHSINK;
