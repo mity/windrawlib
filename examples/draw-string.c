@@ -34,8 +34,21 @@ PaintToCanvas(WD_HCANVAS hCanvas)
     rect.x0 = 10.0f;
     rect.y0 = 10.0f;
     rect.x1 = client.right - 10.0f;
-    rect.y1 = client.bottom - 10.0f;
+    rect.y1 = client.bottom / 2 - 5.0f;
     wdDrawString(hCanvas, hFont, &rect, pszLoremIpsum, -1, hBrush, 0);
+
+    rect.y0 = client.bottom / 2 + 5.0f;
+    rect.y1 = client.bottom - 10.0f;
+    wdDrawString(hCanvas, hFont, &rect, L"Left top", -1, hBrush, WD_STR_LEFTALIGN | WD_STR_TOPALIGN);
+    wdDrawString(hCanvas, hFont, &rect, L"Center top", -1, hBrush, WD_STR_CENTERALIGN | WD_STR_TOPALIGN);
+    wdDrawString(hCanvas, hFont, &rect, L"Right top", -1, hBrush, WD_STR_RIGHTALIGN | WD_STR_TOPALIGN);
+    wdDrawString(hCanvas, hFont, &rect, L"Left center", -1, hBrush, WD_STR_LEFTALIGN | WD_STR_MIDDLEALIGN);
+    wdDrawString(hCanvas, hFont, &rect, L"Right center", -1, hBrush, WD_STR_RIGHTALIGN | WD_STR_MIDDLEALIGN);
+    wdDrawString(hCanvas, hFont, &rect, L"Left bottom", -1, hBrush, WD_STR_LEFTALIGN | WD_STR_BOTTOMALIGN);
+    wdDrawString(hCanvas, hFont, &rect, L"Center bottom", -1, hBrush, WD_STR_CENTERALIGN | WD_STR_BOTTOMALIGN);
+    wdDrawString(hCanvas, hFont, &rect, L"Right bottom", -1, hBrush, WD_STR_RIGHTALIGN | WD_STR_BOTTOMALIGN);
+    wdSetSolidBrushColor(hBrush, WD_RGB(191,191,191));
+    wdDrawRect(hCanvas, hBrush, rect.x0, rect.y0, rect.x1, rect.y1, 1.0f);
 
     wdDestroyBrush(hBrush);
     wdDestroyFont(hFont);
