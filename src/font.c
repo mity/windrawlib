@@ -26,8 +26,6 @@
 #include "backend-dwrite.h"
 #include "backend-gdix.h"
 #include "lock.h"
-#include <stddef.h>
-
 
 static void
 wd_get_default_gui_fontface(WCHAR buffer[LF_FACESIZE])
@@ -37,7 +35,7 @@ wd_get_default_gui_fontface(WCHAR buffer[LF_FACESIZE])
 #if WINVER < 0x0600
     metrics.cbSize = sizeof(NONCLIENTMETRICSW);
 #else
-    metrics.cbSize = offsetof(NONCLIENTMETRICSW, iPaddedBorderWidth);
+    metrics.cbSize = WD_OFFSETOF(NONCLIENTMETRICSW, iPaddedBorderWidth);
 #endif
     SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, 0, (void*) &metrics, 0);
     wcsncpy(buffer, metrics.lfMessageFont.lfFaceName, LF_FACESIZE);
