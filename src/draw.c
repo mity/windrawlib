@@ -28,7 +28,14 @@
 
 
 void
-wdDrawArc(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r,
+wdDrawArc(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r, 
+          float fBaseAngle, float fSweepAngle, float fStrokeWidth)
+{
+  wdDrawEllipseArc(hCanvas, hBrush, cx, cy, r, r, fBaseAngle, fSweepAngle, fStrokeWidth);
+}
+
+void
+wdDrawEllipseArc(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float rx, float ry,
           float fBaseAngle, float fSweepAngle, float fStrokeWidth)
 {
     if(d2d_enabled()) {
@@ -36,7 +43,7 @@ wdDrawArc(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r,
         dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
         dummy_ID2D1Geometry* g;
 
-        g = d2d_create_arc_geometry(cx, cy, r, fBaseAngle, fSweepAngle, FALSE);
+        g = d2d_create_arc_geometry(cx, cy, rx, ry, fBaseAngle, fSweepAngle, FALSE);
         if(g == NULL) {
             WD_TRACE("wdDrawArc: d2d_create_arc_geometry() failed.");
             return;
@@ -46,33 +53,41 @@ wdDrawArc(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r,
         dummy_ID2D1Geometry_Release(g);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
-        float d = 2.0f * r;
+        float dx = 2.0f * rx;
+        float dy = 2.0f * ry;
 
         gdix_vtable->fn_SetPenBrushFill(c->pen, (void*) hBrush);
         gdix_vtable->fn_SetPenWidth(c->pen, fStrokeWidth);
-        gdix_vtable->fn_DrawArc(c->graphics, c->pen, cx - r, cy - r, d, d,
+        gdix_vtable->fn_DrawArc(c->graphics, c->pen, cx - rx, cy - ry, dx, dy,
                      fBaseAngle, fSweepAngle);
     }
 }
 
+void wdDrawCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                  float cx, float cy, float r, float fStrokeWidth)
+{
+  wdDrawEllipse(hCanvas, hBrush, cx, cy, r, r, fStrokeWidth);
+}
+
 void
-wdDrawCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r,
+wdDrawEllipse(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float rx, float ry,
              float fStrokeWidth)
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
         dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
-        dummy_D2D1_ELLIPSE e = { { cx, cy }, r, r };
+        dummy_D2D1_ELLIPSE e = { { cx, cy }, rx, ry };
 
         dummy_ID2D1RenderTarget_DrawEllipse(c->target, &e, b, fStrokeWidth, NULL);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
-        float d = 2.0f * r;
+        float dx = 2.0f * rx;
+        float dy = 2.0f * ry;
 
         gdix_vtable->fn_SetPenBrushFill(c->pen, (void*) hBrush);
         gdix_vtable->fn_SetPenWidth(c->pen, fStrokeWidth);
         gdix_vtable->fn_DrawEllipse(c->graphics, (void*) c->pen,
-                cx - r, cy - r, d, d);
+                cx - rx, cy - ry, dx, dy);
     }
 }
 
@@ -114,8 +129,15 @@ wdDrawPath(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_HPATH hPath,
     }
 }
 
+void wdDrawPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+               float cx, float cy, float r,
+               float fBaseAngle, float fSweepAngle, float fStrokeWidth)
+{
+  wdDrawEllipsePie(hCanvas, hBrush, cx, cy, r, r, fBaseAngle, fSweepAngle, fStrokeWidth);
+}
+
 void
-wdDrawPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r,
+wdDrawEllipsePie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float rx, float ry,
                 float fBaseAngle, float fSweepAngle, float fStrokeWidth)
 {
     if(d2d_enabled()) {
@@ -123,7 +145,7 @@ wdDrawPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r,
         dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
         dummy_ID2D1Geometry* g;
 
-        g = d2d_create_arc_geometry(cx, cy, r, fBaseAngle, fStrokeWidth, TRUE);
+        g = d2d_create_arc_geometry(cx, cy, rx, ry, fBaseAngle, fSweepAngle, TRUE);
         if(g == NULL) {
             WD_TRACE("wdDrawPie: d2d_create_arc_geometry() failed.");
             return;
@@ -133,11 +155,12 @@ wdDrawPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r,
         dummy_ID2D1Geometry_Release(g);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
-        float d = 2.0f * r;
+        float dx = 2.0f * rx;
+        float dy = 2.0f * ry;
 
         gdix_vtable->fn_SetPenBrushFill(c->pen, (void*) hBrush);
         gdix_vtable->fn_SetPenWidth(c->pen, fStrokeWidth);
-        gdix_vtable->fn_DrawPie(c->graphics, c->pen, cx - r, cy - r, d, d,
+        gdix_vtable->fn_DrawPie(c->graphics, c->pen, cx - rx, cy - ry, dx, dy,
                                 fBaseAngle, fSweepAngle);
     }
 }

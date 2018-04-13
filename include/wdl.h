@@ -187,7 +187,7 @@ void wdDestroyCanvas(WD_HCANVAS hCanvas);
  *
  * - The canvas has been created with wdCreateCanvasWithPaintStruct() and
  *   is used strictly for handling WM_PAINT.
- * - wdEndPaint() returns TRUE.
+ * Isso.- wdEndPaint() returns TRUE.
  */
 void wdBeginPaint(WD_HCANVAS hCanvas);
 BOOL wdEndPaint(WD_HCANVAS hCanvas);
@@ -356,14 +356,22 @@ void wdFontMetrics(WD_HFONT hFont, WD_FONTMETRICS* pMetrics);
 void wdDrawArc(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
                 float cx, float cy, float r,
                 float fBaseAngle, float fSweepAngle, float fStrokeWidth);
+void wdDrawEllipseArc(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float cx, float cy, float rx, float ry,
+                float fBaseAngle, float fSweepAngle, float fStrokeWidth);
 void wdDrawCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
                 float cx, float cy, float r, float fStrokeWidth);
+void wdDrawEllipse(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float cx, float cy, float rx, float ry, float fStrokeWidth);
 void wdDrawLine(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
                 float x0, float y0, float x1, float y1, float fStrokeWidth);
 void wdDrawPath(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
                 const WD_HPATH hPath, float fStrokeWidth);
 void wdDrawPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
                 float cx, float cy, float r,
+                float fBaseAngle, float fSweepAngle, float fStrokeWidth);
+void wdDrawEllipsePie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float cx, float cy, float rx, float ry,
                 float fBaseAngle, float fSweepAngle, float fStrokeWidth);
 void wdDrawRect(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
                 float x0, float y0, float x1, float y1, float fStrokeWidth);
@@ -375,9 +383,14 @@ void wdDrawRect(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
 
 void wdFillCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
                 float cx, float cy, float r);
+void wdFillEllipse(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float cx, float cy, float rx, float ry);
 void wdFillPath(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_HPATH hPath);
 void wdFillPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
                 float cx, float cy, float r,
+                float fBaseAngle, float fSweepAngle);
+void wdFillEllipsePie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                float cx, float cy, float rx, float ry,
                 float fBaseAngle, float fSweepAngle);
 void wdFillRect(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
                 float x0, float y0, float x1, float y1);
