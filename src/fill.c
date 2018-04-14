@@ -26,21 +26,27 @@
 #include "backend-gdix.h"
 #include "lock.h"
 
+void wdFillCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+                  float cx, float cy, float r)
+{
+  wdFillEllipse(hCanvas, hBrush, cx, cy, r, r);
+}
 
 void
-wdFillCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r)
+wdFillEllipse(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float rx, float ry)
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
         dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
-        dummy_D2D1_ELLIPSE e = { { cx, cy }, r, r };
+        dummy_D2D1_ELLIPSE e = { { cx, cy }, rx, ry };
 
         dummy_ID2D1RenderTarget_FillEllipse(c->target, &e, b);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
-        float d = 2.0f * r;
+        float dx = 2.0f * rx;
+        float dy = 2.0f * ry;
 
-        gdix_vtable->fn_FillEllipse(c->graphics, (void*) hBrush, cx - r, cy - r, d, d);
+        gdix_vtable->fn_FillEllipse(c->graphics, (void*) hBrush, cx - rx, cy - ry, dx, dy);
     }
 }
 
@@ -60,8 +66,15 @@ wdFillPath(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_HPATH hPath)
     }
 }
 
+void wdFillPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
+               float cx, float cy, float r,
+               float fBaseAngle, float fSweepAngle)
+{
+  wdFillEllipsePie(hCanvas, hBrush, cx, cy, r, r, fBaseAngle, fSweepAngle);
+}
+
 void
-wdFillPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r,
+wdFillEllipsePie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float rx, float ry,
           float fBaseAngle, float fSweepAngle)
 {
     if(d2d_enabled()) {
@@ -69,7 +82,7 @@ wdFillPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r,
         dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
         dummy_ID2D1Geometry* g;
 
-        g = d2d_create_arc_geometry(cx, cy, r, fBaseAngle, fSweepAngle, TRUE);
+        g = d2d_create_arc_geometry(cx, cy, rx, ry, fBaseAngle, fSweepAngle, TRUE);
         if(g == NULL) {
             WD_TRACE("wdFillPie: d2d_create_arc_geometry() failed.");
             return;
@@ -79,10 +92,11 @@ wdFillPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r,
         dummy_ID2D1Geometry_Release(g);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
-        float d = 2.0f * r;
+        float dx = 2.0f * rx;
+        float dy = 2.0f * ry;
 
         gdix_vtable->fn_FillPie(c->graphics, (void*) hBrush,
-                cx - r, cy - r, d, d, fBaseAngle, fSweepAngle);
+                cx - rx, cy - ry, dx, dy, fBaseAngle, fSweepAngle);
     }
 }
 
