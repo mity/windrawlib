@@ -187,7 +187,7 @@ void wdDestroyCanvas(WD_HCANVAS hCanvas);
  *
  * - The canvas has been created with wdCreateCanvasWithPaintStruct() and
  *   is used strictly for handling WM_PAINT.
- * Isso.- wdEndPaint() returns TRUE.
+ * - wdEndPaint() returns TRUE.
  */
 void wdBeginPaint(WD_HCANVAS hCanvas);
 BOOL wdEndPaint(WD_HCANVAS hCanvas);
