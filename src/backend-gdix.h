@@ -139,6 +139,12 @@ struct gdix_vtable_tag {
 
 extern gdix_vtable_t* gdix_vtable;
 
+static inline BOOL
+gdix_enabled(void)
+{
+    return (gdix_vtable != NULL);
+}
+
 
 int gdix_init(void);
 void gdix_fini(void);

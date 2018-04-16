@@ -137,6 +137,14 @@ void wdPreInitialize(void (*fnLock)(void), void (*fnUnlock)(void), DWORD dwFlags
 BOOL wdInitialize(DWORD dwFlags);
 void wdTerminate(DWORD dwFlags);
 
+/* Returns the current backend. 
+ * Returns -1 if there is none.
+ */
+#define WD_BACKEND_D2D          1
+#define WD_BACKEND_GDIPLUS      2
+
+int wdBackend(void);
+
 
 /*******************************
  ***  Opaque Object Handles  ***
