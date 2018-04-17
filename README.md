@@ -1,3 +1,4 @@
+[![Build status (appveyor.com)](https://img.shields.io/appveyor/ci/mity/windrawlib/master.svg?label=build)](https://ci.appveyor.com/project/mity/windrawlib/branch/master)
 
 # WinDrawLib
 
