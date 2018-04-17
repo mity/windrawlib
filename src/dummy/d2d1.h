@@ -72,6 +72,10 @@ typedef struct dummy_ID2D1SolidColorBrush_tag           dummy_ID2D1SolidColorBru
 #define dummy_D2D1_LAYER_OPTIONS_NONE                   0x00000000
 #define dummy_D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE   0x00000002
 
+typedef enum dummy_D2D1_TEXT_ANTIALIAS_MODE_tag dummy_D2D1_TEXT_ANTIALIAS_MODE;
+enum  dummy_D2D1_TEXT_ANTIALIAS_MODE_tag {
+  dummy_D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE = 1
+} ;
 
 typedef enum dummy_DXGI_FORMAT_tag dummy_DXGI_FORMAT;
 enum dummy_DXGI_FORMAT_tag {
@@ -863,7 +867,7 @@ struct dummy_ID2D1RenderTargetVtbl_tag {
     STDMETHOD_(void, GetTransform)(dummy_ID2D1RenderTarget*, dummy_D2D1_MATRIX_3X2_F*);
     STDMETHOD(dummy_SetAntialiasMode)(void);
     STDMETHOD(dummy_GetAntialiasMode)(void);
-    STDMETHOD(dummy_SetTextAntialiasMode)(void);
+    STDMETHOD(SetTextAntialiasMode)(dummy_ID2D1RenderTarget*, dummy_D2D1_TEXT_ANTIALIAS_MODE);
     STDMETHOD(dummy_GetTextAntialiasMode)(void);
     STDMETHOD(dummy_SetTextRenderingParams)(void);
     STDMETHOD(dummy_GetTextRenderingParams)(void);
@@ -917,6 +921,7 @@ struct dummy_ID2D1RenderTarget_tag {
 #define dummy_ID2D1RenderTarget_BeginDraw(self)                         (self)->vtbl->BeginDraw(self)
 #define dummy_ID2D1RenderTarget_EndDraw(self,a,b)                       (self)->vtbl->EndDraw(self,a,b)
 #define dummy_ID2D1RenderTarget_SetDpi(self,a,b)                        (self)->vtbl->SetDpi(self,a,b)
+#define dummy_ID2D1RenderTarget_SetTextAntialiasMode(self,a)            (self)->vtbl->SetTextAntialiasMode(self,a)
 
 
 /*********************************************
