@@ -29,5 +29,8 @@ target_link_libraries("draw-simple" "windrawlib")
 add_executable("draw-string" "draw-string.c")
 target_link_libraries("draw-string" "windrawlib")
 
+add_executable("draw-styled" "draw-styled.c")
+target_link_libraries("draw-styled" "windrawlib")
+
 add_executable("load-image" "load-image.c" "load-image.rc")
 target_link_libraries("load-image" "windrawlib")
