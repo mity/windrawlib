@@ -170,7 +170,6 @@ gdix_canvas_t* gdix_canvas_alloc(HDC dc, const RECT* doublebuffer_rect, UINT wid
 void gdix_rtl_transform(gdix_canvas_t* c);
 void gdix_reset_transform(gdix_canvas_t* c);
 void gdix_canvas_apply_string_flags(gdix_canvas_t* c, DWORD flags);
-gdix_strokestyle_t* gdix_strokestyle_alloc(UINT dashesCountAlloc);
 void gdix_setpen(dummy_GpPen* pen, dummy_GpBrush* brush, float width, gdix_strokestyle_t* style);
 
 

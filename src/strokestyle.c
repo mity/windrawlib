@@ -57,10 +57,10 @@ wdCreateStrokeStyleImpl(UINT dashStyle, const float* dashes, UINT dashesCount, U
     else {
         gdix_strokestyle_t* s;
 
-        s = gdix_strokestyle_alloc(dashesCount);
-        if(s == NULL) {
-            WD_TRACE("wdCreateStrokeStyleImpl: "
-                     "gdix_strokestyle_alloc() failed.");
+        s = (gdix_strokestyle_t*) malloc(
+                WD_OFFSETOF(gdix_strokestyle_t, dashes) + dashesCount * sizeof(float));
+        if (s == NULL) {
+            WD_TRACE("wdCreateStrokeStyleImpl: malloc() failed.");
             return NULL;
         }
 
@@ -69,7 +69,7 @@ wdCreateStrokeStyleImpl(UINT dashStyle, const float* dashes, UINT dashesCount, U
         s->lineJoin = lineJoin;
         s->dashesCount = dashesCount;
         if(dashesCount > 0)
-            memcpy(s->dashes, dashes, dashesCount*sizeof(float));
+            memcpy(s->dashes, dashes, dashesCount * sizeof(float));
 
         return (WD_HSTROKESTYLE)s;
     }
