@@ -112,8 +112,9 @@ wdCreateStrokeStyleCustom(const float* dashes, UINT dashesCount, UINT lineCap, U
         s->dashStyle = dummy_DashStyleCustom;
         s->lineCap = lineCap;
         s->lineJoin = lineJoin;
-        memcpy(s->dashes, dashes, dashesCount*sizeof(float));
         s->dashesCount = dashesCount;
+        if(dashesCount > 0)
+            memcpy(s->dashes, dashes, dashesCount*sizeof(float));
 
         return (WD_HSTROKESTYLE)s;
     }
@@ -125,9 +126,6 @@ wdDestroyStrokeStyle(WD_HSTROKESTYLE hStrokeStyle)
     if(d2d_enabled()) {
         dummy_ID2D1StrokeStyle_Release((dummy_ID2D1StrokeStyle*) hStrokeStyle);
     } else {
-        gdix_strokestyle_t* s = (gdix_strokestyle_t*)hStrokeStyle;
-        if (s->dashes)
-            free(s->dashes);
-        free((void*)hStrokeStyle);
+        free((gdix_strokestyle_t*) hStrokeStyle);
     }
 }

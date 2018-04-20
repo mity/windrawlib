@@ -33,8 +33,8 @@ struct gdix_strokestyle_tag {
   dummy_GpLineCap lineCap;
   dummy_GpLineJoin lineJoin;
   dummy_GpDashStyle dashStyle;
-  float* dashes;
   UINT dashesCount;
+  float dashes[1];
 };
 
 typedef struct gdix_canvas_tag gdix_canvas_t;
