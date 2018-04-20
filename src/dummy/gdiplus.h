@@ -128,6 +128,31 @@ enum dummy_GpStringTrimming_tag {
     dummy_StringTrimmingEllipsisPath = 5
 };
 
+typedef enum dummy_GpLineCap_tag dummy_GpLineCap;
+enum dummy_GpLineCap_tag {
+  dummy_LineCapFlat = 0,
+  dummy_LineCapSquare = 1,
+  dummy_LineCapRound = 2,
+  dummy_LineCapTriangle = 3,
+};
+
+typedef enum dummy_GpLineJoin_tag dummy_GpLineJoin;
+enum dummy_GpLineJoin_tag {
+  dummy_LineJoinMiter = 0,
+  dummy_LineJoinBevel = 1,
+  dummy_LineJoinRound = 2
+};
+
+typedef enum dummy_GpDashStyle_tag dummy_GpDashStyle;
+enum dummy_GpDashStyle_tag {
+  dummy_DashStyleSolid = 0,
+  dummy_DashStyleDash = 1,
+  dummy_DashStyleDot = 2,
+  dummy_DashStyleDashDot = 3,
+  dummy_DashStyleDashDotDot = 4,
+  dummy_DashStyleCustom = 5
+};
+
 
 /***************************
  ***  Helper Structures  ***

@@ -124,6 +124,12 @@ gdix_init(void)
     GPA(DeletePen, (dummy_GpPen*));
     GPA(SetPenBrushFill, (dummy_GpPen*, dummy_GpBrush*));
     GPA(SetPenWidth, (dummy_GpPen*, float));
+    GPA(SetPenStartCap, (dummy_GpPen*, dummy_GpLineCap));
+    GPA(SetPenEndCap, (dummy_GpPen*, dummy_GpLineCap));
+    GPA(SetPenLineJoin, (dummy_GpPen*, dummy_GpLineJoin));
+    GPA(SetPenMiterLimit, (dummy_GpPen*, float));
+    GPA(SetPenDashStyle, (dummy_GpPen*, dummy_GpDashStyle));
+    GPA(SetPenDashArray, (dummy_GpPen*, const float*, INT));
 
     /* Path functions */
     GPA(CreatePath, (dummy_GpFillMode, dummy_GpPath**));
@@ -400,3 +406,46 @@ gdix_canvas_apply_string_flags(gdix_canvas_t* c, DWORD flags)
     gdix_vtable->fn_SetStringFormatTrimming(c->string_format, trim);
 }
 
+gdix_strokestyle_t* 
+gdix_strokestyle_alloc(UINT dashesCountAlloc)
+{
+    gdix_strokestyle_t* s;
+
+    s = (gdix_strokestyle_t*)malloc(sizeof(gdix_strokestyle_t));
+    if (s == NULL) {
+        WD_TRACE("gdix_strokestyle_alloc: malloc() failed.");
+        return NULL;
+    }
+
+    memset(s, 0, sizeof(gdix_strokestyle_t));
+
+    if (dashesCountAlloc)
+    {
+        s->dashes = (float*)malloc(dashesCountAlloc * sizeof(float));
+        if (s->dashes == NULL) {
+          WD_TRACE("gdix_strokestyle_alloc: malloc() failed.");
+          free(s);
+          return NULL;
+        }
+    }
+
+    return s;
+}
+
+void 
+gdix_setpen(dummy_GpPen* pen, dummy_GpBrush* brush, float width, gdix_strokestyle_t* style)
+{
+    if (style)
+    {
+        if (style->dashes)
+            gdix_vtable->fn_SetPenDashArray(pen, style->dashes, style->dashesCount);
+
+        gdix_vtable->fn_SetPenDashStyle(pen, style->dashStyle);
+        gdix_vtable->fn_SetPenStartCap(pen, style->lineCap);
+        gdix_vtable->fn_SetPenEndCap(pen, style->lineCap);
+        gdix_vtable->fn_SetPenLineJoin(pen, style->lineJoin);
+    }
+
+    gdix_vtable->fn_SetPenBrushFill(pen, brush);
+    gdix_vtable->fn_SetPenWidth(pen, width);
+}
