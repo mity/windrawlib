@@ -99,7 +99,6 @@ _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nC
     WNDCLASS wc = { 0 };
     MSG msg;
 
-    //wdPreInitialize(NULL, NULL, WD_DISABLE_D2D);
     wdInitialize(WD_INIT_STRINGAPI);
 
     /* Register main window class */
