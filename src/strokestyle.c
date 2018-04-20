@@ -27,8 +27,8 @@
 #include "backend-gdix.h"
 
 
-WD_HSTROKESTYLE 
-wdCreateStrokeStyle(UINT dashStyle, UINT lineCap, UINT lineJoin)
+static WD_HSTROKESTYLE
+wdCreateStrokeStyleImpl(UINT dashStyle, const float* dashes, UINT dashesCount, UINT lineCap, UINT lineJoin)
 {
     if(d2d_enabled()) {
         HRESULT hr;
@@ -44,55 +44,10 @@ wdCreateStrokeStyle(UINT dashStyle, UINT lineCap, UINT lineJoin)
         p.dashOffset = 0.0f;
 
         wd_lock();
-        hr = dummy_ID2D1Factory_CreateStrokeStyle(d2d_factory, &p, NULL, 0, &s);
-        wd_unlock();
-        if (FAILED(hr)) {
-            WD_TRACE_HR("wdCreateStrokeStyle: "
-                        "ID2D1Factory::CreateStrokeStyle() failed.");
-            return NULL;
-        }
-
-        return (WD_HSTROKESTYLE)s;
-    }
-    else {
-        gdix_strokestyle_t* s;
-
-        s = gdix_strokestyle_alloc(0);
-        if(s == NULL) {
-            WD_TRACE("wdCreateStrokeStyle: "
-                     "gdix_strokestyle_alloc() failed.");
-            return NULL;
-        }
-
-        s->dashStyle = dashStyle;
-        s->lineCap = lineCap;
-        s->lineJoin = lineJoin;
-
-        return (WD_HSTROKESTYLE)s;
-    }
-}
-
-WD_HSTROKESTYLE 
-wdCreateStrokeStyleCustom(const float* dashes, UINT dashesCount, UINT lineCap, UINT lineJoin)
-{
-    if(d2d_enabled()) {
-        HRESULT hr;
-        dummy_D2D1_STROKE_STYLE_PROPERTIES p;
-        dummy_ID2D1StrokeStyle *s;
-
-        p.startCap = lineCap;
-        p.endCap = lineCap;
-        p.dashCap = lineCap;
-        p.lineJoin = lineJoin;
-        p.miterLimit = 1.0f;
-        p.dashStyle = dummy_D2D1_DASH_STYLE_CUSTOM;
-        p.dashOffset = 0.0f;
-
-        wd_lock();
         hr = dummy_ID2D1Factory_CreateStrokeStyle(d2d_factory, &p, dashes, dashesCount, &s);
         wd_unlock();
         if (FAILED(hr)) {
-            WD_TRACE_HR("wdCreateStrokeStyle: "
+            WD_TRACE_HR("wdCreateStrokeStyleImpl: "
                         "ID2D1Factory::CreateStrokeStyle() failed.");
             return NULL;
         }
@@ -104,12 +59,12 @@ wdCreateStrokeStyleCustom(const float* dashes, UINT dashesCount, UINT lineCap, U
 
         s = gdix_strokestyle_alloc(dashesCount);
         if(s == NULL) {
-            WD_TRACE("wdCreateStrokeStyle: "
+            WD_TRACE("wdCreateStrokeStyleImpl: "
                      "gdix_strokestyle_alloc() failed.");
             return NULL;
         }
 
-        s->dashStyle = dummy_DashStyleCustom;
+        s->dashStyle = dashStyle;
         s->lineCap = lineCap;
         s->lineJoin = lineJoin;
         s->dashesCount = dashesCount;
@@ -118,6 +73,42 @@ wdCreateStrokeStyleCustom(const float* dashes, UINT dashesCount, UINT lineCap, U
 
         return (WD_HSTROKESTYLE)s;
     }
+}
+
+
+WD_HSTROKESTYLE 
+wdCreateStrokeStyle(UINT dashStyle, UINT lineCap, UINT lineJoin)
+{
+    #define DASH_LEN    4.25f
+    #define DOT_LEN     1.25f
+    #define SPACE_LEN   3.75f
+
+    static const float pattern_dash[] = { DASH_LEN, SPACE_LEN };
+    static const float pattern_dot[] = { DOT_LEN, SPACE_LEN };
+    static const float pattern_dash_dot[] = { DASH_LEN, SPACE_LEN, DOT_LEN, SPACE_LEN };
+    static const float pattern_dash_dot_dot[] = { DASH_LEN, SPACE_LEN, DOT_LEN, SPACE_LEN, DOT_LEN, SPACE_LEN };
+
+    static const struct {
+        int style_id;
+        const float* pattern;
+        UINT pattern_size;
+    } style_data[] = {
+        { 0, NULL, 0 },
+        { 5, pattern_dash,         WD_SIZEOF_ARRAY(pattern_dash) },
+        { 5, pattern_dot,          WD_SIZEOF_ARRAY(pattern_dot) },
+        { 5, pattern_dash_dot,     WD_SIZEOF_ARRAY(pattern_dash_dot) },
+        { 5, pattern_dash_dot_dot, WD_SIZEOF_ARRAY(pattern_dash_dot_dot) }
+    };
+
+    return wdCreateStrokeStyleImpl(style_data[dashStyle].style_id,
+                style_data[dashStyle].pattern, style_data[dashStyle].pattern_size,
+                lineCap, lineJoin);
+}
+
+WD_HSTROKESTYLE 
+wdCreateStrokeStyleCustom(const float* dashes, UINT dashesCount, UINT lineCap, UINT lineJoin)
+{
+    return wdCreateStrokeStyleImpl(5 /* CUSTOM */, dashes, dashesCount, lineCap, lineJoin);
 }
 
 void
