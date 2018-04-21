@@ -40,6 +40,8 @@ extern "C" {
     #define WD_INLINE   static __inline__
 #elif defined(_MSC_VER)
     #define WD_INLINE   static __inline
+#else
+    #define WD_INLINE   static
 #endif
 
 
