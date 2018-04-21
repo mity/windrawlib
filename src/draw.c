@@ -28,13 +28,6 @@
 
 
 void
-wdDrawArc(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float r, 
-          float fBaseAngle, float fSweepAngle, float fStrokeWidth)
-{
-    wdDrawEllipseArcStyled(hCanvas, hBrush, cx, cy, r, r, fBaseAngle, fSweepAngle, fStrokeWidth, NULL);
-}
-
-void
 wdDrawEllipseArcStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float rx, float ry,
           float fBaseAngle, float fSweepAngle, float fStrokeWidth, WD_HSTROKESTYLE hStrokeStyle)
 {
@@ -66,12 +59,6 @@ wdDrawEllipseArcStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy,
     }
 }
 
-void wdDrawCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
-                  float cx, float cy, float r, float fStrokeWidth)
-{
-    wdDrawEllipseStyled(hCanvas, hBrush, cx, cy, r, r, fStrokeWidth, NULL);
-}
-
 void
 wdDrawEllipseStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float rx, float ry,
              float fStrokeWidth, WD_HSTROKESTYLE hStrokeStyle)
@@ -98,13 +85,6 @@ wdDrawEllipseStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, fl
 }
 
 void
-wdDrawLine(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
-           float x0, float y0, float x1, float y1, float fStrokeWidth)
-{
-    wdDrawLineStyled(hCanvas, hBrush, x0, y0, x1, y1, fStrokeWidth, NULL);
-}
-
-void
 wdDrawLineStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
            float x0, float y0, float x1, float y1, float fStrokeWidth, WD_HSTROKESTYLE hStrokeStyle)
 {
@@ -128,13 +108,6 @@ wdDrawLineStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
 }
 
 void
-wdDrawPath(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_HPATH hPath,
-            float fStrokeWidth)
-{
-    wdDrawPathStyled(hCanvas, hBrush, hPath, fStrokeWidth, NULL);
-}
-
-void
 wdDrawPathStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_HPATH hPath,
             float fStrokeWidth, WD_HSTROKESTYLE hStrokeStyle)
 {
@@ -154,13 +127,6 @@ wdDrawPathStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_HPATH hPath,
 
         gdix_vtable->fn_DrawPath(c->graphics, (void*)c->pen, (void*)hPath);
     }
-}
-
-void wdDrawPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
-               float cx, float cy, float r,
-               float fBaseAngle, float fSweepAngle, float fStrokeWidth)
-{
-    wdDrawEllipsePieStyled(hCanvas, hBrush, cx, cy, r, r, fBaseAngle, fSweepAngle, fStrokeWidth, NULL);
 }
 
 void
@@ -193,13 +159,6 @@ wdDrawEllipsePieStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy,
         gdix_vtable->fn_DrawPie(c->graphics, c->pen, cx - rx, cy - ry, dx, dy,
                                 fBaseAngle, fSweepAngle);
     }
-}
-
-void
-wdDrawRect(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
-float x0, float y0, float x1, float y1, float fStrokeWidth)
-{
-    wdDrawRectStyled(hCanvas, hBrush, x0, y0, x1, y1, fStrokeWidth, NULL);
 }
 
 void

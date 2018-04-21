@@ -26,11 +26,6 @@
 #include "backend-gdix.h"
 #include "lock.h"
 
-void wdFillCircle(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
-                  float cx, float cy, float r)
-{
-  wdFillEllipse(hCanvas, hBrush, cx, cy, r, r);
-}
 
 void
 wdFillEllipse(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float rx, float ry)
@@ -64,13 +59,6 @@ wdFillPath(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_HPATH hPath)
 
         gdix_vtable->fn_FillPath(c->graphics, (void*) hBrush, (void*) hPath);
     }
-}
-
-void wdFillPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
-               float cx, float cy, float r,
-               float fBaseAngle, float fSweepAngle)
-{
-  wdFillEllipsePie(hCanvas, hBrush, cx, cy, r, r, fBaseAngle, fSweepAngle);
 }
 
 void
