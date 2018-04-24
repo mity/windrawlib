@@ -184,10 +184,11 @@ wdLoadImageFromResource(HINSTANCE hInstance, const WCHAR* pszResType,
 {
     IStream* stream;
     WD_HIMAGE img;
+    HRESULT hr;
 
-    stream = memstream_create_from_resource(hInstance, pszResType, pszResName);
-    if(stream == NULL) {
-        WD_TRACE("wdLoadImageFromResource: "
+    hr = memstream_create_from_resource(hInstance, pszResType, pszResName, &stream);
+    if(FAILED(hr)) {
+        WD_TRACE_HR("wdLoadImageFromResource: "
                  "memstream_create_from_resource() failed.");
         return NULL;
     }
