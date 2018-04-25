@@ -1,5 +1,6 @@
 /*
  * WinDrawLib
+ * Copyright (c) 2018 Antonio Scuri
  * Copyright (c) 2015-2016 Martin Mitas
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
