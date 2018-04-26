@@ -121,6 +121,9 @@ struct gdix_vtable_tag {
     int (WINAPI* fn_DisposeImage)(dummy_GpImage*);
     int (WINAPI* fn_GetImageWidth)(dummy_GpImage*, UINT*);
     int (WINAPI* fn_GetImageHeight)(dummy_GpImage*, UINT*);
+    int (WINAPI* fn_CreateBitmapFromScan0)(UINT, UINT, INT, dummy_GpPixelFormat, BYTE*, dummy_GpBitmap**);
+    int (WINAPI* fn_BitmapLockBits)(dummy_GpBitmap*, const dummy_GpRectI*, UINT, dummy_GpPixelFormat, dummy_GpBitmapData*);
+    int (WINAPI* fn_BitmapUnlockBits)(dummy_GpBitmap*, dummy_GpBitmapData*);
 
     /* Cached bitmap functions */
     int (WINAPI* fn_CreateCachedBitmap)(dummy_GpBitmap*, dummy_GpGraphics*, dummy_GpCachedBitmap**);

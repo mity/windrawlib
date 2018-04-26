@@ -160,6 +160,9 @@ gdix_init(void)
     GPA(DisposeImage, (dummy_GpImage*));
     GPA(GetImageWidth, (dummy_GpImage*, UINT*));
     GPA(GetImageHeight, (dummy_GpImage*, UINT*));
+    GPA(CreateBitmapFromScan0, (UINT, UINT, INT, dummy_GpPixelFormat format, BYTE*, dummy_GpBitmap**));
+    GPA(BitmapLockBits, (dummy_GpBitmap*, const dummy_GpRectI*, UINT, dummy_GpPixelFormat, dummy_GpBitmapData*));
+    GPA(BitmapUnlockBits, (dummy_GpBitmap*, dummy_GpBitmapData*));
 
     /* Cached bitmap functions */
     GPA(CreateCachedBitmap, (dummy_GpBitmap*, dummy_GpGraphics*, dummy_GpCachedBitmap**));

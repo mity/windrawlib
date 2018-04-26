@@ -265,6 +265,8 @@ WD_HIMAGE wdLoadImageFromFile(const WCHAR* pszPath);
 WD_HIMAGE wdLoadImageFromIStream(IStream* pStream);
 WD_HIMAGE wdLoadImageFromResource(HINSTANCE hInstance,
                 const WCHAR* pszResType, const WCHAR* pszResName);
+WD_HIMAGE wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, const BYTE* pBuffer, 
+                BOOL bHasAlpha, const COLORREF* cPalette);
 void wdDestroyImage(WD_HIMAGE hImage);
 
 void wdGetImageSize(WD_HIMAGE hImage, UINT* puWidth, UINT* puHeight);
