@@ -124,6 +124,7 @@ struct gdix_vtable_tag {
     int (WINAPI* fn_CreateBitmapFromScan0)(UINT, UINT, INT, dummy_GpPixelFormat, BYTE*, dummy_GpBitmap**);
     int (WINAPI* fn_BitmapLockBits)(dummy_GpBitmap*, const dummy_GpRectI*, UINT, dummy_GpPixelFormat, dummy_GpBitmapData*);
     int (WINAPI* fn_BitmapUnlockBits)(dummy_GpBitmap*, dummy_GpBitmapData*);
+    int (WINAPI* fn_CreateBitmapFromGdiDib)(const BITMAPINFO*, void*, dummy_GpBitmap**);
 
     /* Cached bitmap functions */
     int (WINAPI* fn_CreateCachedBitmap)(dummy_GpBitmap*, dummy_GpGraphics*, dummy_GpCachedBitmap**);
@@ -174,6 +175,7 @@ void gdix_rtl_transform(gdix_canvas_t* c);
 void gdix_reset_transform(gdix_canvas_t* c);
 void gdix_canvas_apply_string_flags(gdix_canvas_t* c, DWORD flags);
 void gdix_setpen(dummy_GpPen* pen, dummy_GpBrush* brush, float width, gdix_strokestyle_t* style);
+int gdix_create_bitmap(HBITMAP hBmp, dummy_GpBitmap* *bitmap);
 
 
 #endif  /* WD_BACKEND_GDIX_H */
