@@ -568,7 +568,7 @@ WD_INLINE void wdFillPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
 void wdBitBltImage(WD_HCANVAS hCanvas, const WD_HIMAGE hImage,
                 const WD_RECT* pDestRect, const WD_RECT* pSourceRect);
 void wdBitBltCachedImage(WD_HCANVAS hCanvas, const WD_HCACHEDIMAGE hCachedImage,
-                int x, int y);
+                float x, float y);
 void wdBitBltHICON(WD_HCANVAS hCanvas, HICON hIcon,
                 const WD_RECT* pDestRect, const WD_RECT* pSourceRect);
 
