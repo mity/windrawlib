@@ -38,6 +38,16 @@
 
 typedef DWORD dummy_ARGB;
 
+typedef INT dummy_GpPixelFormat;
+#define    dummy_PixelFormatGDI          0x00020000 // Is a GDI-supported format
+#define    dummy_PixelFormatAlpha        0x00040000 // Has an alpha component
+#define    dummy_PixelFormatPAlpha       0x00080000 // Pre-multiplied alpha
+#define    dummy_PixelFormatCanonical    0x00200000 
+#define    dummy_PixelFormat24bppRGB        (8 | (24 << 8) | dummy_PixelFormatGDI)
+#define    dummy_PixelFormat32bppARGB       (10 | (32 << 8) | dummy_PixelFormatAlpha | dummy_PixelFormatGDI | dummy_PixelFormatCanonical)
+#define    dummy_PixelFormat32bppPARGB      (11 | (32 << 8) | dummy_PixelFormatAlpha | dummy_PixelFormatPAlpha | dummy_PixelFormatGDI)
+
+#define    dummy_ImageLockModeWrite 2
 
 /*****************************
  ***  Helper Enumerations  ***
@@ -178,6 +188,24 @@ struct dummy_GpRectF_tag {
     float y;
     float w;
     float h;
+};
+
+typedef struct dummy_GpRectI_tag dummy_GpRectI;
+struct dummy_GpRectI_tag {
+    INT x;
+    INT y;
+    INT w;
+    INT h;
+};
+
+typedef struct dummy_GpBitmapData_tag dummy_GpBitmapData;
+struct dummy_GpBitmapData_tag {
+    UINT width;
+    UINT height;
+    INT Stride;
+    dummy_GpPixelFormat PixelFormat;
+    void *Scan0;
+    UINT_PTR Reserved;
 };
 
 

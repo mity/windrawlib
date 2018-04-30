@@ -269,6 +269,17 @@ void wdDestroyImage(WD_HIMAGE hImage);
 
 void wdGetImageSize(WD_HIMAGE hImage, UINT* puWidth, UINT* puHeight);
 
+#define WD_PIXELFORMAT_PALETTE     1  /* cPalette is used */
+#define WD_PIXELFORMAT_R8G8B8      2  /* RGB without alpha */
+#define WD_PIXELFORMAT_R8G8B8A8    3  /* RGB with alpha - RGBA */
+#define WD_PIXELFORMAT_B8G8R8A8    4  /* RGB with alpha pre-multiplied in GDI order - BGRA (and bottom-up) */
+
+/* Buffer is arranged from top to bottom, except for the GDI format. 
+   Stride is the size of the line in buffer including any padding at the end. 
+   If Stride is 0, then it is computed from width*channels.
+   */
+WD_HIMAGE wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, UINT uStride, const BYTE* pBuffer,
+                int pixelFormat, const COLORREF* cPalette, UINT uPaletteSize);
 
 /*********************************
  ***  Cached Image Management  ***
@@ -557,7 +568,7 @@ WD_INLINE void wdFillPie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
 void wdBitBltImage(WD_HCANVAS hCanvas, const WD_HIMAGE hImage,
                 const WD_RECT* pDestRect, const WD_RECT* pSourceRect);
 void wdBitBltCachedImage(WD_HCANVAS hCanvas, const WD_HCACHEDIMAGE hCachedImage,
-                int x, int y);
+                float x, float y);
 void wdBitBltHICON(WD_HCANVAS hCanvas, HICON hIcon,
                 const WD_RECT* pDestRect, const WD_RECT* pSourceRect);
 
