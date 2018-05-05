@@ -29,11 +29,11 @@ BEGIN
 
     POPUP "&Transparency"
     BEGIN
-        MENUITEM "&100% transparent",   IDM_ALPHA_100
-        MENUITEM "&80% transparent",    IDM_ALPHA_80
-        MENUITEM "&60% transparent",    IDM_ALPHA_60
-        MENUITEM "&40% transparent",    IDM_ALPHA_40
-        MENUITEM "&20% transparent",    IDM_ALPHA_20
-        MENUITEM "&0% transparent",     IDM_ALPHA_0
+        MENUITEM "&100% transparent",   IDM_TRANSPARENT_100
+        MENUITEM "&80% transparent",    IDM_TRANSPARENT_80
+        MENUITEM "&60% transparent",    IDM_TRANSPARENT_60
+        MENUITEM "&40% transparent",    IDM_TRANSPARENT_40
+        MENUITEM "&20% transparent",    IDM_TRANSPARENT_20
+        MENUITEM "&0% transparent",     IDM_TRANSPARENT_0
     END
 END
