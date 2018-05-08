@@ -1,6 +1,6 @@
 /*
  * WinDrawLib
- * Copyright (c) 2015-2016 Martin Mitas
+ * Copyright (c) 2015-2018 Martin Mitas
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -260,26 +260,23 @@ void wdResetWorld(WD_HCANVAS hCanvas);
  * is not canvas-specific and can be used for painting on any canvas.
  */
 
+/* For wdCreateImageFromBuffer */
+#define WD_PIXELFORMAT_PALETTE     1  /* 1 byte per pixel. cPalette is used */
+#define WD_PIXELFORMAT_R8G8B8      2  /* 3 bytes per pixel. RGB without alpha */
+#define WD_PIXELFORMAT_R8G8B8A8    3  /* 4 bytes per pixel. RGB with alpha - RGBA */
+#define WD_PIXELFORMAT_B8G8R8A8    4  /* 4 bytes per pixel. RGB with alpha pre-multiplied in GDI order - BGRA (and bottom-up) */
+
 WD_HIMAGE wdCreateImageFromHBITMAP(HBITMAP hBmp);
 WD_HIMAGE wdLoadImageFromFile(const WCHAR* pszPath);
 WD_HIMAGE wdLoadImageFromIStream(IStream* pStream);
 WD_HIMAGE wdLoadImageFromResource(HINSTANCE hInstance,
                 const WCHAR* pszResType, const WCHAR* pszResName);
+WD_HIMAGE wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, UINT uStride, const BYTE* pBuffer,
+                int pixelFormat, const COLORREF* cPalette, UINT uPaletteSize);
 void wdDestroyImage(WD_HIMAGE hImage);
 
 void wdGetImageSize(WD_HIMAGE hImage, UINT* puWidth, UINT* puHeight);
 
-#define WD_PIXELFORMAT_PALETTE     1  /* cPalette is used */
-#define WD_PIXELFORMAT_R8G8B8      2  /* RGB without alpha */
-#define WD_PIXELFORMAT_R8G8B8A8    3  /* RGB with alpha - RGBA */
-#define WD_PIXELFORMAT_B8G8R8A8    4  /* RGB with alpha pre-multiplied in GDI order - BGRA (and bottom-up) */
-
-/* Buffer is arranged from top to bottom, except for the GDI format. 
-   Stride is the size of the line in buffer including any padding at the end. 
-   If Stride is 0, then it is computed from width*channels.
-   */
-WD_HIMAGE wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, UINT uStride, const BYTE* pBuffer,
-                int pixelFormat, const COLORREF* cPalette, UINT uPaletteSize);
 
 /*********************************
  ***  Cached Image Management  ***

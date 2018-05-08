@@ -312,7 +312,8 @@ wdBufferBGRA2Bitmap(BYTE* Scan0, INT dstStride, INT srcStride, UINT width, UINT 
 }
 
 static void 
-wdBufferMap2Bitmap(BYTE* Scan0, INT dstStride, INT srcStride, UINT channels, UINT width, UINT height, const BYTE* map, const COLORREF* palette, UINT uPaletteSize)
+wdBufferMap2Bitmap(BYTE* Scan0, INT dstStride, INT srcStride, UINT channels,
+                   UINT width, UINT height, const BYTE* map, const COLORREF* palette, UINT uPaletteSize)
 {
   UINT i, j;
 
@@ -340,8 +341,9 @@ wdBufferMap2Bitmap(BYTE* Scan0, INT dstStride, INT srcStride, UINT channels, UIN
   (void)uPaletteSize; /* unused */
 }
 
-WD_HIMAGE wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, UINT srcStride, const BYTE* pBuffer,
-                                  int pixelFormat, const COLORREF* cPalette, UINT uPaletteSize)
+WD_HIMAGE
+wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, UINT srcStride, const BYTE* pBuffer,
+                        int pixelFormat, const COLORREF* cPalette, UINT uPaletteSize)
 {
     if (d2d_enabled()) {
         IWICBitmap* bitmap = NULL;
@@ -357,7 +359,10 @@ WD_HIMAGE wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, UINT srcStride, con
             return NULL;
         }
 
-        hr = IWICImagingFactory_CreateBitmap(wic_factory, uWidth, uHeight, &wic_pixel_format, WICBitmapCacheOnDemand, &bitmap);   /* GUID_WICPixelFormat32bppPBGRA - pre-multiplied alpha, BGRA order */
+        /* wic_pixel_format is GUID_WICPixelFormat32bppPBGRA;
+         * i.e. pre-multiplied alpha, BGRA order */
+        hr = IWICImagingFactory_CreateBitmap(wic_factory, uWidth, uHeight,
+                                &wic_pixel_format, WICBitmapCacheOnDemand, &bitmap);
         if(FAILED(hr)) {
             WD_TRACE_HR("wdCreateImageFromBuffer: "
                         "IWICImagingFactory::CreateBitmap() failed.");
