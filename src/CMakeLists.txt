@@ -1,7 +1,35 @@
 
-file(GLOB WINDRAWLIB_SOURCES "*.c" "*.h")
-
-add_library(windrawlib STATIC ${WINDRAWLIB_SOURCES})
+add_library(windrawlib STATIC
+        ${PROJECT_SOURCE_DIR}/include/wdl.h
+        dummy/d2d1.h
+        dummy/dwrite.h
+        dummy/gdiplus.h
+        backend-d2d.c
+        backend-d2d.h
+        backend-dwrite.c
+        backend-dwrite.h
+        backend-gdix.c
+        backend-gdix.h
+        backend-wic.c
+        backend-wic.h
+        bitblt.c
+        brush.c
+        cachedimage.c
+        canvas.c
+        draw.c
+        fill.c
+        font.c
+        image.c
+        init.c
+        lock.h
+        memstream.c
+        memstream.h
+        misc.c
+        misc.h
+        path.c
+        string.c
+        strokestyle.c
+)
 
 add_definitions(-DUNICODE -D_UNICODE)
 add_definitions(-D_WIN32_IE=0x0501 -D_WIN32_WINNT=0x0600 -DWINVER=_WIN32_WINNT)
