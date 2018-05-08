@@ -231,114 +231,94 @@ wdGetImageSize(WD_HIMAGE hImage, UINT* puWidth, UINT* puHeight)
     }
 }
 
-static void 
-wdBufferRGB2Bitmap(BYTE* Scan0, INT dstStride, INT srcStride, UINT channels, UINT width, UINT height, const BYTE *rgb)
+
+#define RAW_BUFFER_FLAG_BOTTOMUP            0x0001
+#define RAW_BUFFER_FLAG_HASALPHA            0x0002
+#define RAW_BUFFER_FLAG_PREMULTIPLYALPHA    0x0004
+
+static void
+raw_buffer_to_bitmap_data(UINT width, UINT height,
+            BYTE* dst_buffer, int dst_stride, int dst_bytes_per_pixel,
+            const BYTE* src_buffer, int src_stride, int src_bytes_per_pixel,
+            int red_offset, int green_offset, int blue_offset, int alpha_offset,
+            DWORD flags)
 {
-  UINT i, j;
+    UINT x, y;
+    BYTE* dst_line = dst_buffer;
+    BYTE* dst;
+    const BYTE* src_line = src_buffer;
+    const BYTE* src;
 
-  for (j = 0; j < height; j++)
-  {
-    UINT line_offset = j * srcStride;
-    const BYTE* rgb_line = rgb + line_offset;
-    BYTE* line_data = Scan0 + j * dstStride;
+    if(src_stride == 0)
+        src_stride = width * src_bytes_per_pixel;
 
-    for (i = 0; i < width; i++)
-    {
-      int offset = i * 3;
-      int offset_data = i * channels;
-      line_data[offset_data + 0] = rgb_line[offset + 2];  /* Blue */
-      line_data[offset_data + 1] = rgb_line[offset + 1];  /* Green */
-      line_data[offset_data + 2] = rgb_line[offset + 0];  /* Red */
-
-      if (channels == 4)
-        line_data[offset_data + 3] = 255;
+    if(flags & RAW_BUFFER_FLAG_BOTTOMUP) {
+        src_line = src_buffer + (height-1) * src_stride;
+        src_stride = -src_stride;
     }
-  }
-}
 
-static void 
-wdBufferRGBA2Bitmap(BYTE* Scan0, INT dstStride, INT srcStride, BOOL PreAlpha, UINT width, UINT height, const BYTE* rgba)
-{
-  UINT i, j;
+    for(y = 0; y < height; y++) {
+        dst = dst_line;
+        src = src_line;
 
-  for (j = 0; j < height; j++)
-  {
-    UINT line_offset = j * srcStride;
-    const BYTE* rgba_line = rgba + line_offset;
-    BYTE* line_data = Scan0 + j * dstStride;
+        for(x = 0; x < width; x++) {
+            dst[0] = src[blue_offset];
+            dst[1] = src[green_offset];
+            dst[2] = src[red_offset];
 
-    for (i = 0; i < width; i++)
-    {
-      int offset = i * 4;
+            if(dst_bytes_per_pixel >= 4) {
+                dst[3] = (flags & RAW_BUFFER_FLAG_HASALPHA) ? src[alpha_offset] : 0xff;
 
-      if (PreAlpha)
-      {
-        line_data[offset + 0] = (rgba_line[offset + 2] * rgba_line[offset + 3]) / 255;  /* Blue */
-        line_data[offset + 1] = (rgba_line[offset + 1] * rgba_line[offset + 3]) / 255;  /* Green */
-        line_data[offset + 2] = (rgba_line[offset + 0] * rgba_line[offset + 3]) / 255;  /* Red */
-      }
-      else
-      {
-        line_data[offset + 0] = rgba_line[offset + 2];  /* Blue */
-        line_data[offset + 1] = rgba_line[offset + 1];  /* Green */
-        line_data[offset + 2] = rgba_line[offset + 0];  /* Red */
-      }
+                if(flags & RAW_BUFFER_FLAG_PREMULTIPLYALPHA) {
+                    dst[0] = (dst[0] + dst[3]) / 255;
+                    dst[1] = (dst[1] + dst[3]) / 255;
+                    dst[2] = (dst[2] + dst[3]) / 255;
+                }
+            }
 
-      line_data[offset + 3] = rgba_line[offset + 3];  /* Alpha */
+            dst += dst_bytes_per_pixel;
+            src += src_bytes_per_pixel;
+        }
+
+        dst_line += dst_stride;
+        src_line += src_stride;
     }
-  }
 }
 
 static void
-wdBufferBGRA2Bitmap(BYTE* Scan0, INT dstStride, INT srcStride, UINT width, UINT height, const BYTE* bgra)
+colormap_buffer_to_bitmap_data(UINT width, UINT height,
+            BYTE* dst_buffer, int dst_stride, int dst_bytes_per_pixel,
+            const BYTE* src_buffer, int src_stride,
+            const COLORREF* palette, UINT palette_size)
 {
-  UINT i, j;
+    UINT x, y;
+    BYTE* dst_line = dst_buffer;
+    BYTE* dst;
+    const BYTE* src_line = src_buffer;
+    const BYTE* src;
 
-  for (j = 0; j < height; j++)
-  {
-    UINT line_offset = (height - 1 - j) * srcStride;  /* source is bottom-up */
-    const BYTE* bgra_line = bgra + line_offset;
-    BYTE* line_data = Scan0 + j * dstStride;
+    if(src_stride == 0)
+        src_stride = width;
 
-    for (i = 0; i < width; i++)
-    {
-      int offset = i * 4;
-      line_data[offset + 0] = bgra_line[offset + 0];  /* Blue */
-      line_data[offset + 1] = bgra_line[offset + 1];  /* Green */
-      line_data[offset + 2] = bgra_line[offset + 2];  /* Red */
-      line_data[offset + 3] = bgra_line[offset + 3];  /* Alpha */
+    for(y = 0; y < height; y++) {
+        dst = dst_line;
+        src = src_line;
+
+        for(x = 0; x < width; x++) {
+            dst[0] = GetBValue(palette[*src]);
+            dst[1] = GetGValue(palette[*src]);
+            dst[2] = GetRValue(palette[*src]);
+
+            if(dst_bytes_per_pixel >= 4)
+                dst[3] = 0xff;
+
+            dst += dst_bytes_per_pixel;
+            src++;
+        }
+
+        dst_line += dst_stride;
+        src_line += src_stride;
     }
-  }
-}
-
-static void 
-wdBufferMap2Bitmap(BYTE* Scan0, INT dstStride, INT srcStride, UINT channels,
-                   UINT width, UINT height, const BYTE* map, const COLORREF* palette, UINT uPaletteSize)
-{
-  UINT i, j;
-
-  for (j = 0; j < height; j++)
-  {
-    UINT line_offset = j * srcStride;
-    const BYTE* map_line = map + line_offset;
-    BYTE* line_data = Scan0 + j * dstStride;
-
-    for (i = 0; i < width; i++)
-    {
-      int map_index = map_line[i];
-      COLORREF color = palette[map_index];
-
-      int offset_data = i * channels;
-      line_data[offset_data + 0] = GetBValue(color);
-      line_data[offset_data + 1] = GetGValue(color);
-      line_data[offset_data + 2] = GetRValue(color);
-
-      if (channels == 4)
-        line_data[offset_data + 3] = 255;
-    }
-  }
-
-  (void)uPaletteSize; /* unused */
 }
 
 WD_HIMAGE
@@ -380,26 +360,27 @@ wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, UINT srcStride, const BYTE* p
         IWICBitmapLock_GetStride(bitmap_lock, &dstStride);
         IWICBitmapLock_GetDataPointer(bitmap_lock, &cbBufferSize, &Scan0);
 
-        if (pixelFormat == WD_PIXELFORMAT_PALETTE) {
-            if (srcStride == 0) srcStride = uWidth * 1;
-            wdBufferMap2Bitmap(Scan0, dstStride, srcStride, 4, uWidth, uHeight, pBuffer, cPalette, uPaletteSize);
-        }
-        else
-        {
-          if (pixelFormat == WD_PIXELFORMAT_R8G8B8) {
-              if (srcStride == 0) srcStride = uWidth * 3;
-              wdBufferRGB2Bitmap(Scan0, dstStride, srcStride, 4, uWidth, uHeight, pBuffer);
-          }
-          else if (pixelFormat == WD_PIXELFORMAT_R8G8B8A8) {
-              if (srcStride == 0) srcStride = uWidth * 4;
-              wdBufferRGBA2Bitmap(Scan0, dstStride, srcStride, TRUE, uWidth, uHeight, pBuffer);
-          }
-          else {
-              if (srcStride == 0) srcStride = uWidth * 4;
-              wdBufferBGRA2Bitmap(Scan0, dstStride, srcStride, uWidth, uHeight, pBuffer);
-          }
-        }
+        switch(pixelFormat) {
+            case WD_PIXELFORMAT_PALETTE:
+                colormap_buffer_to_bitmap_data(uWidth, uHeight, Scan0, dstStride, 4,
+                                pBuffer, srcStride, cPalette, uPaletteSize);
+                break;
 
+            case WD_PIXELFORMAT_R8G8B8:
+                raw_buffer_to_bitmap_data(uWidth, uHeight, Scan0, dstStride, 4,
+                                pBuffer, srcStride, 3, 0, 1, 2, 0, 0);
+                break;
+
+            case WD_PIXELFORMAT_R8G8B8A8:
+                raw_buffer_to_bitmap_data(uWidth, uHeight, Scan0, dstStride, 4,
+                                pBuffer, srcStride, 4, 0, 1, 2, 3, RAW_BUFFER_FLAG_HASALPHA | RAW_BUFFER_FLAG_PREMULTIPLYALPHA);
+                break;
+
+            case WD_PIXELFORMAT_B8G8R8A8:
+                raw_buffer_to_bitmap_data(uWidth, uHeight, Scan0, dstStride, 4,
+                                pBuffer, srcStride, 4, 2, 1, 0, 3, RAW_BUFFER_FLAG_HASALPHA | RAW_BUFFER_FLAG_BOTTOMUP);
+                break;
+        }
 
         IWICBitmapLock_Release(bitmap_lock);
         return (WD_HIMAGE)bitmap;
@@ -427,28 +408,29 @@ wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, UINT srcStride, const BYTE* p
 
         gdix_vtable->fn_BitmapLockBits(bitmap, &rect, dummy_ImageLockModeWrite, format, &bitmapData);
 
-        if (pixelFormat == WD_PIXELFORMAT_PALETTE) {
-            if (srcStride == 0) srcStride = uWidth * 1;
-            wdBufferMap2Bitmap((BYTE*)bitmapData.Scan0, bitmapData.Stride, srcStride, 3, uWidth, uHeight, pBuffer, cPalette, uPaletteSize);
-        }
-        else
-        {
-            if (pixelFormat == WD_PIXELFORMAT_R8G8B8) {
-                if (srcStride == 0) srcStride = uWidth * 3;
-                wdBufferRGB2Bitmap((BYTE*)bitmapData.Scan0, bitmapData.Stride, srcStride, 3, uWidth, uHeight, pBuffer);
-            }
-            else if (pixelFormat == WD_PIXELFORMAT_R8G8B8A8) {
-                if (srcStride == 0) srcStride = uWidth * 4;
-                wdBufferRGBA2Bitmap((BYTE*)bitmapData.Scan0, bitmapData.Stride, srcStride, FALSE, uWidth, uHeight, pBuffer);
-            }
-            else {
-                if (srcStride == 0) srcStride = uWidth * 4;
-                wdBufferBGRA2Bitmap((BYTE*)bitmapData.Scan0, bitmapData.Stride, srcStride, uWidth, uHeight, pBuffer);
-            }
+        switch(pixelFormat) {
+            case WD_PIXELFORMAT_PALETTE:
+                colormap_buffer_to_bitmap_data(uWidth, uHeight, (BYTE*)bitmapData.Scan0, bitmapData.Stride, 3,
+                    pBuffer, srcStride, cPalette, uPaletteSize);
+                break;
+
+            case WD_PIXELFORMAT_R8G8B8:
+                raw_buffer_to_bitmap_data(uWidth, uHeight, (BYTE*)bitmapData.Scan0, bitmapData.Stride, 3,
+                                pBuffer, srcStride, 3, 0, 1, 2, 0, 0);
+                break;
+
+            case WD_PIXELFORMAT_R8G8B8A8:
+                raw_buffer_to_bitmap_data(uWidth, uHeight, (BYTE*)bitmapData.Scan0, bitmapData.Stride, 4,
+                                pBuffer, srcStride, 4, 0, 1, 2, 3, RAW_BUFFER_FLAG_HASALPHA);
+                break;
+
+            case WD_PIXELFORMAT_B8G8R8A8:
+                raw_buffer_to_bitmap_data(uWidth, uHeight, (BYTE*)bitmapData.Scan0, bitmapData.Stride, 4,
+                                pBuffer, srcStride, 4, 2, 1, 0, 3, RAW_BUFFER_FLAG_HASALPHA | RAW_BUFFER_FLAG_BOTTOMUP);
+                break;
         }
 
         gdix_vtable->fn_BitmapUnlockBits(bitmap, &bitmapData);
-
         return (WD_HIMAGE)bitmap;
     }
 }
