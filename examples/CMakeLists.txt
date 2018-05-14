@@ -20,6 +20,9 @@ elseif(MSVC)
 endif()
 
 
+add_executable("cached-image" "cached-image.c" "cached-image.rc")
+target_link_libraries("cached-image" "windrawlib")
+
 add_executable("draw-cached" "draw-cached.c")
 target_link_libraries("draw-cached" "windrawlib")
 
