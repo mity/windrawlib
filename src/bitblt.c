@@ -102,7 +102,7 @@ wdBitBltCachedImage(WD_HCANVAS hCanvas, const WD_HCACHEDIMAGE hCachedImage,
         dummy_D2D1_SIZE_U sz;
         dummy_D2D1_RECT_F dest;
 
-        sz = dummy_ID2D1Bitmap_GetPixelSize(b);
+        dummy_ID2D1Bitmap_GetPixelSize(b, &sz);
 
         dest.left = x - D2D_BASEDELTA_X;
         dest.top = y - D2D_BASEDELTA_X;

@@ -280,7 +280,31 @@ struct dummy_ID2D1BitmapVtbl_tag {
 
     /* ID2D1Bitmap methods */
     STDMETHOD(dummy_GetSize)(void);
+#if 0
+    /* Original vanilla method prototype. But this seems to be problematic
+     * as compiler use different ABI when returning aggregate types.
+     *
+     * When built with incompatible compiler, it usually results in crash.
+     *
+     * For gcc, it seems to be completely incompatible:
+     *  -- https://gcc.gnu.org/bugzilla/show_bug.cgi?id=64384
+     *  -- https://sourceforge.net/p/mingw-w64/mailman/message/36238073/
+     *  -- https://source.winehq.org/git/wine.git/commitdiff/b42a15513eaa973b40ab967014b311af64acbb98
+     *  -- https://www.winehq.org/pipermail/wine-devel/2017-July/118470.html
+     *  -- https://bugzilla.mozilla.org/show_bug.cgi?id=1411401
+     *
+     * For MSVC, it is compatible only when building as C++. In C, it crashes
+     * as well.
+     */
     STDMETHOD_(dummy_D2D1_SIZE_U, GetPixelSize)(dummy_ID2D1Bitmap*);
+#else
+    /* This prototype corresponds more literally to what the COM calling
+     * convention is expecting from us.
+     *
+     * Tested with MSVC 2017 (64-bit build), gcc (32-bit build).
+     */
+    STDMETHOD_(void, GetPixelSize)(dummy_ID2D1Bitmap*, dummy_D2D1_SIZE_U*);
+#endif
     STDMETHOD(dummy_GetPixelFormat)(void);
     STDMETHOD(dummy_GetDpi)(void);
     STDMETHOD(dummy_CopyFromBitmap)(void);
@@ -295,7 +319,7 @@ struct dummy_ID2D1Bitmap_tag {
 #define dummy_ID2D1Bitmap_QueryInterface(self,a,b)  (self)->vtbl->QueryInterface(self,a,b)
 #define dummy_ID2D1Bitmap_AddRef(self)              (self)->vtbl->AddRef(self)
 #define dummy_ID2D1Bitmap_Release(self)             (self)->vtbl->Release(self)
-#define dummy_ID2D1Bitmap_GetPixelSize(self)        (self)->vtbl->GetPixelSize(self)
+#define dummy_ID2D1Bitmap_GetPixelSize(self,a)      (self)->vtbl->GetPixelSize(self,a)
 
 
 /*******************************************
