@@ -29,6 +29,7 @@ add_library(windrawlib STATIC
         path.c
         string.c
         strokestyle.c
+        text.c
 )
 
 add_definitions(-DUNICODE -D_UNICODE)

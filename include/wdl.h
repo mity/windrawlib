@@ -1,6 +1,6 @@
 /*
  * WinDrawLib
- * Copyright (c) 2015-2018 Martin Mitas
+ * Copyright (c) 2015-2019 Martin Mitas
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -145,6 +145,7 @@ void wdPreInitialize(void (*fnLock)(void), void (*fnUnlock)(void), DWORD dwFlags
 #define WD_INIT_COREAPI             0x0000
 #define WD_INIT_IMAGEAPI            0x0001
 #define WD_INIT_STRINGAPI           0x0002
+#define WD_INIT_TEXTAPI             0x0004
 
 BOOL wdInitialize(DWORD dwFlags);
 void wdTerminate(DWORD dwFlags);
@@ -169,6 +170,7 @@ typedef struct WD_FONT_tag *WD_HFONT;
 typedef struct WD_IMAGE_tag *WD_HIMAGE;
 typedef struct WD_CACHEDIMAGE_tag* WD_HCACHEDIMAGE;
 typedef struct WD_PATH_tag *WD_HPATH;
+typedef struct WD_HTEXT_tag *WD_HTEXT;
 
 
 /***************************
@@ -584,8 +586,13 @@ void wdBitBltHICON(WD_HCANVAS hCanvas, HICON hIcon,
 /* Functions for basic string output. Note the functions operate strictly with
  * Unicode strings.
  *
+ * This API allows to output simple string, using one font, one brush and one
+ * style. If you need to render more complex text (e.g. a paragraph, which
+ * uses different styles or fonts or brushes for various parts of the text)
+ * use rather the advanced text output API below.
+ *
  * All these functions are usable only if the library has been initialized with
- * the flag WD_INIT_DRAWSTRINGAPI.
+ * the flag WD_INIT_STRINGAPI.
  */
 
 /* Flags specifying alignment and various rendering options.
@@ -620,6 +627,95 @@ void wdMeasureString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
 /* Convenient wdMeasureString() wrapper. */
 float wdStringWidth(WD_HCANVAS hCanvas, WD_HFONT hFont, const WCHAR* pszText);
 float wdStringHeight(WD_HFONT hFont, const WCHAR* pszText);
+
+
+/******************************
+ ***  Advanced Text Output  ***
+ ******************************/
+
+/* Functions for advanced string output.
+ * Note the functions operate strictly with Unicode strings.
+ *
+ * This API is more complex and more difficult to use then wdDrawString(), but
+ * it offers richer functionality. For example it allows to render paragraph of
+ * text, whose parts use different fonts, effects, or brushes.
+ *
+ * Consider for example paragraph of a text of normal text which includes some
+ * hyper-links and/or some emphasis of text using a bold or italic typeface
+ * and/or talks  some about some programming language and the described
+ * identifier should be rendered in a monospaced font.
+ *
+ * All these functions are usable only if the library has been initialized with
+ * the flag WD_INIT_TEXTAPI.
+ *
+ * WARNING: This module is currently available only for D2D back-end. If not
+ * available, wdInitialize(WD_INIT_TEXTAPI) shall fail.
+ */
+
+/* Flags specifying alignment and various rendering options.
+ *
+ * Most of the flags are for wdCreateText().
+ * Only WD_TEXT_NOCLIP is for wdDrawText().
+ */
+#define WD_TEXT_LEFTALIGN       WD_STR_LEFTALIGN
+#define WD_TEXT_CENTERALIGN     WD_STR_CENTERALIGN
+#define WD_TEXT_RIGHTALIGN      WD_STR_RIGHTALIGN
+#define WD_TEXT_TOPALIGN        WD_STR_TOPALIGN
+#define WD_TEXT_MIDDLEALIGN     WD_STR_MIDDLEALIGN
+#define WD_TEXT_BOTTOMALIGN     WD_STR_BOTTOMALIGN
+#define WD_TEXT_NOCLIP          WD_STR_NOCLIP
+#define WD_TEXT_NOWRAP          WD_STR_NOWRAP
+#define WD_TEXT_ENDELLIPSIS     WD_STR_ENDELLIPSIS
+#define WD_TEXT_WORDELLIPSIS    WD_STR_WORDELLIPSIS
+#define WD_TEXT_PATHELLIPSIS    WD_STR_PATHELLIPSIS
+
+#define WD_TEXT_ALIGNMASK       WD_STR_ALIGNMASK
+#define WD_TEXT_VALIGNMASK      WD_STR_VALIGNMASK
+#define WD_TEXT_ELLIPSISMASK    WD_STR_ELLIPSISMASK
+
+
+WD_HTEXT wdCreateText(WD_HFONT hFont, const WD_RECT* pRect,
+                const WCHAR* pszText, int iTextLength, DWORD dwFlags);
+void wdDestroyText(WD_HTEXT hText);
+
+/* Customizers of the text layout.
+ *
+ * Typically these apply some effects, other font or other text attribute
+ * to the specified range of the whole text.
+ */
+
+#define WD_TEXTSTYLE_NORMAL     0
+#define WD_TEXTSTYLE_OBLIQUE    1
+#define WD_TEXTSTYLE_ITALIC     2
+
+void wdSetTextFontSize(WD_HTEXT hText, UINT uPos, UINT uLen, float fSize);
+void wdSetTextFontStyle(WD_HTEXT hText, UINT uPos, UINT uLen, int iStyle);
+void wdSetTextFontWeight(WD_HTEXT hText, UINT uPos, UINT uLen, LONG lfWeight);
+void wdSetTextStrikethrough(WD_HTEXT hText, UINT uPos, UINT uLen, BOOL bStrikethrough);
+void wdSetTextUnderline(WD_HTEXT hText, UINT uPos, UINT uLen, BOOL bUnderline);
+
+/* Getters inspecting the text layout.
+ */
+typedef struct WD_TEXTMETRICS_tag WD_TEXTMETRICS;
+struct WD_TEXTMETRICS_tag {
+    float fLeft;
+    float fTop;
+    float fWidth;           /* Computed/required width. */
+    float fWidthWithTrailingWhitespace;
+    float fHeight;          /* Computed/required height. */
+    float fInitialWidth;    /* Width of the rect passed into wdCreateText() */
+    float fInitialHeight;   /* Height of the rect passed into wdCreateText() */
+    UINT32 uMaxBidiDepth;
+    UINT32 uLineCount;
+};
+
+void wdTextMetrics(WD_HTEXT hText, WD_TEXTMETRICS* pMetrics);
+
+/* Draw the text.
+ */
+void wdDrawText(WD_HCANVAS hCanvas, WD_HTEXT hText, WD_HBRUSH hBrush,
+                float x, float y, DWORD dwFlags);
+
 
 #ifdef __cplusplus
 }  /* extern "C" */

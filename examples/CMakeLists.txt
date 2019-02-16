@@ -32,6 +32,9 @@ target_link_libraries("draw-simple" "windrawlib")
 add_executable("draw-string" WIN32 "draw-string.c")
 target_link_libraries("draw-string" "windrawlib")
 
+add_executable("draw-text" WIN32 "draw-text.c")
+target_link_libraries("draw-text" "windrawlib")
+
 add_executable("draw-styled" WIN32 "draw-styled.c")
 target_link_libraries("draw-styled" "windrawlib")
 
