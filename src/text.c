@@ -60,6 +60,24 @@ wdDestroyText(WD_HTEXT hText)
 }
 
 void
+wdSetTextMaxWidth(WD_HTEXT hText, float fWidth)
+{
+    if(d2d_enabled()) {
+        dummy_IDWriteTextLayout* layout = (dummy_IDWriteTextLayout*) hText;
+        dummy_IDWriteTextLayout_SetMaxWidth(layout, fWidth);
+    }
+}
+
+void
+wdSetTextMaxHeight(WD_HTEXT hText, float fHeight)
+{
+    if(d2d_enabled()) {
+        dummy_IDWriteTextLayout* layout = (dummy_IDWriteTextLayout*) hText;
+        dummy_IDWriteTextLayout_SetMaxHeight(layout, fHeight);
+    }
+}
+
+void
 wdSetTextFontSize(WD_HTEXT hText, UINT uPos, UINT uLen, float fSize)
 {
     if(d2d_enabled()) {
