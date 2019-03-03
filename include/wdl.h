@@ -619,6 +619,9 @@ void wdDrawString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
                 const WCHAR* pszText, int iTextLength, WD_HBRUSH hBrush,
                 DWORD dwFlags);
 
+/* Note hCanvas here is optional. If hCanvas == NULL, GDI+ uses screen
+ * for the computation; D2D back-end ignores that parameter altogether.
+ */
 void wdMeasureString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
                 const WCHAR* pszText, int iTextLength, WD_RECT* pResult,
                 DWORD dwFlags);
