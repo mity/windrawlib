@@ -684,6 +684,11 @@ WD_HTEXT wdCreateText(WD_HFONT hFont, const WD_RECT* pRect,
                 const WCHAR* pszText, int iTextLength, DWORD dwFlags);
 void wdDestroyText(WD_HTEXT hText);
 
+/* Get minimal width required for reasonable output. If lower width is requested,
+ * there might be some line breaks inside words or similar unpleasant effects.
+ */
+float wdMinimalTextWidth(WD_HTEXT hText);
+
 /* Customizers of the text layout.
  *
  * Typically these apply some effects, other font or other text attribute

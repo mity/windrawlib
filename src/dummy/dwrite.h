@@ -549,7 +549,7 @@ struct dummy_IDWriteTextLayoutVtbl_tag {
     STDMETHOD(GetMetrics)(dummy_IDWriteTextLayout*, dummy_DWRITE_TEXT_METRICS*);
     STDMETHOD(dummy_GetOverhangMetrics)(void);
     STDMETHOD(dummy_GetClusterMetrics)(void);
-    STDMETHOD(dummy_DetermineMinWidth)(void);
+    STDMETHOD(DetermineMinWidth)(dummy_IDWriteTextLayout*, FLOAT*);
     STDMETHOD(dummy_HitTestPoint)(void);
     STDMETHOD(dummy_HitTestTextPosition)(void);
     STDMETHOD(dummy_HitTestTextRange)(void);
@@ -576,6 +576,7 @@ struct dummy_IDWriteTextLayout_tag {
 #define dummy_IDWriteTextLayout_SetUnderline(self,a,b)          (self)->vtbl->SetUnderline(self,a,b)
 #define dummy_IDWriteTextLayout_GetMaxWidth(self)               (self)->vtbl->GetMaxWidth(self)
 #define dummy_IDWriteTextLayout_GetMetrics(self,a)              (self)->vtbl->GetMetrics(self,a)
+#define dummy_IDWriteTextLayout_DetermineMinWidth(self,a)       (self)->vtbl->DetermineMinWidth(self,a)
 
 
 #endif  /* DUMMY_DWRITE_H */

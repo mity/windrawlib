@@ -59,6 +59,20 @@ wdDestroyText(WD_HTEXT hText)
     }
 }
 
+float
+wdMinimalTextWidth(WD_HTEXT hText)
+{
+    if(d2d_enabled()) {
+        dummy_IDWriteTextLayout* layout = (dummy_IDWriteTextLayout*) hText;
+        float min_width;
+
+        dummy_IDWriteTextLayout_DetermineMinWidth(layout, &min_width);
+        return min_width;
+    } else {
+        return 0;
+    }
+}
+
 void
 wdSetTextMaxWidth(WD_HTEXT hText, float fWidth)
 {
