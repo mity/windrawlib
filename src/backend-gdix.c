@@ -376,20 +376,19 @@ gdix_canvas_apply_string_flags(gdix_canvas_t* c, DWORD flags)
     int sff;
     int trim;
 
-    if(flags & WD_STR_RIGHTALIGN)
-        sfa = dummy_StringAlignmentFar;
-    else if(flags & WD_STR_CENTERALIGN)
-        sfa = dummy_StringAlignmentCenter;
-    else
-        sfa = dummy_StringAlignmentNear;
+    /* Note WD_STR_JUSTIFY is not supported here. */
+    switch(flags & WD_STR_ALIGNMASK) {
+        case WD_STR_CENTERALIGN:    sfa = dummy_StringAlignmentCenter; break;
+        case WD_STR_RIGHTALIGN:     sfa = dummy_StringAlignmentFar; break;
+        default:                    sfa = dummy_StringAlignmentNear; break;
+    }
     gdix_vtable->fn_SetStringFormatAlign(c->string_format, sfa);
 
-    if(flags & WD_STR_BOTTOMALIGN)
-        sfa = dummy_StringAlignmentFar;
-    else if(flags & WD_STR_MIDDLEALIGN)
-        sfa = dummy_StringAlignmentCenter;
-    else
-        sfa = dummy_StringAlignmentNear;
+    switch(flags & WD_STR_VALIGNMASK) {
+        case WD_STR_MIDDLEALIGN:    sfa = dummy_StringAlignmentCenter; break;
+        case WD_STR_BOTTOMALIGN:    sfa = dummy_StringAlignmentFar; break;
+        default:                    sfa = dummy_StringAlignmentNear; break;
+    }
     gdix_vtable->fn_SetStringFormatLineAlign(c->string_format, sfa);
 
     sff = 0;
