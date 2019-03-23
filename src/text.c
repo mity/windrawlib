@@ -91,6 +91,26 @@ wdSetTextMaxHeight(WD_HTEXT hText, float fHeight)
     }
 }
 
+BOOL
+wdSetTextFontFamily(WD_HTEXT hText, UINT uPos, UINT uLen, const WCHAR* pszFamilyName)
+{
+    if(d2d_enabled()) {
+        dummy_IDWriteTextLayout* layout = (dummy_IDWriteTextLayout*) hText;
+        dummy_DWRITE_TEXT_RANGE range = { uPos, uLen };
+        HRESULT hr;
+
+        hr = dummy_IDWriteTextLayout_SetFontFamilyName(layout, pszFamilyName, range);
+        if(FAILED(hr)) {
+            WD_TRACE_HR("wdSetTextFontFamily: IDWriteTextLayout::SetFontFamilyName() failed.");
+            return FALSE;
+        }
+
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
 void
 wdSetTextFontSize(WD_HTEXT hText, UINT uPos, UINT uLen, float fSize)
 {

@@ -703,6 +703,7 @@ float wdMinimalTextWidth(WD_HTEXT hText);
 
 void wdSetTextMaxWidth(WD_HTEXT hText, float fWidth);
 void wdSetTextMaxHeight(WD_HTEXT hText, float fHeight);
+BOOL wdSetTextFontFamily(WD_HTEXT hText, UINT uPos, UINT uLen, const WCHAR* pszFamilyName);
 void wdSetTextFontSize(WD_HTEXT hText, UINT uPos, UINT uLen, float fSize);
 void wdSetTextFontStyle(WD_HTEXT hText, UINT uPos, UINT uLen, int iStyle);
 void wdSetTextFontWeight(WD_HTEXT hText, UINT uPos, UINT uLen, LONG lfWeight);

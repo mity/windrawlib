@@ -518,7 +518,7 @@ struct dummy_IDWriteTextLayoutVtbl_tag {
     STDMETHOD(SetMaxWidth)(dummy_IDWriteTextLayout*, FLOAT);
     STDMETHOD(SetMaxHeight)(dummy_IDWriteTextLayout*, FLOAT);
     STDMETHOD(dummy_SetFontCollection)(void);
-    STDMETHOD(dummy_SetFontFamilyName)(void);
+    STDMETHOD(SetFontFamilyName)(dummy_IDWriteTextLayout*, const WCHAR*, dummy_DWRITE_TEXT_RANGE);
     STDMETHOD(SetFontWeight)(dummy_IDWriteTextLayout*, dummy_DWRITE_FONT_WEIGHT, dummy_DWRITE_TEXT_RANGE);
     STDMETHOD(SetFontStyle)(dummy_IDWriteTextLayout*, dummy_DWRITE_FONT_STYLE, dummy_DWRITE_TEXT_RANGE);
     STDMETHOD(dummy_SetFontStretch)(void);
@@ -570,6 +570,7 @@ struct dummy_IDWriteTextLayout_tag {
 #define dummy_IDWriteTextLayout_SetTrimming(self,a,b)           (self)->vtbl->SetTrimming(self,a,b)
 #define dummy_IDWriteTextLayout_SetMaxWidth(self,a)             (self)->vtbl->SetMaxWidth(self,a)
 #define dummy_IDWriteTextLayout_SetMaxHeight(self,a)            (self)->vtbl->SetMaxHeight(self,a)
+#define dummy_IDWriteTextLayout_SetFontFamilyName(self,a,b)     (self)->vtbl->SetFontFamilyName(self,a,b)
 #define dummy_IDWriteTextLayout_SetFontWeight(self,a,b)         (self)->vtbl->SetFontWeight(self,a,b)
 #define dummy_IDWriteTextLayout_SetFontStyle(self,a,b)          (self)->vtbl->SetFontStyle(self,a,b)
 #define dummy_IDWriteTextLayout_SetFontSize(self,a,b)           (self)->vtbl->SetFontSize(self,a,b)
