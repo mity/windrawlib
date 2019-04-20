@@ -99,6 +99,7 @@ struct gdix_vtable_tag {
     int (WINAPI* fn_StartPathFigure)(dummy_GpPath*);
     int (WINAPI* fn_GetPathLastPoint)(dummy_GpPath*, dummy_GpPointF*);
     int (WINAPI* fn_AddPathArc)(dummy_GpPath*, float, float, float, float, float, float);
+    int (WINAPI* fn_AddPathBezier)(dummy_GpPath*, float, float, float, float, float, float, float, float);
     int (WINAPI* fn_AddPathLine)(dummy_GpPath*, float, float, float, float);
 
     /* Font functions */
@@ -144,6 +145,7 @@ struct gdix_vtable_tag {
     int (WINAPI* fn_DrawImageRectRect)(dummy_GpGraphics*, dummy_GpImage*, float, float, float, float, float, float, float, float, dummy_GpUnit, const void*, void*, void*);
     int (WINAPI* fn_DrawEllipse)(dummy_GpGraphics*, dummy_GpPen*, float, float, float, float);
     int (WINAPI* fn_DrawLine)(dummy_GpGraphics*, dummy_GpPen*, float, float, float, float);
+    int (WINAPI* fn_DrawBezier)(dummy_GpGraphics*, dummy_GpPen*, float, float, float, float, float, float, float, float);
     int (WINAPI* fn_DrawPath)(dummy_GpGraphics*, dummy_GpPen*, dummy_GpPath*);
     int (WINAPI* fn_DrawPie)(dummy_GpGraphics*, dummy_GpPen*, float, float, float, float, float, float);
     int (WINAPI* fn_DrawRectangle)(dummy_GpGraphics*, void*, float, float, float, float);

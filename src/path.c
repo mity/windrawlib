@@ -262,3 +262,19 @@ wdAddArc(WD_PATHSINK* pSink, float cx, float cy, float fSweepAngle)
     }
 }
 
+void
+wdAddBezier(WD_PATHSINK* pSink, float x0, float y0, float x1, float y1, float x2, float y2)
+{
+    if(d2d_enabled()) {
+        dummy_ID2D1GeometrySink* s = (dummy_ID2D1GeometrySink*) pSink->pData;
+        dummy_D2D1_BEZIER_SEGMENT bezier_seg;
+
+        d2d_setup_bezier_segment(&bezier_seg, x0, y0, x1, y1, x2, y2);
+        dummy_ID2D1GeometrySink_AddBezier(s, &bezier_seg);
+    } else {
+        gdix_vtable->fn_AddPathBezier(pSink->pData, pSink->ptEnd.x, pSink->ptEnd.y,
+                                      x0, y0, x1, y1, x2, y2);
+    }
+    pSink->ptEnd.x = x2;
+    pSink->ptEnd.y = y2;
+}
