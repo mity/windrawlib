@@ -387,7 +387,7 @@ void wdEndFigure(WD_PATHSINK* pSink, BOOL bCloseFigure);
 
 void wdAddLine(WD_PATHSINK* pSink, float x, float y);
 void wdAddArc(WD_PATHSINK* pSink, float cx, float cy, float fSweepAngle);
-
+void wdAddBezier(WD_PATHSINK* pSink, float x0, float y0, float x1, float y1, float x2, float y2);
 
 /*************************
  ***  Font Management  ***

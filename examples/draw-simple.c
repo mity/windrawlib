@@ -45,6 +45,27 @@ MainWinPaintToCanvas(WD_HCANVAS hCanvas)
         wdDrawCircle(hCanvas, hBrush, x, y, 55.0f, 3.0f);
     }
 
+    for(i = 0; i < 3; i++) {
+        float x = 360.0f + i * 20.0f;
+        float y = 60.0f + i * 20.0f;
+
+        WD_HPATH hPath = wdCreatePath(hCanvas);
+        WD_PATHSINK sink;
+        wdOpenPathSink(&sink, hPath);
+        wdBeginFigure(&sink, x, y);
+        wdAddBezier(&sink, x + 50, y - 80, x + 80, y + 80, x + 120, y);
+        wdEndFigure(&sink, FALSE);
+        wdClosePathSink(&sink);
+
+        wdSetSolidBrushColor(hBrush, fillColors[i]);
+        wdFillPath(hCanvas, hBrush, hPath);
+
+        wdSetSolidBrushColor(hBrush, drawColors[i]);
+        wdDrawPath(hCanvas, hBrush, hPath, 3.0f);
+
+        wdDestroyPath(hPath);
+    }
+
     wdDestroyBrush(hBrush);
     wdEndPaint(hCanvas);
 }
