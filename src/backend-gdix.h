@@ -74,8 +74,9 @@ struct gdix_vtable_tag {
     int (WINAPI* fn_SetPixelOffsetMode)(dummy_GpGraphics*, dummy_GpPixelOffsetMode);
     int (WINAPI* fn_SetSmoothingMode)(dummy_GpGraphics*, dummy_GpSmoothingMode);
     int (WINAPI* fn_TranslateWorldTransform)(dummy_GpGraphics*, float, float, dummy_GpMatrixOrder);
-    int (WINAPI* fn_SetWorldTransform)(dummy_GpGraphics*, dummy_GpMatrix*, dummy_GpMatrixOrder);
+    int (WINAPI* fn_MultiplyWorldTransform)(dummy_GpGraphics*, dummy_GpMatrix*, dummy_GpMatrixOrder);
     int (WINAPI* fn_CreateMatrix2)(float, float, float, float, float, float, dummy_GpMatrix**);
+    int (WINAPI* fn_DeleteMatrix)(dummy_GpMatrix*);
 
     /* Brush functions */
     int (WINAPI* fn_CreateSolidFill)(dummy_ARGB, dummy_GpSolidFill**);
@@ -178,6 +179,7 @@ gdix_canvas_t* gdix_canvas_alloc(HDC dc, const RECT* doublebuffer_rect, UINT wid
 void gdix_canvas_free(gdix_canvas_t* c);
 void gdix_rtl_transform(gdix_canvas_t* c);
 void gdix_reset_transform(gdix_canvas_t* c);
+void gdix_delete_matrix(dummy_GpMatrix* m);
 void gdix_canvas_apply_string_flags(gdix_canvas_t* c, DWORD flags);
 void gdix_setpen(dummy_GpPen* pen, dummy_GpBrush* brush, float width, gdix_strokestyle_t* style);
 dummy_GpBitmap* gdix_bitmap_from_HBITMAP_with_alpha(HBITMAP hBmp, BOOL has_premultiplied_alpha);

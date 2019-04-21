@@ -27,11 +27,22 @@ MainWinPaintToCanvas(WD_HCANVAS hCanvas)
         float x = 10.0f + i * 20.0f;
         float y = 10.0f + i * 20.0f;
 
+
+        WD_MATRIX m;
+        m.m11 = 1.2f;
+        m.m12 = 0;
+        m.m21 = 0;
+        m.m22 = 1.2f;
+        m.dx = 0;
+        m.dy = 0;
+        wdSetWorldTransform(hCanvas, &m);
+
         wdSetSolidBrushColor(hBrush, fillColors[i]);
         wdFillRect(hCanvas, hBrush, x, y, x + 100.0f, y + 100.0f);
 
         wdSetSolidBrushColor(hBrush, drawColors[i]);
         wdDrawRect(hCanvas, hBrush, x, y, x + 100.0f, y + 100.0f, 3.0f);
+        //wdResetWorld(hCanvas);
     }
 
     for(i = 0; i < 3; i++) {
@@ -115,7 +126,7 @@ _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nC
     WNDCLASS wc = { 0 };
     MSG msg;
 
-    wdPreInitialize(NULL, NULL, 0);
+    wdPreInitialize(NULL, NULL, WD_DISABLE_D2D);
     wdInitialize(0);
 
     /* Register main window class */
