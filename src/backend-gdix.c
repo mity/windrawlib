@@ -113,6 +113,8 @@ gdix_init(void)
     GPA(SetPixelOffsetMode, (dummy_GpGraphics*, dummy_GpPixelOffsetMode));
     GPA(SetSmoothingMode, (dummy_GpGraphics*, dummy_GpSmoothingMode));
     GPA(TranslateWorldTransform, (dummy_GpGraphics*, float, float, dummy_GpMatrixOrder));
+    GPA(SetWorldTransform, (dummy_GpGraphics*, dummy_GpMatrix*, dummy_GpMatrixOrder));
+    GPA(CreateMatrix2, (float, float, float, float, float, float, dummy_GpMatrix**));
 
     /* Brush functions */
     GPA(CreateSolidFill, (dummy_ARGB, dummy_GpSolidFill**));

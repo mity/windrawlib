@@ -467,6 +467,31 @@ wdTranslateWorld(WD_HCANVAS hCanvas, float dx, float dy)
 }
 
 void
+wdSetWorldTransform(WD_HCANVAS hCanvas, const WD_MATRIX* pMatrix)
+{
+    if(d2d_enabled()) {
+        d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
+        dummy_D2D1_MATRIX_3X2_F m;
+
+        m._11 = pMatrix->m11;
+        m._12 = pMatrix->m12;
+        m._21 = pMatrix->m21;
+        m._22 = pMatrix->m22;
+        m._31 = pMatrix->dx;
+        m._32 = pMatrix->dy;
+        d2d_apply_transform(c, &m);
+    } else {
+        gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
+
+        dummy_GpMatrix* matrix;
+        gdix_vtable->fn_CreateMatrix2(pMatrix->m11, pMatrix->m12,
+                                      pMatrix->m21, pMatrix->m22,
+                                      pMatrix->dx, pMatrix->dy, &matrix);
+        gdix_vtable->fn_SetWorldTransform(c->graphics, matrix, dummy_MatrixOrderAppend);
+    }
+}
+
+void
 wdResetWorld(WD_HCANVAS hCanvas)
 {
     if(d2d_enabled()) {

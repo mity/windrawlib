@@ -74,6 +74,8 @@ struct gdix_vtable_tag {
     int (WINAPI* fn_SetPixelOffsetMode)(dummy_GpGraphics*, dummy_GpPixelOffsetMode);
     int (WINAPI* fn_SetSmoothingMode)(dummy_GpGraphics*, dummy_GpSmoothingMode);
     int (WINAPI* fn_TranslateWorldTransform)(dummy_GpGraphics*, float, float, dummy_GpMatrixOrder);
+    int (WINAPI* fn_SetWorldTransform)(dummy_GpGraphics*, dummy_GpMatrix*, dummy_GpMatrixOrder);
+    int (WINAPI* fn_CreateMatrix2)(float, float, float, float, float, float, dummy_GpMatrix**);
 
     /* Brush functions */
     int (WINAPI* fn_CreateSolidFill)(dummy_ARGB, dummy_GpSolidFill**);
