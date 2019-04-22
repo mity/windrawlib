@@ -221,6 +221,7 @@ typedef struct dummy_GpImage_tag        dummy_GpImage;
 typedef struct dummy_GpPath_tag         dummy_GpPath;
 typedef struct dummy_GpPen_tag          dummy_GpPen;
 typedef struct dummy_GpStringFormat_tag dummy_GpStringFormat;
+typedef struct dummy_GpMatrix_tag       dummy_GpMatrix;
 
 /* These are "derived" from the types aboves (more specialized). */
 typedef struct dummy_GpImage_tag        dummy_GpBitmap;

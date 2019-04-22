@@ -113,6 +113,9 @@ gdix_init(void)
     GPA(SetPixelOffsetMode, (dummy_GpGraphics*, dummy_GpPixelOffsetMode));
     GPA(SetSmoothingMode, (dummy_GpGraphics*, dummy_GpSmoothingMode));
     GPA(TranslateWorldTransform, (dummy_GpGraphics*, float, float, dummy_GpMatrixOrder));
+    GPA(MultiplyWorldTransform, (dummy_GpGraphics*, dummy_GpMatrix*, dummy_GpMatrixOrder));
+    GPA(CreateMatrix2, (float, float, float, float, float, float, dummy_GpMatrix**));
+    GPA(DeleteMatrix, (dummy_GpMatrix*));
 
     /* Brush functions */
     GPA(CreateSolidFill, (dummy_ARGB, dummy_GpSolidFill**));
@@ -386,6 +389,16 @@ gdix_reset_transform(gdix_canvas_t* c)
     gdix_vtable->fn_ResetWorldTransform(c->graphics);
     if(c->rtl)
         gdix_rtl_transform(c);
+}
+
+void
+gdix_delete_matrix(dummy_GpMatrix* m)
+{
+    int status = gdix_vtable->fn_DeleteMatrix(m);
+    if(status != 0) {
+        WD_TRACE_ERR_("wdSetWorldTransform: Could not delete matrix", status);
+        return;
+    }
 }
 
 void
