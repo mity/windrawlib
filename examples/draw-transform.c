@@ -26,44 +26,40 @@ MainWinPaintToCanvas(WD_HCANVAS hCanvas)
     for(i = 0; i < 3; i++) {
         float x = 10.0f + i * 20.0f;
         float y = 10.0f + i * 20.0f;
+        
+        wdTranslateWorld(hCanvas, x, y);
 
-        wdSetSolidBrushColor(hBrush, fillColors[i]);
-        wdFillRect(hCanvas, hBrush, x, y, x + 100.0f, y + 100.0f);
+        wdSetSolidBrushColor(hBrush, drawColors[i]);
+        wdDrawRect(hCanvas, hBrush, 0, 0, 50.0f, 50.0f, 3.0f);
+    }
+
+    wdResetWorld(hCanvas);
+
+    for(i = 0; i < 3; i++) {
+        float x = 200.0f;
+        float y = 30.0f;
+
+        wdRotateWorld(hCanvas, x + 50.0f, y + 50.0f, 15.0f * i);
 
         wdSetSolidBrushColor(hBrush, drawColors[i]);
         wdDrawRect(hCanvas, hBrush, x, y, x + 100.0f, y + 100.0f, 3.0f);
     }
 
-    for(i = 0; i < 3; i++) {
-        float x = 250.0f + i * 20.0f;
-        float y = 60.0f + i * 20.0f;
+    wdResetWorld(hCanvas);
 
-        wdSetSolidBrushColor(hBrush, fillColors[i]);
-        wdFillCircle(hCanvas, hBrush, x, y, 55.0f);
+    wdTranslateWorld(hCanvas, 350, 30);
+    for(i = 0; i < 3; i++) {
+        WD_MATRIX m;
+        m.m11 = 1.0f + i * 0.2f;
+        m.m12 = 0;
+        m.m21 = 0;
+        m.m22 = 1.0f - i * 0.2f;
+        m.dx = 0;
+        m.dy = 0;
+        wdMultiplyWorldTransform(hCanvas, &m);
 
         wdSetSolidBrushColor(hBrush, drawColors[i]);
-        wdDrawCircle(hCanvas, hBrush, x, y, 55.0f, 3.0f);
-    }
-
-    for(i = 0; i < 3; i++) {
-        float x = 360.0f + i * 20.0f;
-        float y = 60.0f + i * 20.0f;
-
-        WD_HPATH hPath = wdCreatePath(hCanvas);
-        WD_PATHSINK sink;
-        wdOpenPathSink(&sink, hPath);
-        wdBeginFigure(&sink, x, y);
-        wdAddBezier(&sink, x + 50, y - 80, x + 80, y + 80, x + 120, y);
-        wdEndFigure(&sink, FALSE);
-        wdClosePathSink(&sink);
-
-        wdSetSolidBrushColor(hBrush, fillColors[i]);
-        wdFillPath(hCanvas, hBrush, hPath);
-
-        wdSetSolidBrushColor(hBrush, drawColors[i]);
-        wdDrawPath(hCanvas, hBrush, hPath, 3.0f);
-
-        wdDestroyPath(hPath);
+        wdDrawRect(hCanvas, hBrush, 0, 0, 100.0f, 100.0f, 3.0f);
     }
 
     wdDestroyBrush(hBrush);

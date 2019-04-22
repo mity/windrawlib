@@ -467,13 +467,12 @@ wdTranslateWorld(WD_HCANVAS hCanvas, float dx, float dy)
 }
 
 void
-wdSetWorldTransform(WD_HCANVAS hCanvas, const WD_MATRIX* pMatrix)
+wdMultiplyWorldTransform(WD_HCANVAS hCanvas, const WD_MATRIX* pMatrix)
 {
     if(pMatrix == NULL) {
         WD_TRACE("wdSetWorldTransform: Invalid pMatrix");
         return;
     }
-    wdResetWorld(hCanvas);
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
 
@@ -498,7 +497,7 @@ wdSetWorldTransform(WD_HCANVAS hCanvas, const WD_MATRIX* pMatrix)
             WD_TRACE_ERR_("wdSetWorldTransform: GdpiCreateMatrix2() failed", status);
             return;
         }
-        status = gdix_vtable->fn_MultiplyWorldTransform(c->graphics, matrix, dummy_MatrixOrderAppend);
+        status = gdix_vtable->fn_MultiplyWorldTransform(c->graphics, matrix, dummy_MatrixOrderPrepend);
         if(status != 0) {
             WD_TRACE_ERR_("wdSetWorldTransform: MultiplyWorldTransform() failed", status);
             gdix_delete_matrix(matrix);

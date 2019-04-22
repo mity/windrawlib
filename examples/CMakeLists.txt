@@ -35,6 +35,9 @@ target_link_libraries("draw-string" "windrawlib")
 add_executable("draw-styled" WIN32 "draw-styled.c")
 target_link_libraries("draw-styled" "windrawlib")
 
+add_executable("draw-transform" WIN32 "draw-transform.c")
+target_link_libraries("draw-transform" "windrawlib")
+
 add_executable("image-from-buffer" WIN32 "image-from-buffer.c" "image-from-buffer.h" "image-from-buffer.rc")
 target_link_libraries("image-from-buffer" "windrawlib")
 
