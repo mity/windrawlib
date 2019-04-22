@@ -467,7 +467,7 @@ wdTranslateWorld(WD_HCANVAS hCanvas, float dx, float dy)
 }
 
 void
-wdMultiplyWorldTransform(WD_HCANVAS hCanvas, const WD_MATRIX* pMatrix)
+wdTransformWorld(WD_HCANVAS hCanvas, const WD_MATRIX* pMatrix)
 {
     if(pMatrix == NULL) {
         WD_TRACE("wdSetWorldTransform: Invalid pMatrix");

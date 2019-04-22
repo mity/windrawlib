@@ -261,7 +261,7 @@ void wdSetClip(WD_HCANVAS hCanvas, const WD_RECT* pRect, const WD_HPATH hPath);
  */
 void wdRotateWorld(WD_HCANVAS hCanvas, float cx, float cy, float fAngle);
 void wdTranslateWorld(WD_HCANVAS hCanvas, float dx, float dy);
-void wdMultiplyWorldTransform(WD_HCANVAS hCanvas, const WD_MATRIX* pMatrix);
+void wdTransformWorld(WD_HCANVAS hCanvas, const WD_MATRIX* pMatrix);
 void wdResetWorld(WD_HCANVAS hCanvas);
 
 

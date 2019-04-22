@@ -56,7 +56,7 @@ MainWinPaintToCanvas(WD_HCANVAS hCanvas)
         m.m22 = 1.0f - i * 0.2f;
         m.dx = 0;
         m.dy = 0;
-        wdMultiplyWorldTransform(hCanvas, &m);
+        wdTransformWorld(hCanvas, &m);
 
         wdSetSolidBrushColor(hBrush, drawColors[i]);
         wdDrawRect(hCanvas, hBrush, 0, 0, 100.0f, 100.0f, 3.0f);
