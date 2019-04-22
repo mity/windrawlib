@@ -163,6 +163,14 @@ enum dummy_GpDashStyle_tag {
   dummy_DashStyleCustom = 5
 };
 
+typedef enum dummy_GpWrapMode_tag dummy_GpWrapMode;
+enum dummy_GpWrapMode_tag {
+  dummy_WrapModeTile = 0,
+  dummy_WrapModeTileFlipX = 1,
+  dummy_WrapModeTileFlipY = 2,
+  dummy_WrapModeTileFlipXY = 3,
+  dummy_WrapModeClamp = 4
+};
 
 /***************************
  ***  Helper Structures  ***
@@ -226,6 +234,7 @@ typedef struct dummy_GpMatrix_tag       dummy_GpMatrix;
 /* These are "derived" from the types aboves (more specialized). */
 typedef struct dummy_GpImage_tag        dummy_GpBitmap;
 typedef struct dummy_GpBrush_tag        dummy_GpSolidFill;
+typedef struct dummy_GpBrush_tag        dummy_GpLineGradient;
 
 
 #endif  /* DUMMY_GDIPLUS_H */

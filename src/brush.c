@@ -82,3 +82,29 @@ wdSetSolidBrushColor(WD_HBRUSH hBrush, WD_COLOR color)
         gdix_vtable->fn_SetSolidFillColor(b, (dummy_ARGB) color);
     }
 }
+
+WD_HBRUSH
+wdCreateLinearGradientBrush(WD_HCANVAS hCanvas, const WD_POINT* p0, const WD_POINT* p1, const WD_COLOR* colors, const float* offsets, UINT stopCount)
+{
+    if(d2d_enabled()) {
+    } else {
+        int status;
+        WD_COLOR color0 = colors[0];
+        WD_COLOR color1 = colors[stopCount - 1];
+        dummy_GpLineGradient* grad;
+        status = gdix_vtable->fn_CreateLineBrush((const dummy_GpPointF*)p0, (const dummy_GpPointF*)p1, color0, color1, dummy_WrapModeTile, &grad);
+        if(status != 0) {
+            WD_TRACE("wdCreateLinearGradientBrush: "
+                     "GdipCreateLineBrush() failed. [%d]", status);
+            return NULL;
+        }
+        status = gdix_vtable->fn_SetLinePresetBlend(grad, colors, offsets, stopCount);
+        if(status != 0) {
+            WD_TRACE("wdCreateLinearGradientBrush: "
+                     "GdipSetLinePresetBlend() failed. [%d]", status);
+            return NULL;
+        }
+        return (WD_HBRUSH)grad;
+    }
+    return NULL;
+}
