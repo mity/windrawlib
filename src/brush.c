@@ -86,7 +86,41 @@ wdSetSolidBrushColor(WD_HBRUSH hBrush, WD_COLOR color)
 WD_HBRUSH
 wdCreateLinearGradientBrush(WD_HCANVAS hCanvas, const WD_POINT* p0, const WD_POINT* p1, const WD_COLOR* colors, const float* offsets, UINT stopCount)
 {
+    if(stopCount < 2)
+        return NULL;
     if(d2d_enabled()) {
+        d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
+
+        HRESULT hr;
+        dummy_ID2D1GradientStopCollection* collection;
+        dummy_ID2D1LinearGradientBrush* b;
+        // TODO: allocate memory dynamically
+        dummy_D2D1_GRADIENT_STOP stops[100];
+        dummy_D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES gradientProperties;
+
+        for (UINT i = 0; i < stopCount; i++)
+        {
+            d2d_init_color(&stops[i].color, colors[i]);
+            stops[i].position = offsets[i];
+        }
+        hr = dummy_ID2D1RenderTarget_CreateGradientStopCollection(c->target, stops, stopCount, dummy_D2D1_GAMMA_2_2, D2D1_EXTEND_MODE_CLAMP, &collection);
+        if(FAILED(hr)) {
+            WD_TRACE_HR("wdCreateLinearGradientBrush: "
+                        "ID2D1RenderTarget::CreateGradientStopCollection() failed.");
+            return NULL;
+        }
+        gradientProperties.startPoint.x = p0->x;
+        gradientProperties.startPoint.x = p0->x;
+        gradientProperties.endPoint.x = p1->y;
+        gradientProperties.endPoint.x = p1->y;
+        hr = dummy_ID2D1RenderTarget_CreateLinearGradientBrush(c->target, &gradientProperties, NULL, collection, &b);
+        if(FAILED(hr)) {
+            WD_TRACE_HR("wdCreateLinearGradientBrush: "
+                        "ID2D1RenderTarget::CreateLinearGradientBrush() failed.");
+            return NULL;
+        }
+        dummy_ID2D1GradientStopCollection_Release(collection);
+        return (WD_HBRUSH) b;
     } else {
         int status;
         WD_COLOR color0 = colors[0];
