@@ -20,8 +20,6 @@ MainWinPaintToCanvas(WD_HCANVAS hCanvas)
 
     wdBeginPaint(hCanvas);
     wdClear(hCanvas, WD_RGB(255,255,255));
-    wdBeginPaint(hCanvas);
-    wdClear(hCanvas, WD_RGB(255,255,255));
 
     for(i = 0; i < 3; i++) {
         float x = 10.0f + i * 20.0f;

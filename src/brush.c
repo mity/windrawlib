@@ -95,8 +95,7 @@ wdCreateLinearGradientBrushEx(WD_HCANVAS hCanvas, float x0, float y0, float x1, 
         HRESULT hr;
         dummy_ID2D1GradientStopCollection* collection;
         dummy_ID2D1LinearGradientBrush* b;
-        // TODO: allocate memory dynamically
-        dummy_D2D1_GRADIENT_STOP stops[100];
+        dummy_D2D1_GRADIENT_STOP* stops = (dummy_D2D1_GRADIENT_STOP*)malloc(numStops * sizeof(dummy_D2D1_GRADIENT_STOP));
         dummy_D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES gradientProperties;
 
         for (UINT i = 0; i < numStops; i++)
@@ -108,6 +107,7 @@ wdCreateLinearGradientBrushEx(WD_HCANVAS hCanvas, float x0, float y0, float x1, 
         if(FAILED(hr)) {
             WD_TRACE_HR("wdCreateLinearGradientBrushEx: "
                         "ID2D1RenderTarget::CreateGradientStopCollection() failed.");
+            free(stops);
             return NULL;
         }
         gradientProperties.startPoint.x = x0;
@@ -116,6 +116,7 @@ wdCreateLinearGradientBrushEx(WD_HCANVAS hCanvas, float x0, float y0, float x1, 
         gradientProperties.endPoint.y = y1;
         hr = dummy_ID2D1RenderTarget_CreateLinearGradientBrush(c->target, &gradientProperties, NULL, collection, &b);
         dummy_ID2D1GradientStopCollection_Release(collection);
+		free(stops);
         if(FAILED(hr)) {
             WD_TRACE_HR("wdCreateLinearGradientBrushEx: "
                         "ID2D1RenderTarget::CreateLinearGradientBrush() failed.");
