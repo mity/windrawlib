@@ -23,11 +23,11 @@ endif()
 add_executable("cached-image" WIN32 "cached-image.c" "cached-image.rc")
 target_link_libraries("cached-image" "windrawlib")
 
-add_executable("draw-brush" WIN32 "draw-brush.c")
-target_link_libraries("draw-brush" "windrawlib")
-
 add_executable("draw-cached" WIN32 "draw-cached.c")
 target_link_libraries("draw-cached" "windrawlib")
+
+add_executable("draw-gradient" WIN32 "draw-gradient.c")
+target_link_libraries("draw-gradient" "windrawlib")
 
 add_executable("draw-simple" WIN32 "draw-simple.c")
 target_link_libraries("draw-simple" "windrawlib")
