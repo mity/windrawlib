@@ -1058,11 +1058,11 @@ struct dummy_ID2D1LinearGradientBrushVtbl_tag {
     STDMETHOD(dummy_GetTransform)(void);
 
     /* ID2D1LinearGradientBrushBrush methods */
+    STDMETHOD(dummy_SetStartPoint)(void);
+    STDMETHOD(dummy_SetEndPoint)(void);
+    STDMETHOD(dummy_GetStartPoint)(void);
     STDMETHOD(dummy_GetEndPoint)(void);
     STDMETHOD(dummy_GetGradientStopCollection)(void);
-    STDMETHOD(dummy_GetStartPoint)(void);
-    STDMETHOD(dummy_SetEndPoint)(void);
-    STDMETHOD(dummy_SetStartPoint)(void);
 };
 
 struct dummy_ID2D1LinearGradientBrush_tag {
@@ -1089,10 +1089,10 @@ struct dummy_ID2D1GradientStopCollectionVtbl_tag {
     STDMETHOD(dummy_GetFactory)(void);
 
     /* ID2D1GradientStopCollection methods */
-    STDMETHOD(dummy_GetColorInterpolationGamma)(void);
-    STDMETHOD(dummy_GetExtendMode)(void);
     STDMETHOD(dummy_GetGradientStopCount)(void);
     STDMETHOD(dummy_GetGradientStops)(void);
+    STDMETHOD(dummy_GetColorInterpolationGamma)(void);
+    STDMETHOD(dummy_GetExtendMode)(void);
 };
 
 struct dummy_ID2D1GradientStopCollection_tag {
