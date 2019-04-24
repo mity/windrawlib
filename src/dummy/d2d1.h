@@ -187,10 +187,10 @@ enum dummy_D2D1_GAMMA_tag {
 
 typedef enum dummy_D2D1_EXTEND_MODE_tag dummy_D2D1_EXTEND_MODE;
 enum dummy_D2D1_EXTEND_MODE_tag {
-  D2D1_EXTEND_MODE_CLAMP = 0,
-  D2D1_EXTEND_MODE_WRAP = 1,
-  D2D1_EXTEND_MODE_MIRROR = 2,
-  D2D1_EXTEND_MODE_FORCE_DWORD = 3
+  dummy_D2D1_EXTEND_MODE_CLAMP = 0,
+  dummy_D2D1_EXTEND_MODE_WRAP = 1,
+  dummy_D2D1_EXTEND_MODE_MIRROR = 2,
+  dummy_D2D1_EXTEND_MODE_FORCE_DWORD = 3
 };
 
 /*************************
@@ -198,7 +198,7 @@ enum dummy_D2D1_EXTEND_MODE_tag {
  *************************/
 
 typedef struct dummy_D2D1_BITMAP_PROPERTIES_tag                 dummy_D2D1_BITMAP_PROPERTIES;
-typedef struct dummy_D2D1_BRUSH_PROPERTIES_PROPERTIES_tag       dummy_D2D1_BRUSH_PROPERTIES;
+typedef struct dummy_D2D1_BRUSH_PROPERTIES_tag       dummy_D2D1_BRUSH_PROPERTIES;
 typedef D2D_COLOR_F                                             dummy_D2D1_COLOR_F;
 typedef struct D2D_MATRIX_3X2_F                                 dummy_D2D1_MATRIX_3X2_F;
 typedef struct D2D_POINT_2F                                     dummy_D2D1_POINT_2F;

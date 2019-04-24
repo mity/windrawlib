@@ -84,9 +84,10 @@ wdSetSolidBrushColor(WD_HBRUSH hBrush, WD_COLOR color)
 }
 
 WD_HBRUSH
-wdCreateLinearGradientBrush(WD_HCANVAS hCanvas, const WD_POINT* p0, const WD_POINT* p1, const WD_COLOR* colors, const float* offsets, UINT stopCount)
+wdCreateLinearGradientBrushEx(WD_HCANVAS hCanvas, float x0, float y0, float x1, float y1,
+    const WD_COLOR* colors, const float* offsets, UINT numStops)
 {
-    if(stopCount < 2)
+    if(numStops < 2)
         return NULL;
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
@@ -98,25 +99,25 @@ wdCreateLinearGradientBrush(WD_HCANVAS hCanvas, const WD_POINT* p0, const WD_POI
         dummy_D2D1_GRADIENT_STOP stops[100];
         dummy_D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES gradientProperties;
 
-        for (UINT i = 0; i < stopCount; i++)
+        for (UINT i = 0; i < numStops; i++)
         {
             d2d_init_color(&stops[i].color, colors[i]);
             stops[i].position = offsets[i];
         }
-        hr = dummy_ID2D1RenderTarget_CreateGradientStopCollection(c->target, stops, stopCount, dummy_D2D1_GAMMA_2_2, D2D1_EXTEND_MODE_CLAMP, &collection);
+        hr = dummy_ID2D1RenderTarget_CreateGradientStopCollection(c->target, stops, numStops, dummy_D2D1_GAMMA_2_2, dummy_D2D1_EXTEND_MODE_CLAMP, &collection);
         if(FAILED(hr)) {
-            WD_TRACE_HR("wdCreateLinearGradientBrush: "
+            WD_TRACE_HR("wdCreateLinearGradientBrushEx: "
                         "ID2D1RenderTarget::CreateGradientStopCollection() failed.");
             return NULL;
         }
-        gradientProperties.startPoint.x = p0->x;
-        gradientProperties.startPoint.y = p0->y;
-        gradientProperties.endPoint.x = p1->x;
-        gradientProperties.endPoint.y = p1->y;
+        gradientProperties.startPoint.x = x0;
+        gradientProperties.startPoint.y = y0;
+        gradientProperties.endPoint.x = x1;
+        gradientProperties.endPoint.y = y1;
         hr = dummy_ID2D1RenderTarget_CreateLinearGradientBrush(c->target, &gradientProperties, NULL, collection, &b);
         dummy_ID2D1GradientStopCollection_Release(collection);
         if(FAILED(hr)) {
-            WD_TRACE_HR("wdCreateLinearGradientBrush: "
+            WD_TRACE_HR("wdCreateLinearGradientBrushEx: "
                         "ID2D1RenderTarget::CreateLinearGradientBrush() failed.");
             return NULL;
         }
@@ -124,21 +125,36 @@ wdCreateLinearGradientBrush(WD_HCANVAS hCanvas, const WD_POINT* p0, const WD_POI
     } else {
         int status;
         WD_COLOR color0 = colors[0];
-        WD_COLOR color1 = colors[stopCount - 1];
+        WD_COLOR color1 = colors[numStops - 1];
         dummy_GpLineGradient* grad;
-        status = gdix_vtable->fn_CreateLineBrush((const dummy_GpPointF*)p0, (const dummy_GpPointF*)p1, color0, color1, dummy_WrapModeTile, &grad);
+        dummy_GpPointF p0;
+        dummy_GpPointF p1;
+        p0.x = x0;
+        p0.y = y0;
+        p1.x = x1;
+        p1.y = y1;
+        status = gdix_vtable->fn_CreateLineBrush(&p0, &p1, color0, color1, dummy_WrapModeTile, &grad);
         if(status != 0) {
-            WD_TRACE("wdCreateLinearGradientBrush: "
+            WD_TRACE("wdCreateLinearGradientBrushEx: "
                      "GdipCreateLineBrush() failed. [%d]", status);
             return NULL;
         }
-        status = gdix_vtable->fn_SetLinePresetBlend(grad, colors, offsets, stopCount);
+        status = gdix_vtable->fn_SetLinePresetBlend(grad, colors, offsets, numStops);
         if(status != 0) {
-            WD_TRACE("wdCreateLinearGradientBrush: "
+            WD_TRACE("wdCreateLinearGradientBrushEx: "
                      "GdipSetLinePresetBlend() failed. [%d]", status);
             return NULL;
         }
         return (WD_HBRUSH)grad;
     }
     return NULL;
+}
+
+WD_HBRUSH
+wdCreateLinearGradientBrush(WD_HCANVAS hCanvas, float x0, float y0,
+    WD_COLOR color0, float x1, float y1, WD_COLOR color1)
+{
+     WD_COLOR colors[] = { color0, color1 };
+     float offsets[] = { 0.0f, 1.0f };
+     return wdCreateLinearGradientBrushEx(hCanvas, x0, y0, x1, y1, colors, offsets, 2);
 }
