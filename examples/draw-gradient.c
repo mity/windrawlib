@@ -8,7 +8,7 @@
 static HWND hwndMain = NULL;
 
 
-static const WD_COLOR brushColors[3] =
+static const WD_COLOR stopColors[3] =
         { WD_RGB(255,0,0), WD_RGB(0,255,0), WD_RGB(0,0,255) };
 static float stopOffsets[3] = { 0, 0.5f, 1.0f };
 
@@ -26,7 +26,7 @@ MainWinPaintToCanvas(WD_HCANVAS hCanvas)
         float y = 10.0f + i * 20.0f;
 
         hBrush = wdCreateLinearGradientBrushEx(hCanvas, x, y, x + 100.0f, y + 100.0f,
-                    brushColors, stopOffsets, 3);
+                    stopColors, stopOffsets, 3);
         wdFillRect(hCanvas, hBrush, x, y, x + 100.0f, y + 100.0f);
 
         wdDestroyBrush(hBrush);
