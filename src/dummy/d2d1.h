@@ -62,6 +62,8 @@ typedef struct dummy_ID2D1Layer_tag                     dummy_ID2D1Layer;
 typedef struct dummy_ID2D1PathGeometry_tag              dummy_ID2D1PathGeometry;
 typedef struct dummy_ID2D1RenderTarget_tag              dummy_ID2D1RenderTarget;
 typedef struct dummy_ID2D1SolidColorBrush_tag           dummy_ID2D1SolidColorBrush;
+typedef struct dummy_ID2D1LinearGradientBrush_tag       dummy_ID2D1LinearGradientBrush;
+typedef struct dummy_ID2D1GradientStopCollection_tag    dummy_ID2D1GradientStopCollection;
 
 
 /*****************************
@@ -176,12 +178,27 @@ enum dummy_D2D1_LINE_JOIN_tag {
   dummy_D2D1_LINE_JOIN_ROUND = 2
 };
 
+typedef enum dummy_D2D1_GAMMA_tag dummy_D2D1_GAMMA;
+enum dummy_D2D1_GAMMA_tag {
+  dummy_D2D1_GAMMA_2_2 = 0,
+  dummy_D2D1_GAMMA_1_0 = 1,
+  dummy_D2D1_GAMMA_FORCE_DWORD = 2
+};
+
+typedef enum dummy_D2D1_EXTEND_MODE_tag dummy_D2D1_EXTEND_MODE;
+enum dummy_D2D1_EXTEND_MODE_tag {
+  dummy_D2D1_EXTEND_MODE_CLAMP = 0,
+  dummy_D2D1_EXTEND_MODE_WRAP = 1,
+  dummy_D2D1_EXTEND_MODE_MIRROR = 2,
+  dummy_D2D1_EXTEND_MODE_FORCE_DWORD = 3
+};
 
 /*************************
  ***  Helper Typedefs  ***
  *************************/
 
 typedef struct dummy_D2D1_BITMAP_PROPERTIES_tag dummy_D2D1_BITMAP_PROPERTIES;
+typedef struct dummy_D2D1_BRUSH_PROPERTIES_tag  dummy_D2D1_BRUSH_PROPERTIES;
 typedef D2D_COLOR_F                             dummy_D2D1_COLOR_F;
 typedef struct D2D_MATRIX_3X2_F                 dummy_D2D1_MATRIX_3X2_F;
 typedef struct D2D_POINT_2F                     dummy_D2D1_POINT_2F;
@@ -193,6 +210,18 @@ typedef struct D2D_SIZE_U                       dummy_D2D1_SIZE_U;
 /***************************
  ***  Helper Structures  ***
  ***************************/
+
+typedef struct dummy_D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES_tag dummy_D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES;
+struct dummy_D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES_tag {
+    dummy_D2D1_POINT_2F startPoint;
+    dummy_D2D1_POINT_2F endPoint;
+};
+
+typedef struct dummy_D2D1_GRADIENT_STOP_tag dummy_D2D1_GRADIENT_STOP;
+struct dummy_D2D1_GRADIENT_STOP_tag {
+    FLOAT position;
+    dummy_D2D1_COLOR_F color;
+};
 
 typedef struct dummy_D2D1_ARC_SEGMENT_tag dummy_D2D1_ARC_SEGMENT;
 struct dummy_D2D1_ARC_SEGMENT_tag {
@@ -888,8 +917,8 @@ struct dummy_ID2D1RenderTargetVtbl_tag {
     STDMETHOD(dummy_CreateSharedBitmap)(void);
     STDMETHOD(dummy_CreateBitmapBrush)(void);
     STDMETHOD(CreateSolidColorBrush)(dummy_ID2D1RenderTarget*, const dummy_D2D1_COLOR_F*, const void*, dummy_ID2D1SolidColorBrush**);
-    STDMETHOD(dummy_CreateGradientStopCollection)(void);
-    STDMETHOD(dummy_CreateLinearGradientBrush)(void);
+    STDMETHOD(CreateGradientStopCollection)(dummy_ID2D1RenderTarget*, const dummy_D2D1_GRADIENT_STOP*, UINT32, dummy_D2D1_GAMMA, dummy_D2D1_EXTEND_MODE, dummy_ID2D1GradientStopCollection**);
+    STDMETHOD(CreateLinearGradientBrush)(dummy_ID2D1RenderTarget*, const dummy_D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES*, const dummy_D2D1_BRUSH_PROPERTIES*, dummy_ID2D1GradientStopCollection*, dummy_ID2D1LinearGradientBrush**);
     STDMETHOD(dummy_CreateRadialGradientBrush)(void);
     STDMETHOD(dummy_CreateCompatibleRenderTarget)(void);
     STDMETHOD(CreateLayer)(dummy_ID2D1RenderTarget*, const dummy_D2D1_SIZE_F*, dummy_ID2D1Layer**);
@@ -948,6 +977,8 @@ struct dummy_ID2D1RenderTarget_tag {
 #define dummy_ID2D1RenderTarget_Release(self)                           (self)->vtbl->Release(self)
 #define dummy_ID2D1RenderTarget_CreateBitmapFromWicBitmap(self,a,b,c)   (self)->vtbl->CreateBitmapFromWicBitmap(self,a,b,c)
 #define dummy_ID2D1RenderTarget_CreateSolidColorBrush(self,a,b,c)       (self)->vtbl->CreateSolidColorBrush(self,a,b,c)
+#define dummy_ID2D1RenderTarget_CreateLinearGradientBrush(self,a,b,c,d) (self)->vtbl->CreateLinearGradientBrush(self,a,b,c,d)
+#define dummy_ID2D1RenderTarget_CreateGradientStopCollection(self,a,b,c,d,e) (self)->vtbl->CreateGradientStopCollection(self,a,b,c,d,e)
 #define dummy_ID2D1RenderTarget_CreateLayer(self,a,b)                   (self)->vtbl->CreateLayer(self,a,b)
 #define dummy_ID2D1RenderTarget_DrawLine(self,a,b,c,d,e)                (self)->vtbl->DrawLine(self,a,b,c,d,e)
 #define dummy_ID2D1RenderTarget_DrawRectangle(self,a,b,c,d)             (self)->vtbl->DrawRectangle(self,a,b,c,d)
@@ -1005,5 +1036,71 @@ struct dummy_ID2D1SolidColorBrush_tag {
 #define dummy_ID2D1SolidColorBrush_Release(self)                (self)->vtbl->Release(self)
 #define dummy_ID2D1SolidColorBrush_SetColor(self,a)             (self)->vtbl->SetColor(self,a)
 
+
+/*********************************************
+ ***  Interface ID2D1LinearGradientBrush   ***
+ *********************************************/
+
+typedef struct dummy_ID2D1LinearGradientBrushVtbl_tag dummy_ID2D1LinearGradientBrushVtbl;
+struct dummy_ID2D1LinearGradientBrushVtbl_tag {
+    /* IUnknown methods */
+    STDMETHOD(QueryInterface)(dummy_ID2D1LinearGradientBrush*, REFIID, void**);
+    STDMETHOD_(ULONG, AddRef)(dummy_ID2D1LinearGradientBrush*);
+    STDMETHOD_(ULONG, Release)(dummy_ID2D1LinearGradientBrush*);
+
+    /* ID2D1Resource methods */
+    STDMETHOD(dummy_GetFactory)(void);
+
+    /* ID2D1Brush methods */
+    STDMETHOD(dummy_SetOpacity)(void);
+    STDMETHOD(dummy_SetTransform)(void);
+    STDMETHOD(dummy_GetOpacity)(void);
+    STDMETHOD(dummy_GetTransform)(void);
+
+    /* ID2D1LinearGradientBrushBrush methods */
+    STDMETHOD(dummy_SetStartPoint)(void);
+    STDMETHOD(dummy_SetEndPoint)(void);
+    STDMETHOD(dummy_GetStartPoint)(void);
+    STDMETHOD(dummy_GetEndPoint)(void);
+    STDMETHOD(dummy_GetGradientStopCollection)(void);
+};
+
+struct dummy_ID2D1LinearGradientBrush_tag {
+    dummy_ID2D1LinearGradientBrushVtbl* vtbl;
+};
+
+#define dummy_ID2D1LinearGradientBrush_QueryInterface(self,a,b)     (self)->vtbl->QueryInterface(self,a,b)
+#define dummy_ID2D1LinearGradientBrush_AddRef(self)                 (self)->vtbl->AddRef(self)
+#define dummy_ID2D1LinearGradientBrush_Release(self)                (self)->vtbl->Release(self)
+
+
+/************************************************
+ ***  Interface ID2D1GradientStopCollection   ***
+ ************************************************/
+
+typedef struct dummy_ID2D1GradientStopCollectionVtbl_tag dummy_ID2D1GradientStopCollectionVtbl;
+struct dummy_ID2D1GradientStopCollectionVtbl_tag {
+    /* IUnknown methods */
+    STDMETHOD(QueryInterface)(dummy_ID2D1GradientStopCollection*, REFIID, void**);
+    STDMETHOD_(ULONG, AddRef)(dummy_ID2D1GradientStopCollection*);
+    STDMETHOD_(ULONG, Release)(dummy_ID2D1GradientStopCollection*);
+
+    /* ID2D1Resource methods */
+    STDMETHOD(dummy_GetFactory)(void);
+
+    /* ID2D1GradientStopCollection methods */
+    STDMETHOD(dummy_GetGradientStopCount)(void);
+    STDMETHOD(dummy_GetGradientStops)(void);
+    STDMETHOD(dummy_GetColorInterpolationGamma)(void);
+    STDMETHOD(dummy_GetExtendMode)(void);
+};
+
+struct dummy_ID2D1GradientStopCollection_tag {
+    dummy_ID2D1GradientStopCollectionVtbl* vtbl;
+};
+
+#define dummy_ID2D1GradientStopCollection_QueryInterface(self,a,b)     (self)->vtbl->QueryInterface(self,a,b)
+#define dummy_ID2D1GradientStopCollection_AddRef(self)                 (self)->vtbl->AddRef(self)
+#define dummy_ID2D1GradientStopCollection_Release(self)                (self)->vtbl->Release(self)
 
 #endif  /* DUMMY_D2D1_H */
