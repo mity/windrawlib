@@ -110,13 +110,14 @@ wdCreateLinearGradientBrush(WD_HCANVAS hCanvas, const WD_POINT* p0, const WD_POI
             return NULL;
         }
         gradientProperties.startPoint.x = p0->x;
-        gradientProperties.startPoint.x = p0->x;
-        gradientProperties.endPoint.x = p1->y;
-        gradientProperties.endPoint.x = p1->y;
+        gradientProperties.startPoint.y = p0->y;
+        gradientProperties.endPoint.x = p1->x;
+        gradientProperties.endPoint.y = p1->y;
         hr = dummy_ID2D1RenderTarget_CreateLinearGradientBrush(c->target, &gradientProperties, NULL, collection, &b);
         if(FAILED(hr)) {
             WD_TRACE_HR("wdCreateLinearGradientBrush: "
                         "ID2D1RenderTarget::CreateLinearGradientBrush() failed.");
+            dummy_ID2D1GradientStopCollection_Release(collection);
             return NULL;
         }
         dummy_ID2D1GradientStopCollection_Release(collection);
