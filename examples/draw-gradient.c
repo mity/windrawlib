@@ -27,12 +27,6 @@ MainWinPaintToCanvas(WD_HCANVAS hCanvas)
         float x = 10.0f + i * 20.0f;
         float y = 10.0f + i * 20.0f;
 
-        WD_POINT p0;
-        p0.x = x;
-        p0.y = y;
-        WD_POINT p1;
-        p1.x = x + 100.0f;
-        p1.y = y + 100.0f;
         hBrush = wdCreateLinearGradientBrushEx(hCanvas, x, y, x + 100.0f, y + 100.0f,
                     brushColors, stopOffsets, 3);
         wdFillRect(hCanvas, hBrush, x, y, x + 100.0f, y + 100.0f);
