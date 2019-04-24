@@ -197,14 +197,14 @@ enum dummy_D2D1_EXTEND_MODE_tag {
  ***  Helper Typedefs  ***
  *************************/
 
-typedef struct dummy_D2D1_BITMAP_PROPERTIES_tag                 dummy_D2D1_BITMAP_PROPERTIES;
-typedef struct dummy_D2D1_BRUSH_PROPERTIES_tag       dummy_D2D1_BRUSH_PROPERTIES;
-typedef D2D_COLOR_F                                             dummy_D2D1_COLOR_F;
-typedef struct D2D_MATRIX_3X2_F                                 dummy_D2D1_MATRIX_3X2_F;
-typedef struct D2D_POINT_2F                                     dummy_D2D1_POINT_2F;
-typedef struct D2D_RECT_F                                       dummy_D2D1_RECT_F;
-typedef struct D2D_SIZE_F                                       dummy_D2D1_SIZE_F;
-typedef struct D2D_SIZE_U                                       dummy_D2D1_SIZE_U;
+typedef struct dummy_D2D1_BITMAP_PROPERTIES_tag dummy_D2D1_BITMAP_PROPERTIES;
+typedef struct dummy_D2D1_BRUSH_PROPERTIES_tag  dummy_D2D1_BRUSH_PROPERTIES;
+typedef D2D_COLOR_F                             dummy_D2D1_COLOR_F;
+typedef struct D2D_MATRIX_3X2_F                 dummy_D2D1_MATRIX_3X2_F;
+typedef struct D2D_POINT_2F                     dummy_D2D1_POINT_2F;
+typedef struct D2D_RECT_F                       dummy_D2D1_RECT_F;
+typedef struct D2D_SIZE_F                       dummy_D2D1_SIZE_F;
+typedef struct D2D_SIZE_U                       dummy_D2D1_SIZE_U;
 
 
 /***************************
