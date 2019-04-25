@@ -83,7 +83,10 @@ struct gdix_vtable_tag {
     int (WINAPI* fn_DeleteBrush)(dummy_GpBrush*);
     int (WINAPI* fn_SetSolidFillColor)(dummy_GpSolidFill*, dummy_ARGB);
     int (WINAPI* fn_CreateLineBrush)(const dummy_GpPointF*, const dummy_GpPointF*, dummy_ARGB, dummy_ARGB, dummy_GpWrapMode, dummy_GpLineGradient**);
+    int (WINAPI* fn_CreatePathGradientFromPath)(const dummy_GpPath*, dummy_GpPathGradient**);
     int (WINAPI* fn_SetLinePresetBlend)(dummy_GpLineGradient*, const dummy_ARGB*, const float*, INT);
+    int (WINAPI* fn_SetPathGradientPresetBlend)(dummy_GpPathGradient*, const dummy_ARGB*, const float*, INT);
+    int (WINAPI* fn_SetPathGradientCenterPoint)(dummy_GpPathGradient*, const dummy_GpPointF*);
 
     /* Pen functions */
     int (WINAPI* fn_CreatePen1)(dummy_ARGB, float, dummy_GpUnit, dummy_GpPen**);

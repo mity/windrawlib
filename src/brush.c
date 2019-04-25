@@ -155,7 +155,103 @@ WD_HBRUSH
 wdCreateLinearGradientBrush(WD_HCANVAS hCanvas, float x0, float y0,
     WD_COLOR color0, float x1, float y1, WD_COLOR color1)
 {
-     WD_COLOR colors[] = { color0, color1 };
-     float offsets[] = { 0.0f, 1.0f };
-     return wdCreateLinearGradientBrushEx(hCanvas, x0, y0, x1, y1, colors, offsets, 2);
+    WD_COLOR colors[] = { color0, color1 };
+    float offsets[] = { 0.0f, 1.0f };
+    return wdCreateLinearGradientBrushEx(hCanvas, x0, y0, x1, y1, colors, offsets, 2);
+}
+
+WD_HBRUSH
+wdCreateRadialGradientBrushEx(WD_HCANVAS hCanvas, float cx, float cy, float r,
+    float fx, float fy, const WD_COLOR* colors, const float* offsets, UINT numStops)
+{
+    if(numStops < 2)
+        return NULL;
+    if(d2d_enabled()) {
+        d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
+
+        HRESULT hr;
+        dummy_ID2D1GradientStopCollection* collection;
+        dummy_ID2D1RadialGradientBrush* b;
+        dummy_D2D1_GRADIENT_STOP* stops = (dummy_D2D1_GRADIENT_STOP*)malloc(numStops * sizeof(dummy_D2D1_GRADIENT_STOP));
+        dummy_D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES gradientProperties;
+
+        for (UINT i = 0; i < numStops; i++)
+        {
+            d2d_init_color(&stops[i].color, colors[i]);
+            stops[i].position = offsets[i];
+        }
+        hr = dummy_ID2D1RenderTarget_CreateGradientStopCollection(c->target, stops, numStops, dummy_D2D1_GAMMA_2_2, dummy_D2D1_EXTEND_MODE_CLAMP, &collection);
+        if(FAILED(hr)) {
+            WD_TRACE_HR("wdCreateRadialGradientBrushEx: "
+                        "ID2D1RenderTarget::CreateGradientStopCollection() failed.");
+            free(stops);
+            return NULL;
+        }
+        gradientProperties.center.x = cx;
+        gradientProperties.center.y = cy;
+        gradientProperties.gradientOriginOffset.x = fx - cx;
+        gradientProperties.gradientOriginOffset.y = fy - cy;
+        gradientProperties.radiusX = r;
+        gradientProperties.radiusY = r;
+        hr = dummy_ID2D1RenderTarget_CreateRadialGradientBrush(c->target, &gradientProperties, NULL, collection, &b);
+        dummy_ID2D1GradientStopCollection_Release(collection);
+		free(stops);
+        if(FAILED(hr)) {
+            WD_TRACE_HR("wdCreateRadialGradientBrushEx: "
+                        "ID2D1RenderTarget::CreateRadialGradientBrush() failed.");
+            return NULL;
+        }
+        return (WD_HBRUSH) b;
+    } else {
+        // TODO: Brush currently limited to outer circle bounds.
+        WD_HPATH p;
+        WD_RECT rect;
+        rect.x0 = cx - r;
+        rect.y0 = cy - r;
+        rect.x1 = cx + r;
+        rect.y1 = cy + r;
+        p = wdCreateRoundedRectPath(hCanvas, &rect, r);
+
+        int status;
+        dummy_GpPathGradient* grad;
+        status = gdix_vtable->fn_CreatePathGradientFromPath((void*)p, &grad);
+		wdDestroyPath(p);
+        if(status != 0) {
+            WD_TRACE("wdCreateRadialGradientBrushEx: "
+                     "GdipCreatePathGradientFromPath() failed. [%d]", status);
+            return NULL;
+        }
+        WD_POINT focalPoint[1];
+        focalPoint[0].x = fx;
+        focalPoint[0].y = fy;
+        status = gdix_vtable->fn_SetPathGradientCenterPoint(grad, (dummy_GpPointF*)focalPoint);
+
+        float* reverseStops = (float*)malloc(numStops * sizeof(float));
+        for (UINT i = 0; i < numStops; i++)
+            reverseStops[i] = 1 - offsets[numStops - i - 1];
+
+        WD_COLOR* reverseColors = (WD_COLOR*)malloc(numStops * sizeof(WD_COLOR));
+        for (UINT i = 0; i < numStops; i++)
+            reverseColors[i] = colors[numStops - i - 1];
+
+        status = gdix_vtable->fn_SetPathGradientPresetBlend(grad, reverseColors, reverseStops, numStops);
+        free(reverseStops);
+        free(reverseColors);
+        if(status != 0) {
+            WD_TRACE("wdCreateRadialGradientBrushEx: "
+                     "GdipSetPathGradientPresetBlend() failed. [%d]", status);
+            return NULL;
+        }
+		return (WD_HBRUSH) grad;
+    }
+    return NULL;
+}
+
+WD_HBRUSH
+wdCreateRadialGradientBrush(WD_HCANVAS hCanvas, float cx, float cy, float r,
+    WD_COLOR color0, WD_COLOR color1)
+{
+    WD_COLOR colors[] = { color0, color1 };
+    float offsets[] = { 0.0f, 1.0f };
+    return wdCreateRadialGradientBrushEx(hCanvas, cx, cy, r, cx, cy, colors, offsets, 2);
 }
