@@ -203,6 +203,8 @@ wdCreateRadialGradientBrushEx(WD_HCANVAS hCanvas, float cx, float cy, float r,
         }
         return (WD_HBRUSH) b;
     } else {
+		// TODO: Colors outside of the ellipse can only get faked
+		// with a second brush.
         WD_HPATH p;
         WD_RECT rect;
         rect.x0 = cx - r;
@@ -224,10 +226,6 @@ wdCreateRadialGradientBrushEx(WD_HCANVAS hCanvas, float cx, float cy, float r,
         focalPoint[0].x = fx;
         focalPoint[0].y = fy;
         gdix_vtable->fn_SetPathGradientCenterPoint(grad, (dummy_GpPointF*)focalPoint);
-
-        INT surroundColorsNum = 1;
-        WD_COLOR surroundColors[] = { colors[numStops - 1] };
-        gdix_vtable->fn_SetPathGradientSurroundColorsWithCount(grad, surroundColors, &surroundColorsNum);
 
         float* reverseStops = (float*)malloc(numStops * sizeof(float));
         WD_COLOR* reverseColors = (WD_COLOR*)malloc(numStops * sizeof(WD_COLOR));
