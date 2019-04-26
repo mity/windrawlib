@@ -203,7 +203,6 @@ wdCreateRadialGradientBrushEx(WD_HCANVAS hCanvas, float cx, float cy, float r,
         }
         return (WD_HBRUSH) b;
     } else {
-        // TODO: Brush currently limited to outer circle bounds.
         WD_HPATH p;
         WD_RECT rect;
         rect.x0 = cx - r;
@@ -224,15 +223,18 @@ wdCreateRadialGradientBrushEx(WD_HCANVAS hCanvas, float cx, float cy, float r,
         WD_POINT focalPoint[1];
         focalPoint[0].x = fx;
         focalPoint[0].y = fy;
-        status = gdix_vtable->fn_SetPathGradientCenterPoint(grad, (dummy_GpPointF*)focalPoint);
+        gdix_vtable->fn_SetPathGradientCenterPoint(grad, (dummy_GpPointF*)focalPoint);
+
+        INT surroundColorsNum = 1;
+        WD_COLOR surroundColors[] = { colors[numStops - 1] };
+        gdix_vtable->fn_SetPathGradientSurroundColorsWithCount(grad, surroundColors, &surroundColorsNum);
 
         float* reverseStops = (float*)malloc(numStops * sizeof(float));
-        for (UINT i = 0; i < numStops; i++)
-            reverseStops[i] = 1 - offsets[numStops - i - 1];
-
         WD_COLOR* reverseColors = (WD_COLOR*)malloc(numStops * sizeof(WD_COLOR));
-        for (UINT i = 0; i < numStops; i++)
+        for (UINT i = 0; i < numStops; i++) {
+            reverseStops[i] = 1 - offsets[numStops - i - 1];
             reverseColors[i] = colors[numStops - i - 1];
+        }
 
         status = gdix_vtable->fn_SetPathGradientPresetBlend(grad, reverseColors, reverseStops, numStops);
         free(reverseStops);

@@ -126,6 +126,7 @@ gdix_init(void)
     GPA(SetLinePresetBlend, (dummy_GpLineGradient*, const dummy_ARGB*, const float*, INT));
     GPA(SetPathGradientPresetBlend, (dummy_GpPathGradient*, const dummy_ARGB*, const float*, INT));
     GPA(SetPathGradientCenterPoint, (dummy_GpPathGradient*, const dummy_GpPointF*));
+    GPA(SetPathGradientSurroundColorsWithCount, (dummy_GpPathGradient*, const dummy_ARGB*, INT*));
 
     /* Pen functions */
     GPA(CreatePen1, (DWORD, float, dummy_GpUnit, dummy_GpPen**));
