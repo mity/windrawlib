@@ -21,16 +21,26 @@ MainWinPaintToCanvas(WD_HCANVAS hCanvas)
     wdBeginPaint(hCanvas);
     wdClear(hCanvas, WD_RGB(255,255,255));
 
-    for(i = 0; i < 3; i++) {
-        float x = 10.0f + i * 20.0f;
-        float y = 10.0f + i * 20.0f;
+    hBrush = wdCreateLinearGradientBrushEx(hCanvas, 10.0f, 10.0f, 110.0f, 110.0f,
+                stopColors, stopOffsets, 3);
+    wdFillRect(hCanvas, hBrush, 10.0f, 10.0f, 110.0f, 110.0f);
+    wdDestroyBrush(hBrush);
 
-        hBrush = wdCreateLinearGradientBrushEx(hCanvas, x, y, x + 100.0f, y + 100.0f,
-                    stopColors, stopOffsets, 3);
-        wdFillRect(hCanvas, hBrush, x, y, x + 100.0f, y + 100.0f);
+    hBrush = wdCreateLinearGradientBrush(hCanvas, 130.0f, 10.0f, stopColors[0],
+                230.0f, 110.0f, stopColors[1]);
+    wdFillRect(hCanvas, hBrush, 130.0f, 10.0f, 230.0f, 110.0f);
+    wdDestroyBrush(hBrush);
 
-        wdDestroyBrush(hBrush);
-    }
+    hBrush = wdCreateRadialGradientBrushEx(hCanvas, 60.0f, 170.0f, 50.0f,
+                80.0f, 190.0f, stopColors, stopOffsets, 3);
+    wdFillRect(hCanvas, hBrush, 10.0f, 120.0f, 110.0f, 220.0f);
+    wdDestroyBrush(hBrush);
+
+    hBrush = wdCreateRadialGradientBrush(hCanvas, 180.0f, 170.0f, 50.0f,
+                stopColors[0], stopColors[1]);
+    wdFillRect(hCanvas, hBrush, 130.0f, 120.0f, 230.0f, 220.0f);
+    wdDestroyBrush(hBrush);
+
     wdEndPaint(hCanvas);
 }
 

@@ -340,6 +340,10 @@ WD_HBRUSH wdCreateLinearGradientBrushEx(WD_HCANVAS hCanvas, float x0, float y0,
             float x1, float y1, const WD_COLOR* colors, const float* offsets, UINT numStops);
 WD_HBRUSH wdCreateLinearGradientBrush(WD_HCANVAS hCanvas, float x0, float y0,
             WD_COLOR color0, float x1, float y1, WD_COLOR color1);
+WD_HBRUSH wdCreateRadialGradientBrushEx(WD_HCANVAS hCanvas, float cx, float cy, float r,
+            float fx, float fy, const WD_COLOR* colors, const float* offsets, UINT numStops);
+WD_HBRUSH wdCreateRadialGradientBrush(WD_HCANVAS hCanvas, float cx, float cy, float r,
+            WD_COLOR color0, WD_COLOR color1);
 void wdDestroyBrush(WD_HBRUSH hBrush);
 
 /* Can be only called for brushes created with wdCreateSolidBrush(). */

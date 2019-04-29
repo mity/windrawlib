@@ -235,6 +235,7 @@ typedef struct dummy_GpMatrix_tag       dummy_GpMatrix;
 typedef struct dummy_GpImage_tag        dummy_GpBitmap;
 typedef struct dummy_GpBrush_tag        dummy_GpSolidFill;
 typedef struct dummy_GpBrush_tag        dummy_GpLineGradient;
+typedef struct dummy_GpBrush_tag        dummy_GpPathGradient;
 
 
 #endif  /* DUMMY_GDIPLUS_H */
