@@ -195,7 +195,7 @@ wdCreateRadialGradientBrushEx(WD_HCANVAS hCanvas, float cx, float cy, float r,
         gradientProperties.radiusY = r;
         hr = dummy_ID2D1RenderTarget_CreateRadialGradientBrush(c->target, &gradientProperties, NULL, collection, &b);
         dummy_ID2D1GradientStopCollection_Release(collection);
-		free(stops);
+        free(stops);
         if(FAILED(hr)) {
             WD_TRACE_HR("wdCreateRadialGradientBrushEx: "
                         "ID2D1RenderTarget::CreateRadialGradientBrush() failed.");
@@ -203,8 +203,8 @@ wdCreateRadialGradientBrushEx(WD_HCANVAS hCanvas, float cx, float cy, float r,
         }
         return (WD_HBRUSH) b;
     } else {
-		// TODO: Colors outside of the ellipse can only get faked
-		// with a second brush.
+        // TODO: Colors outside of the ellipse can only get faked
+        // with a second brush.
         WD_HPATH p;
         WD_RECT rect;
         rect.x0 = cx - r;
@@ -216,7 +216,7 @@ wdCreateRadialGradientBrushEx(WD_HCANVAS hCanvas, float cx, float cy, float r,
         int status;
         dummy_GpPathGradient* grad;
         status = gdix_vtable->fn_CreatePathGradientFromPath((void*)p, &grad);
-		wdDestroyPath(p);
+        wdDestroyPath(p);
         if(status != 0) {
             WD_TRACE("wdCreateRadialGradientBrushEx: "
                      "GdipCreatePathGradientFromPath() failed. [%d]", status);
@@ -242,7 +242,7 @@ wdCreateRadialGradientBrushEx(WD_HCANVAS hCanvas, float cx, float cy, float r,
                      "GdipSetPathGradientPresetBlend() failed. [%d]", status);
             return NULL;
         }
-		return (WD_HBRUSH) grad;
+        return (WD_HBRUSH) grad;
     }
     return NULL;
 }
