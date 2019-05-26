@@ -50,7 +50,7 @@ wdCreateFont(const LOGFONTW* pLogFont)
         static WCHAR enus_locale[] = L"en-us";
 
         WCHAR user_locale[LOCALE_NAME_MAX_LENGTH];
-        WCHAR* locales[] = { user_locale, no_locale, enus_locale };
+        WCHAR* locales[3];
         WCHAR default_fontface[LF_FACESIZE];
         dwrite_font_t* font;
         int i;
@@ -62,6 +62,9 @@ wdCreateFont(const LOGFONTW* pLogFont)
         }
 
         dwrite_default_user_locale(user_locale);
+        locales[0] = user_locale;
+        locales[1] = no_locale;
+        locales[2] = enus_locale;
 
         /* Direct 2D seems to not understand "MS Shell Dlg" and "MS Shell Dlg 2"
          * so we skip the attempts to use it. */
