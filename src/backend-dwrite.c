@@ -223,20 +223,24 @@ dwrite_create_text_layout(dummy_IDWriteTextFormat* tf, const WD_RECT* rect,
         return NULL;
     }
 
-    if(flags & WD_STR_RIGHTALIGN)
-        tla = dummy_DWRITE_TEXT_ALIGNMENT_TRAILING;
-    else if(flags & WD_STR_CENTERALIGN)
-        tla = dummy_DWRITE_TEXT_ALIGNMENT_CENTER;
-    else
+    switch(flags & WD_STR_ALIGNMASK) {
+        case WD_STR_LEFTALIGN:      tla = dummy_DWRITE_TEXT_ALIGNMENT_LEADING; break;
+        case WD_STR_CENTERALIGN:    tla = dummy_DWRITE_TEXT_ALIGNMENT_CENTER; break;
+        case WD_STR_RIGHTALIGN:     tla = dummy_DWRITE_TEXT_ALIGNMENT_TRAILING; break;
+        case WD_STR_JUSTIFY:        tla = dummy_DWRITE_TEXT_ALIGNMENT_JUSTIFY; break;
+    }
+    hr = dummy_IDWriteTextLayout_SetTextAlignment(layout, tla);
+    if(FAILED(hr)  &&  tla == dummy_DWRITE_TEXT_ALIGNMENT_JUSTIFY) {
+        /* Older DWrite versions (Windows 7) do not support DWRITE_TEXT_ALIGNMENT_JUSTIFY. */
         tla = dummy_DWRITE_TEXT_ALIGNMENT_LEADING;
-    dummy_IDWriteTextLayout_SetTextAlignment(layout, tla);
+        dummy_IDWriteTextLayout_SetTextAlignment(layout, tla);
+    }
 
-    if(flags & WD_STR_BOTTOMALIGN)
-        tla = dummy_DWRITE_PARAGRAPH_ALIGNMENT_FAR;
-    else if(flags & WD_STR_MIDDLEALIGN)
-        tla = dummy_DWRITE_PARAGRAPH_ALIGNMENT_CENTER;
-    else
-        tla = dummy_DWRITE_PARAGRAPH_ALIGNMENT_NEAR;
+    switch(flags & WD_STR_VALIGNMASK) {
+        case WD_STR_MIDDLEALIGN:    tla = dummy_DWRITE_PARAGRAPH_ALIGNMENT_CENTER; break;
+        case WD_STR_BOTTOMALIGN:    tla = dummy_DWRITE_PARAGRAPH_ALIGNMENT_FAR; break;
+        default:                    tla = dummy_DWRITE_PARAGRAPH_ALIGNMENT_NEAR; break;
+    }
     dummy_IDWriteTextLayout_SetParagraphAlignment(layout, tla);
 
     if(flags & WD_STR_NOWRAP)

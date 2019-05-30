@@ -101,7 +101,8 @@ typedef enum dummy_DWRITE_TEXT_ALIGNMENT_tag dummy_DWRITE_TEXT_ALIGNMENT;
 enum dummy_DWRITE_TEXT_ALIGNMENT_tag {
     dummy_DWRITE_TEXT_ALIGNMENT_LEADING = 0,
     dummy_DWRITE_TEXT_ALIGNMENT_TRAILING,
-    dummy_DWRITE_TEXT_ALIGNMENT_CENTER
+    dummy_DWRITE_TEXT_ALIGNMENT_CENTER,
+    dummy_DWRITE_TEXT_ALIGNMENT_JUSTIFY
 };
 
 typedef enum dummy_DWRITE_PARAGRAPH_ALIGNMENT_tag dummy_DWRITE_PARAGRAPH_ALIGNMENT;
@@ -155,6 +156,12 @@ struct dummy_DWRITE_TEXT_METRICS_tag {
     FLOAT layoutHeight;
     UINT32 maxBidiReorderingDepth;
     UINT32 lineCount;
+};
+
+typedef struct dummy_DWRITE_TEXT_RANGE_tag dummy_DWRITE_TEXT_RANGE;
+struct dummy_DWRITE_TEXT_RANGE_tag {
+    UINT32 startPosition;
+    UINT32 length;
 };
 
 
@@ -508,21 +515,21 @@ struct dummy_IDWriteTextLayoutVtbl_tag {
     STDMETHOD(dummy_GetLocaleName)(void);
 
     /* IDWriteTextLayout methods */
-    STDMETHOD(dummy_SetMaxWidth)(void);
-    STDMETHOD(dummy_SetMaxHeight)(void);
+    STDMETHOD(SetMaxWidth)(dummy_IDWriteTextLayout*, FLOAT);
+    STDMETHOD(SetMaxHeight)(dummy_IDWriteTextLayout*, FLOAT);
     STDMETHOD(dummy_SetFontCollection)(void);
-    STDMETHOD(dummy_SetFontFamilyName)(void);
-    STDMETHOD(dummy_SetFontWeight)(void);
-    STDMETHOD(dummy_SetFontStyle)(void);
+    STDMETHOD(SetFontFamilyName)(dummy_IDWriteTextLayout*, const WCHAR*, dummy_DWRITE_TEXT_RANGE);
+    STDMETHOD(SetFontWeight)(dummy_IDWriteTextLayout*, dummy_DWRITE_FONT_WEIGHT, dummy_DWRITE_TEXT_RANGE);
+    STDMETHOD(SetFontStyle)(dummy_IDWriteTextLayout*, dummy_DWRITE_FONT_STYLE, dummy_DWRITE_TEXT_RANGE);
     STDMETHOD(dummy_SetFontStretch)(void);
-    STDMETHOD(dummy_SetFontSize)(void);
-    STDMETHOD(dummy_SetUnderline)(void);
-    STDMETHOD(dummy_SetStrikethrough)(void);
+    STDMETHOD(SetFontSize)(dummy_IDWriteTextLayout*, FLOAT, dummy_DWRITE_TEXT_RANGE);
+    STDMETHOD(SetUnderline)(dummy_IDWriteTextLayout*, BOOL, dummy_DWRITE_TEXT_RANGE);
+    STDMETHOD(SetStrikethrough)(dummy_IDWriteTextLayout*, BOOL, dummy_DWRITE_TEXT_RANGE);
     STDMETHOD(dummy_SetDrawingEffect)(void);
     STDMETHOD(dummy_SetInlineObject)(void);
     STDMETHOD(dummy_SetTypography)(void);
     STDMETHOD(dummy_SetLocaleName)(void);
-    STDMETHOD(dummy_GetMaxWidth)(void);
+    STDMETHOD_(FLOAT, GetMaxWidth)(dummy_IDWriteTextLayout*);
     STDMETHOD(dummy_GetMaxHeight)(void);
     STDMETHOD(dummy_GetFontCollection2)(void);
     STDMETHOD(dummy_GetFontFamilyNameLength2)(void);
@@ -543,7 +550,7 @@ struct dummy_IDWriteTextLayoutVtbl_tag {
     STDMETHOD(GetMetrics)(dummy_IDWriteTextLayout*, dummy_DWRITE_TEXT_METRICS*);
     STDMETHOD(dummy_GetOverhangMetrics)(void);
     STDMETHOD(dummy_GetClusterMetrics)(void);
-    STDMETHOD(dummy_DetermineMinWidth)(void);
+    STDMETHOD(DetermineMinWidth)(dummy_IDWriteTextLayout*, FLOAT*);
     STDMETHOD(dummy_HitTestPoint)(void);
     STDMETHOD(dummy_HitTestTextPosition)(void);
     STDMETHOD(dummy_HitTestTextRange)(void);
@@ -561,7 +568,17 @@ struct dummy_IDWriteTextLayout_tag {
 #define dummy_IDWriteTextLayout_SetWordWrapping(self,a)         (self)->vtbl->SetWordWrapping(self,a)
 #define dummy_IDWriteTextLayout_SetReadingDirection(self,a)     (self)->vtbl->SetReadingDirection(self,a)
 #define dummy_IDWriteTextLayout_SetTrimming(self,a,b)           (self)->vtbl->SetTrimming(self,a,b)
+#define dummy_IDWriteTextLayout_SetMaxWidth(self,a)             (self)->vtbl->SetMaxWidth(self,a)
+#define dummy_IDWriteTextLayout_SetMaxHeight(self,a)            (self)->vtbl->SetMaxHeight(self,a)
+#define dummy_IDWriteTextLayout_SetFontFamilyName(self,a,b)     (self)->vtbl->SetFontFamilyName(self,a,b)
+#define dummy_IDWriteTextLayout_SetFontWeight(self,a,b)         (self)->vtbl->SetFontWeight(self,a,b)
+#define dummy_IDWriteTextLayout_SetFontStyle(self,a,b)          (self)->vtbl->SetFontStyle(self,a,b)
+#define dummy_IDWriteTextLayout_SetFontSize(self,a,b)           (self)->vtbl->SetFontSize(self,a,b)
+#define dummy_IDWriteTextLayout_SetStrikethrough(self,a,b)      (self)->vtbl->SetStrikethrough(self,a,b)
+#define dummy_IDWriteTextLayout_SetUnderline(self,a,b)          (self)->vtbl->SetUnderline(self,a,b)
+#define dummy_IDWriteTextLayout_GetMaxWidth(self)               (self)->vtbl->GetMaxWidth(self)
 #define dummy_IDWriteTextLayout_GetMetrics(self,a)              (self)->vtbl->GetMetrics(self,a)
+#define dummy_IDWriteTextLayout_DetermineMinWidth(self,a)       (self)->vtbl->DetermineMinWidth(self,a)
 
 
 #endif  /* DUMMY_DWRITE_H */
