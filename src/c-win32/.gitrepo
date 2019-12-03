@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/mity/c-win32
 	branch = master
-	commit = 654ca8254db740f1f3524ddbb6afee423fa5c2ff
-	parent = 7c4ebe91fde6bc122d8d1f2548f4587ed1862677
+	commit = a39403c9a108894d26857a73aec5d88ee4c1ee1a
+	parent = 78f3f6b7b8280426c662977b97e04e1ced05b6a2
 	method = merge
 	cmdver = 0.4.0
