@@ -1,9 +1,9 @@
 
 add_library(windrawlib STATIC
         ${PROJECT_SOURCE_DIR}/include/wdl.h
-        dummy/d2d1.h
-        dummy/dwrite.h
-        dummy/gdiplus.h
+        c-win32/include/c-d2d1.h
+        c-win32/include/c-dwrite.h
+        c-win32/include/c-gdiplus.h
         backend-d2d.c
         backend-d2d.h
         backend-dwrite.c
@@ -33,6 +33,7 @@ add_library(windrawlib STATIC
 
 add_definitions(-DUNICODE -D_UNICODE)
 add_definitions(-D_WIN32_IE=0x0501 -D_WIN32_WINNT=0x0600 -DWINVER=_WIN32_WINNT)
+include_directories(c-win32/include)
 
 # Tell <windows.h> to not include everything. We include what we need anyway
 # and this saves compiler a lot of work in the parsing stage, so compilation

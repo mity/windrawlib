@@ -33,8 +33,8 @@ wdCreateStrokeStyleImpl(UINT dashStyle, const float* dashes, UINT dashesCount, U
 {
     if(d2d_enabled()) {
         HRESULT hr;
-        dummy_D2D1_STROKE_STYLE_PROPERTIES p;
-        dummy_ID2D1StrokeStyle *s;
+        c_D2D1_STROKE_STYLE_PROPERTIES p;
+        c_ID2D1StrokeStyle *s;
 
         p.startCap = lineCap;
         p.endCap = lineCap;
@@ -45,7 +45,7 @@ wdCreateStrokeStyleImpl(UINT dashStyle, const float* dashes, UINT dashesCount, U
         p.dashOffset = 0.0f;
 
         wd_lock();
-        hr = dummy_ID2D1Factory_CreateStrokeStyle(d2d_factory, &p, dashes, dashesCount, &s);
+        hr = c_ID2D1Factory_CreateStrokeStyle(d2d_factory, &p, dashes, dashesCount, &s);
         wd_unlock();
         if (FAILED(hr)) {
             WD_TRACE_HR("wdCreateStrokeStyleImpl: "
@@ -116,7 +116,7 @@ void
 wdDestroyStrokeStyle(WD_HSTROKESTYLE hStrokeStyle)
 {
     if(d2d_enabled()) {
-        dummy_ID2D1StrokeStyle_Release((dummy_ID2D1StrokeStyle*) hStrokeStyle);
+        c_ID2D1StrokeStyle_Release((c_ID2D1StrokeStyle*) hStrokeStyle);
     } else {
         free((gdix_strokestyle_t*) hStrokeStyle);
     }

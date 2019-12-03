@@ -32,10 +32,10 @@ wdCreateCachedImage(WD_HCANVAS hCanvas, WD_HIMAGE hImage)
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1Bitmap* b;
+        c_ID2D1Bitmap* b;
         HRESULT hr;
 
-        hr = dummy_ID2D1RenderTarget_CreateBitmapFromWicBitmap(c->target,
+        hr = c_ID2D1RenderTarget_CreateBitmapFromWicBitmap(c->target,
                 (IWICBitmapSource*) hImage, NULL, &b);
         if(FAILED(hr)) {
             WD_TRACE_HR("wdCreateCachedImage: "
@@ -46,10 +46,10 @@ wdCreateCachedImage(WD_HCANVAS hCanvas, WD_HIMAGE hImage)
         return (WD_HCACHEDIMAGE) b;
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
-        dummy_GpCachedBitmap* cb;
+        c_GpCachedBitmap* cb;
         int status;
 
-        status = gdix_vtable->fn_CreateCachedBitmap((dummy_GpImage*) hImage,
+        status = gdix_vtable->fn_CreateCachedBitmap((c_GpImage*) hImage,
                 c->graphics, &cb);
         if(status != 0) {
             WD_TRACE("wdCreateCachedImage: "
@@ -65,8 +65,8 @@ void
 wdDestroyCachedImage(WD_HCACHEDIMAGE hCachedImage)
 {
     if(d2d_enabled()) {
-        dummy_ID2D1Bitmap_Release((dummy_ID2D1Bitmap*) hCachedImage);
+        c_ID2D1Bitmap_Release((c_ID2D1Bitmap*) hCachedImage);
     } else {
-        gdix_vtable->fn_DeleteCachedBitmap((dummy_GpCachedBitmap*) hCachedImage);
+        gdix_vtable->fn_DeleteCachedBitmap((c_GpCachedBitmap*) hCachedImage);
     }
 }

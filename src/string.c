@@ -35,11 +35,11 @@ wdDrawString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
 {
     if(d2d_enabled()) {
         dwrite_font_t* font = (dwrite_font_t*) hFont;
-        dummy_D2D1_POINT_2F origin = { pRect->x0, pRect->y0 };
+        c_D2D1_POINT_2F origin = { pRect->x0, pRect->y0 };
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
-        dummy_IDWriteTextLayout* layout;
-        dummy_D2D1_MATRIX_3X2_F old_matrix;
+        c_ID2D1Brush* b = (c_ID2D1Brush*) hBrush;
+        c_IDWriteTextLayout* layout;
+        c_D2D1_MATRIX_3X2_F old_matrix;
 
         layout = dwrite_create_text_layout(font->tf, pRect, pszText, iTextLength, dwFlags);
         if(layout == NULL) {
@@ -51,23 +51,23 @@ wdDrawString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
             d2d_disable_rtl_transform(c, &old_matrix);
             origin.x = (float)c->width - pRect->x1;
 
-            dummy_IDWriteTextLayout_SetReadingDirection(layout,
-                    dummy_DWRITE_READING_DIRECTION_RIGHT_TO_LEFT);
+            c_IDWriteTextLayout_SetReadingDirection(layout,
+                    c_DWRITE_READING_DIRECTION_RIGHT_TO_LEFT);
         }
 
-        dummy_ID2D1RenderTarget_DrawTextLayout(c->target, origin, layout, b,
-                (dwFlags & WD_STR_NOCLIP) ? 0 : dummy_D2D1_DRAW_TEXT_OPTIONS_CLIP);
+        c_ID2D1RenderTarget_DrawTextLayout(c->target, origin, layout, b,
+                (dwFlags & WD_STR_NOCLIP) ? 0 : c_D2D1_DRAW_TEXT_OPTIONS_CLIP);
 
-        dummy_IDWriteTextLayout_Release(layout);
+        c_IDWriteTextLayout_Release(layout);
 
         if(c->flags & D2D_CANVASFLAG_RTL) {
-            dummy_ID2D1RenderTarget_SetTransform(c->target, &old_matrix);
+            c_ID2D1RenderTarget_SetTransform(c->target, &old_matrix);
         }
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
-        dummy_GpRectF r;
-        dummy_GpFont* f = (dummy_GpFont*) hFont;
-        dummy_GpBrush* b = (dummy_GpBrush*) hBrush;
+        c_GpRectF r;
+        c_GpFont* f = (c_GpFont*) hFont;
+        c_GpBrush* b = (c_GpBrush*) hBrush;
 
         if(c->rtl) {
             gdix_rtl_transform(c);
@@ -95,8 +95,8 @@ wdMeasureString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
 {
     if(d2d_enabled()) {
         dwrite_font_t* font = (dwrite_font_t*) hFont;
-        dummy_IDWriteTextLayout* layout;
-        dummy_DWRITE_TEXT_METRICS tm;
+        c_IDWriteTextLayout* layout;
+        c_DWRITE_TEXT_METRICS tm;
 
         layout = dwrite_create_text_layout(font->tf, pRect, pszText, iTextLength, dwFlags);
         if(layout == NULL) {
@@ -104,20 +104,20 @@ wdMeasureString(WD_HCANVAS hCanvas, WD_HFONT hFont, const WD_RECT* pRect,
             return;
         }
 
-        dummy_IDWriteTextLayout_GetMetrics(layout, &tm);
+        c_IDWriteTextLayout_GetMetrics(layout, &tm);
 
         pResult->x0 = pRect->x0 + tm.left;
         pResult->y0 = pRect->y0 + tm.top;
         pResult->x1 = pResult->x0 + tm.width;
         pResult->y1 = pResult->y0 + tm.height;
 
-        dummy_IDWriteTextLayout_Release(layout);
+        c_IDWriteTextLayout_Release(layout);
     } else {
         HDC screen_dc;
         gdix_canvas_t* c;
-        dummy_GpRectF r;
-        dummy_GpFont* f = (dummy_GpFont*) hFont;
-        dummy_GpRectF br;
+        c_GpRectF r;
+        c_GpFont* f = (c_GpFont*) hFont;
+        c_GpRectF br;
 
         if(hCanvas != NULL) {
             c = (gdix_canvas_t*) hCanvas;

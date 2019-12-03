@@ -33,9 +33,9 @@ wdDrawEllipseArcStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy,
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
-        dummy_ID2D1Geometry* g;
-        dummy_ID2D1StrokeStyle* s = (dummy_ID2D1StrokeStyle*)hStrokeStyle;
+        c_ID2D1Brush* b = (c_ID2D1Brush*) hBrush;
+        c_ID2D1Geometry* g;
+        c_ID2D1StrokeStyle* s = (c_ID2D1StrokeStyle*)hStrokeStyle;
 
         g = d2d_create_arc_geometry(cx, cy, rx, ry, fBaseAngle, fSweepAngle, FALSE);
         if(g == NULL) {
@@ -43,12 +43,12 @@ wdDrawEllipseArcStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy,
             return;
         }
 
-        dummy_ID2D1RenderTarget_DrawGeometry(c->target, g, b, fStrokeWidth, s);
-        dummy_ID2D1Geometry_Release(g);
+        c_ID2D1RenderTarget_DrawGeometry(c->target, g, b, fStrokeWidth, s);
+        c_ID2D1Geometry_Release(g);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
         gdix_strokestyle_t* s = (gdix_strokestyle_t*)hStrokeStyle;
-        dummy_GpBrush* b = (dummy_GpBrush*)hBrush;
+        c_GpBrush* b = (c_GpBrush*)hBrush;
         float dx = 2.0f * rx;
         float dy = 2.0f * ry;
 
@@ -65,15 +65,15 @@ wdDrawEllipseStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, fl
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
-        dummy_D2D1_ELLIPSE e = { { cx, cy }, rx, ry };
-        dummy_ID2D1StrokeStyle* s = (dummy_ID2D1StrokeStyle*)hStrokeStyle;
+        c_ID2D1Brush* b = (c_ID2D1Brush*) hBrush;
+        c_D2D1_ELLIPSE e = { { cx, cy }, rx, ry };
+        c_ID2D1StrokeStyle* s = (c_ID2D1StrokeStyle*)hStrokeStyle;
 
-        dummy_ID2D1RenderTarget_DrawEllipse(c->target, &e, b, fStrokeWidth, s);
+        c_ID2D1RenderTarget_DrawEllipse(c->target, &e, b, fStrokeWidth, s);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
         gdix_strokestyle_t* s = (gdix_strokestyle_t*)hStrokeStyle;
-        dummy_GpBrush* b = (dummy_GpBrush*)hBrush;
+        c_GpBrush* b = (c_GpBrush*)hBrush;
         float dx = 2.0f * rx;
         float dy = 2.0f * ry;
 
@@ -90,16 +90,16 @@ wdDrawLineStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
-        dummy_D2D1_POINT_2F pt0 = { x0, y0 };
-        dummy_D2D1_POINT_2F pt1 = { x1, y1 };
-        dummy_ID2D1StrokeStyle* s = (dummy_ID2D1StrokeStyle*)hStrokeStyle;
+        c_ID2D1Brush* b = (c_ID2D1Brush*) hBrush;
+        c_D2D1_POINT_2F pt0 = { x0, y0 };
+        c_D2D1_POINT_2F pt1 = { x1, y1 };
+        c_ID2D1StrokeStyle* s = (c_ID2D1StrokeStyle*)hStrokeStyle;
 
-        dummy_ID2D1RenderTarget_DrawLine(c->target, pt0, pt1, b, fStrokeWidth, s);
+        c_ID2D1RenderTarget_DrawLine(c->target, pt0, pt1, b, fStrokeWidth, s);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
         gdix_strokestyle_t* s = (gdix_strokestyle_t*)hStrokeStyle;
-        dummy_GpBrush* b = (dummy_GpBrush*)hBrush;
+        c_GpBrush* b = (c_GpBrush*)hBrush;
 
         gdix_setpen(c->pen, b, fStrokeWidth, s);
 
@@ -113,15 +113,15 @@ wdDrawPathStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_HPATH hPath,
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1Geometry* g = (dummy_ID2D1Geometry*) hPath;
-        dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
-        dummy_ID2D1StrokeStyle* s = (dummy_ID2D1StrokeStyle*)hStrokeStyle;
+        c_ID2D1Geometry* g = (c_ID2D1Geometry*) hPath;
+        c_ID2D1Brush* b = (c_ID2D1Brush*) hBrush;
+        c_ID2D1StrokeStyle* s = (c_ID2D1StrokeStyle*)hStrokeStyle;
 
-        dummy_ID2D1RenderTarget_DrawGeometry(c->target, g, b, fStrokeWidth, s);
+        c_ID2D1RenderTarget_DrawGeometry(c->target, g, b, fStrokeWidth, s);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
         gdix_strokestyle_t* s = (gdix_strokestyle_t*)hStrokeStyle;
-        dummy_GpBrush* b = (dummy_GpBrush*)hBrush;
+        c_GpBrush* b = (c_GpBrush*)hBrush;
 
         gdix_setpen(c->pen, b, fStrokeWidth, s);
 
@@ -135,9 +135,9 @@ wdDrawEllipsePieStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy,
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
-        dummy_ID2D1Geometry* g;
-        dummy_ID2D1StrokeStyle* s = (dummy_ID2D1StrokeStyle*)hStrokeStyle;
+        c_ID2D1Brush* b = (c_ID2D1Brush*) hBrush;
+        c_ID2D1Geometry* g;
+        c_ID2D1StrokeStyle* s = (c_ID2D1StrokeStyle*)hStrokeStyle;
 
         g = d2d_create_arc_geometry(cx, cy, rx, ry, fBaseAngle, fSweepAngle, TRUE);
         if(g == NULL) {
@@ -145,12 +145,12 @@ wdDrawEllipsePieStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy,
             return;
         }
 
-        dummy_ID2D1RenderTarget_DrawGeometry(c->target, g, b, fStrokeWidth, s);
-        dummy_ID2D1Geometry_Release(g);
+        c_ID2D1RenderTarget_DrawGeometry(c->target, g, b, fStrokeWidth, s);
+        c_ID2D1Geometry_Release(g);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
         gdix_strokestyle_t* s = (gdix_strokestyle_t*)hStrokeStyle;
-        dummy_GpBrush* b = (dummy_GpBrush*)hBrush;
+        c_GpBrush* b = (c_GpBrush*)hBrush;
         float dx = 2.0f * rx;
         float dy = 2.0f * ry;
 
@@ -167,15 +167,15 @@ wdDrawRectStyled(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
-        dummy_D2D1_RECT_F r = { x0, y0, x1, y1 };
-        dummy_ID2D1StrokeStyle* s = (dummy_ID2D1StrokeStyle*)hStrokeStyle;
+        c_ID2D1Brush* b = (c_ID2D1Brush*) hBrush;
+        c_D2D1_RECT_F r = { x0, y0, x1, y1 };
+        c_ID2D1StrokeStyle* s = (c_ID2D1StrokeStyle*)hStrokeStyle;
 
-        dummy_ID2D1RenderTarget_DrawRectangle(c->target, &r, b, fStrokeWidth, s);
+        c_ID2D1RenderTarget_DrawRectangle(c->target, &r, b, fStrokeWidth, s);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
         gdix_strokestyle_t* s = (gdix_strokestyle_t*)hStrokeStyle;
-        dummy_GpBrush* b = (dummy_GpBrush*)hBrush;
+        c_GpBrush* b = (c_GpBrush*)hBrush;
         float tmp;
 
         /* Make sure x0 <= x1 and y0 <= y1. */

@@ -72,7 +72,7 @@ wdCreateImageFromHBITMAPWithAlpha(HBITMAP hBmp, int alphaMode)
 
         return (WD_HIMAGE) converted_bitmap;
     } else {
-        dummy_GpBitmap* b;
+        c_GpBitmap* b;
 
         if(alphaMode == WD_ALPHA_IGNORE) {
             int status;
@@ -133,7 +133,7 @@ err_GetFrame:
 err_CreateDecoderFromFilename:
         return (WD_HIMAGE) converted_bitmap;
     } else {
-        dummy_GpImage* img;
+        c_GpImage* img;
         int status;
 
         status = gdix_vtable->fn_LoadImageFromFile(pszPath, &img);
@@ -186,7 +186,7 @@ err_GetFrame:
 err_CreateDecoderFromFilename:
         return (WD_HIMAGE) converted_bitmap;
     } else {
-        dummy_GpImage* img;
+        c_GpImage* img;
         int status;
 
         status = gdix_vtable->fn_LoadImageFromStream(pStream, &img);
@@ -229,7 +229,7 @@ wdDestroyImage(WD_HIMAGE hImage)
     if(d2d_enabled()) {
         IWICBitmapSource_Release((IWICBitmapSource*) hImage);
     } else {
-        gdix_vtable->fn_DisposeImage((dummy_GpImage*) hImage);
+        gdix_vtable->fn_DisposeImage((c_GpImage*) hImage);
     }
 }
 
@@ -246,9 +246,9 @@ wdGetImageSize(WD_HIMAGE hImage, UINT* puWidth, UINT* puHeight)
             *puHeight = h;
     } else {
         if(puWidth != NULL)
-            gdix_vtable->fn_GetImageWidth((dummy_GpImage*) hImage, puWidth);
+            gdix_vtable->fn_GetImageWidth((c_GpImage*) hImage, puWidth);
         if(puHeight != NULL)
-            gdix_vtable->fn_GetImageHeight((dummy_GpImage*) hImage, puHeight);
+            gdix_vtable->fn_GetImageHeight((c_GpImage*) hImage, puHeight);
     }
 }
 
@@ -350,7 +350,7 @@ wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, UINT srcStride, const BYTE* p
     BYTE *scan0 = NULL;
     UINT dstStride = 0;
     IWICBitmapLock *bitmap_lock = NULL;
-    dummy_GpBitmapData bitmapData;
+    c_GpBitmapData bitmapData;
 
     if (d2d_enabled()) {
         IWICBitmap* bitmap = NULL;
@@ -385,17 +385,17 @@ wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, UINT srcStride, const BYTE* p
         IWICBitmapLock_GetDataPointer(bitmap_lock, &cbBufferSize, &scan0);
         b = (WD_HIMAGE) bitmap;
     } else {
-        dummy_GpPixelFormat format;
+        c_GpPixelFormat format;
         int status;
-        dummy_GpBitmap *bitmap = NULL;
-        dummy_GpRectI rect = { 0, 0, uWidth, uHeight };
+        c_GpBitmap *bitmap = NULL;
+        c_GpRectI rect = { 0, 0, uWidth, uHeight };
 
         if (pixelFormat == WD_PIXELFORMAT_R8G8B8 || pixelFormat == WD_PIXELFORMAT_PALETTE)
-            format = dummy_PixelFormat24bppRGB;
+            format = c_PixelFormat24bppRGB;
         else if (pixelFormat == WD_PIXELFORMAT_R8G8B8A8)
-            format = dummy_PixelFormat32bppARGB;
+            format = c_PixelFormat32bppARGB;
         else
-            format = dummy_PixelFormat32bppPARGB;
+            format = c_PixelFormat32bppPARGB;
 
         status = gdix_vtable->fn_CreateBitmapFromScan0(uWidth, uHeight, 0, format, NULL, &bitmap);
         if(status != 0) {
@@ -404,7 +404,7 @@ wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, UINT srcStride, const BYTE* p
             return NULL;
         }
 
-        gdix_vtable->fn_BitmapLockBits(bitmap, &rect, dummy_ImageLockModeWrite, format, &bitmapData);
+        gdix_vtable->fn_BitmapLockBits(bitmap, &rect, c_ImageLockModeWrite, format, &bitmapData);
 
         scan0 = (BYTE*)bitmapData.Scan0;
         dstStride = bitmapData.Stride;
@@ -444,7 +444,7 @@ wdCreateImageFromBuffer(UINT uWidth, UINT uHeight, UINT srcStride, const BYTE* p
     if(d2d_enabled()) {
         IWICBitmapLock_Release(bitmap_lock);
     } else {
-        gdix_vtable->fn_BitmapUnlockBits((dummy_GpBitmap*) b, &bitmapData);
+        gdix_vtable->fn_BitmapUnlockBits((c_GpBitmap*) b, &bitmapData);
     }
 
     return b;

@@ -25,16 +25,16 @@
 #define WD_BACKEND_DWRITE_H
 
 #include "misc.h"
-#include "dummy/dwrite.h"
+#include <c-dwrite.h>
 
 
-extern dummy_IDWriteFactory* dwrite_factory;
+extern c_IDWriteFactory* dwrite_factory;
 
 
 typedef struct dwrite_font_tag dwrite_font_t;
 struct dwrite_font_tag {
-    dummy_IDWriteTextFormat* tf;
-    dummy_DWRITE_FONT_METRICS metrics;
+    c_IDWriteTextFormat* tf;
+    c_DWRITE_FONT_METRICS metrics;
 };
 
 
@@ -43,10 +43,10 @@ void dwrite_fini(void);
 
 void dwrite_default_user_locale(WCHAR buffer[LOCALE_NAME_MAX_LENGTH]);
 
-dummy_IDWriteTextFormat* dwrite_create_text_format(const WCHAR* locale_name,
-            const LOGFONTW* logfont, dummy_DWRITE_FONT_METRICS* metrics);
+c_IDWriteTextFormat* dwrite_create_text_format(const WCHAR* locale_name,
+            const LOGFONTW* logfont, c_DWRITE_FONT_METRICS* metrics);
 
-dummy_IDWriteTextLayout* dwrite_create_text_layout(dummy_IDWriteTextFormat* tf,
+c_IDWriteTextLayout* dwrite_create_text_layout(c_IDWriteTextFormat* tf,
             const WD_RECT* rect, const WCHAR* str, int len, DWORD flags);
 
 

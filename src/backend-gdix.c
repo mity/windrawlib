@@ -41,8 +41,8 @@ gdix_vtable_t* gdix_vtable = NULL;
 int
 gdix_init(void)
 {
-    int (WINAPI* gdix_Startup)(ULONG_PTR*, const dummy_GpStartupInput*, void*);
-    dummy_GpStartupInput input = { 0 };
+    int (WINAPI* gdix_Startup)(ULONG_PTR*, const c_GpStartupInput*, void*);
+    c_GpStartupInput input = { 0 };
     int status;
 
     gdix_dll = wd_load_system_dll(_T("GDIPLUS.DLL"));
@@ -73,7 +73,7 @@ gdix_init(void)
     }
 
 
-    gdix_Startup = (int (WINAPI*)(ULONG_PTR*, const dummy_GpStartupInput*, void*))
+    gdix_Startup = (int (WINAPI*)(ULONG_PTR*, const c_GpStartupInput*, void*))
                         GetProcAddress(gdix_dll, "GdiplusStartup");
     if(gdix_Startup == NULL) {
         WD_TRACE_ERR("gdix_init: GetProcAddress(GdiplusStartup) failed");
@@ -98,109 +98,109 @@ gdix_init(void)
         } while(0)
 
     /* Graphics functions */
-    GPA(CreateFromHDC, (HDC, dummy_GpGraphics**));
-    GPA(DeleteGraphics, (dummy_GpGraphics*));
-    GPA(GraphicsClear, (dummy_GpGraphics*, dummy_ARGB));
-    GPA(GetDC, (dummy_GpGraphics*, HDC*));
-    GPA(ReleaseDC, (dummy_GpGraphics*, HDC));
-    GPA(ResetClip, (dummy_GpGraphics*));
-    GPA(ResetWorldTransform, (dummy_GpGraphics*));
-    GPA(RotateWorldTransform, (dummy_GpGraphics*, float, dummy_GpMatrixOrder));
-    GPA(ScaleWorldTransform, (dummy_GpGraphics*, float, float, dummy_GpMatrixOrder));
-    GPA(SetClipPath, (dummy_GpGraphics*, dummy_GpPath*, dummy_GpCombineMode));
-    GPA(SetClipRect, (dummy_GpGraphics*, float, float, float, float, dummy_GpCombineMode));
-    GPA(SetPageUnit, (dummy_GpGraphics*, dummy_GpUnit));
-    GPA(SetPixelOffsetMode, (dummy_GpGraphics*, dummy_GpPixelOffsetMode));
-    GPA(SetSmoothingMode, (dummy_GpGraphics*, dummy_GpSmoothingMode));
-    GPA(TranslateWorldTransform, (dummy_GpGraphics*, float, float, dummy_GpMatrixOrder));
-    GPA(MultiplyWorldTransform, (dummy_GpGraphics*, dummy_GpMatrix*, dummy_GpMatrixOrder));
-    GPA(CreateMatrix2, (float, float, float, float, float, float, dummy_GpMatrix**));
-    GPA(DeleteMatrix, (dummy_GpMatrix*));
+    GPA(CreateFromHDC, (HDC, c_GpGraphics**));
+    GPA(DeleteGraphics, (c_GpGraphics*));
+    GPA(GraphicsClear, (c_GpGraphics*, c_ARGB));
+    GPA(GetDC, (c_GpGraphics*, HDC*));
+    GPA(ReleaseDC, (c_GpGraphics*, HDC));
+    GPA(ResetClip, (c_GpGraphics*));
+    GPA(ResetWorldTransform, (c_GpGraphics*));
+    GPA(RotateWorldTransform, (c_GpGraphics*, float, c_GpMatrixOrder));
+    GPA(ScaleWorldTransform, (c_GpGraphics*, float, float, c_GpMatrixOrder));
+    GPA(SetClipPath, (c_GpGraphics*, c_GpPath*, c_GpCombineMode));
+    GPA(SetClipRect, (c_GpGraphics*, float, float, float, float, c_GpCombineMode));
+    GPA(SetPageUnit, (c_GpGraphics*, c_GpUnit));
+    GPA(SetPixelOffsetMode, (c_GpGraphics*, c_GpPixelOffsetMode));
+    GPA(SetSmoothingMode, (c_GpGraphics*, c_GpSmoothingMode));
+    GPA(TranslateWorldTransform, (c_GpGraphics*, float, float, c_GpMatrixOrder));
+    GPA(MultiplyWorldTransform, (c_GpGraphics*, c_GpMatrix*, c_GpMatrixOrder));
+    GPA(CreateMatrix2, (float, float, float, float, float, float, c_GpMatrix**));
+    GPA(DeleteMatrix, (c_GpMatrix*));
 
     /* Brush functions */
-    GPA(CreateSolidFill, (dummy_ARGB, dummy_GpSolidFill**));
-    GPA(DeleteBrush, (dummy_GpBrush*));
-    GPA(SetSolidFillColor, (dummy_GpSolidFill*, dummy_ARGB));
-    GPA(CreateLineBrush, (const dummy_GpPointF*, const dummy_GpPointF*, dummy_ARGB, dummy_ARGB, dummy_GpWrapMode, dummy_GpLineGradient**));
-    GPA(CreatePathGradientFromPath, (const dummy_GpPath*, dummy_GpPathGradient**));
-    GPA(SetLinePresetBlend, (dummy_GpLineGradient*, const dummy_ARGB*, const float*, INT));
-    GPA(SetPathGradientPresetBlend, (dummy_GpPathGradient*, const dummy_ARGB*, const float*, INT));
-    GPA(SetPathGradientCenterPoint, (dummy_GpPathGradient*, const dummy_GpPointF*));
+    GPA(CreateSolidFill, (c_ARGB, c_GpSolidFill**));
+    GPA(DeleteBrush, (c_GpBrush*));
+    GPA(SetSolidFillColor, (c_GpSolidFill*, c_ARGB));
+    GPA(CreateLineBrush, (const c_GpPointF*, const c_GpPointF*, c_ARGB, c_ARGB, c_GpWrapMode, c_GpLineGradient**));
+    GPA(CreatePathGradientFromPath, (const c_GpPath*, c_GpPathGradient**));
+    GPA(SetLinePresetBlend, (c_GpLineGradient*, const c_ARGB*, const float*, INT));
+    GPA(SetPathGradientPresetBlend, (c_GpPathGradient*, const c_ARGB*, const float*, INT));
+    GPA(SetPathGradientCenterPoint, (c_GpPathGradient*, const c_GpPointF*));
 
     /* Pen functions */
-    GPA(CreatePen1, (DWORD, float, dummy_GpUnit, dummy_GpPen**));
-    GPA(DeletePen, (dummy_GpPen*));
-    GPA(SetPenBrushFill, (dummy_GpPen*, dummy_GpBrush*));
-    GPA(SetPenWidth, (dummy_GpPen*, float));
-    GPA(SetPenStartCap, (dummy_GpPen*, dummy_GpLineCap));
-    GPA(SetPenEndCap, (dummy_GpPen*, dummy_GpLineCap));
-    GPA(SetPenLineJoin, (dummy_GpPen*, dummy_GpLineJoin));
-    GPA(SetPenMiterLimit, (dummy_GpPen*, float));
-    GPA(SetPenDashStyle, (dummy_GpPen*, dummy_GpDashStyle));
-    GPA(SetPenDashArray, (dummy_GpPen*, const float*, INT));
+    GPA(CreatePen1, (DWORD, float, c_GpUnit, c_GpPen**));
+    GPA(DeletePen, (c_GpPen*));
+    GPA(SetPenBrushFill, (c_GpPen*, c_GpBrush*));
+    GPA(SetPenWidth, (c_GpPen*, float));
+    GPA(SetPenStartCap, (c_GpPen*, c_GpLineCap));
+    GPA(SetPenEndCap, (c_GpPen*, c_GpLineCap));
+    GPA(SetPenLineJoin, (c_GpPen*, c_GpLineJoin));
+    GPA(SetPenMiterLimit, (c_GpPen*, float));
+    GPA(SetPenDashStyle, (c_GpPen*, c_GpDashStyle));
+    GPA(SetPenDashArray, (c_GpPen*, const float*, INT));
 
     /* Path functions */
-    GPA(CreatePath, (dummy_GpFillMode, dummy_GpPath**));
-    GPA(DeletePath, (dummy_GpPath*));
-    GPA(ClosePathFigure, (dummy_GpPath*));
-    GPA(StartPathFigure, (dummy_GpPath*));
-    GPA(GetPathLastPoint, (dummy_GpPath*, dummy_GpPointF*));
-    GPA(AddPathArc, (dummy_GpPath*, float, float, float, float, float, float));
-    GPA(AddPathLine, (dummy_GpPath*, float, float, float, float));
-    GPA(AddPathBezier, (dummy_GpPath*, float, float, float, float, float, float, float, float));
+    GPA(CreatePath, (c_GpFillMode, c_GpPath**));
+    GPA(DeletePath, (c_GpPath*));
+    GPA(ClosePathFigure, (c_GpPath*));
+    GPA(StartPathFigure, (c_GpPath*));
+    GPA(GetPathLastPoint, (c_GpPath*, c_GpPointF*));
+    GPA(AddPathArc, (c_GpPath*, float, float, float, float, float, float));
+    GPA(AddPathLine, (c_GpPath*, float, float, float, float));
+    GPA(AddPathBezier, (c_GpPath*, float, float, float, float, float, float, float, float));
 
     /* Font functions */
-    GPA(CreateFontFromLogfontW, (HDC, const LOGFONTW*, dummy_GpFont**));
-    GPA(DeleteFont, (dummy_GpFont*));
-    GPA(DeleteFontFamily, (dummy_GpFont*));
-    GPA(GetCellAscent, (const dummy_GpFont*, int, UINT16*));
-    GPA(GetCellDescent, (const dummy_GpFont*, int, UINT16*));
-    GPA(GetEmHeight, (const dummy_GpFont*, int, UINT16*));
-    GPA(GetFamily, (dummy_GpFont*, void**));
-    GPA(GetFontSize, (dummy_GpFont*, float*));
-    GPA(GetFontStyle, (dummy_GpFont*, int*));
-    GPA(GetLineSpacing, (const dummy_GpFont*, int, UINT16*));
+    GPA(CreateFontFromLogfontW, (HDC, const LOGFONTW*, c_GpFont**));
+    GPA(DeleteFont, (c_GpFont*));
+    GPA(DeleteFontFamily, (c_GpFont*));
+    GPA(GetCellAscent, (const c_GpFont*, int, UINT16*));
+    GPA(GetCellDescent, (const c_GpFont*, int, UINT16*));
+    GPA(GetEmHeight, (const c_GpFont*, int, UINT16*));
+    GPA(GetFamily, (c_GpFont*, void**));
+    GPA(GetFontSize, (c_GpFont*, float*));
+    GPA(GetFontStyle, (c_GpFont*, int*));
+    GPA(GetLineSpacing, (const c_GpFont*, int, UINT16*));
 
     /* Image & bitmap functions */
-    GPA(LoadImageFromFile, (const WCHAR*, dummy_GpImage**));
-    GPA(LoadImageFromStream, (IStream*, dummy_GpImage**));
-    GPA(CreateBitmapFromHBITMAP, (HBITMAP, HPALETTE, dummy_GpBitmap**));
-    GPA(CreateBitmapFromHICON, (HICON, dummy_GpBitmap**));
-    GPA(DisposeImage, (dummy_GpImage*));
-    GPA(GetImageWidth, (dummy_GpImage*, UINT*));
-    GPA(GetImageHeight, (dummy_GpImage*, UINT*));
-    GPA(CreateBitmapFromScan0, (UINT, UINT, INT, dummy_GpPixelFormat format, BYTE*, dummy_GpBitmap**));
-    GPA(BitmapLockBits, (dummy_GpBitmap*, const dummy_GpRectI*, UINT, dummy_GpPixelFormat, dummy_GpBitmapData*));
-    GPA(BitmapUnlockBits, (dummy_GpBitmap*, dummy_GpBitmapData*));
-    GPA(CreateBitmapFromGdiDib, (const BITMAPINFO*, void*, dummy_GpBitmap**));
+    GPA(LoadImageFromFile, (const WCHAR*, c_GpImage**));
+    GPA(LoadImageFromStream, (IStream*, c_GpImage**));
+    GPA(CreateBitmapFromHBITMAP, (HBITMAP, HPALETTE, c_GpBitmap**));
+    GPA(CreateBitmapFromHICON, (HICON, c_GpBitmap**));
+    GPA(DisposeImage, (c_GpImage*));
+    GPA(GetImageWidth, (c_GpImage*, UINT*));
+    GPA(GetImageHeight, (c_GpImage*, UINT*));
+    GPA(CreateBitmapFromScan0, (UINT, UINT, INT, c_GpPixelFormat format, BYTE*, c_GpBitmap**));
+    GPA(BitmapLockBits, (c_GpBitmap*, const c_GpRectI*, UINT, c_GpPixelFormat, c_GpBitmapData*));
+    GPA(BitmapUnlockBits, (c_GpBitmap*, c_GpBitmapData*));
+    GPA(CreateBitmapFromGdiDib, (const BITMAPINFO*, void*, c_GpBitmap**));
 
     /* Cached bitmap functions */
-    GPA(CreateCachedBitmap, (dummy_GpBitmap*, dummy_GpGraphics*, dummy_GpCachedBitmap**));
-    GPA(DeleteCachedBitmap, (dummy_GpCachedBitmap*));
-    GPA(DrawCachedBitmap, (dummy_GpGraphics*, dummy_GpCachedBitmap*, INT, INT));
+    GPA(CreateCachedBitmap, (c_GpBitmap*, c_GpGraphics*, c_GpCachedBitmap**));
+    GPA(DeleteCachedBitmap, (c_GpCachedBitmap*));
+    GPA(DrawCachedBitmap, (c_GpGraphics*, c_GpCachedBitmap*, INT, INT));
 
     /* String format functions */
-    GPA(CreateStringFormat, (int, LANGID, dummy_GpStringFormat**));
-    GPA(DeleteStringFormat, (dummy_GpStringFormat*));
-    GPA(SetStringFormatAlign, (dummy_GpStringFormat*, dummy_GpStringAlignment));
-    GPA(SetStringFormatLineAlign, (dummy_GpStringFormat*, dummy_GpStringAlignment));
-    GPA(SetStringFormatFlags, (dummy_GpStringFormat*, int));
-    GPA(SetStringFormatTrimming, (dummy_GpStringFormat*, dummy_GpStringTrimming));
+    GPA(CreateStringFormat, (int, LANGID, c_GpStringFormat**));
+    GPA(DeleteStringFormat, (c_GpStringFormat*));
+    GPA(SetStringFormatAlign, (c_GpStringFormat*, c_GpStringAlignment));
+    GPA(SetStringFormatLineAlign, (c_GpStringFormat*, c_GpStringAlignment));
+    GPA(SetStringFormatFlags, (c_GpStringFormat*, int));
+    GPA(SetStringFormatTrimming, (c_GpStringFormat*, c_GpStringTrimming));
 
     /* Draw/fill functions */
-    GPA(DrawArc, (dummy_GpGraphics*, dummy_GpPen*, float, float, float, float, float, float));
-    GPA(DrawImageRectRect, (dummy_GpGraphics*, dummy_GpImage*, float, float, float, float, float, float, float, float, dummy_GpUnit, const void*, void*, void*));
-    GPA(DrawEllipse, (dummy_GpGraphics*, dummy_GpPen*, float, float, float, float));
-    GPA(DrawLine, (dummy_GpGraphics*, dummy_GpPen*, float, float, float, float));
-    GPA(DrawPath, (dummy_GpGraphics*, dummy_GpPen*, dummy_GpPath*));
-    GPA(DrawPie, (dummy_GpGraphics*, dummy_GpPen*, float, float, float, float, float, float));
-    GPA(DrawRectangle, (dummy_GpGraphics*, void*, float, float, float, float));
-    GPA(DrawString, (dummy_GpGraphics*, const WCHAR*, int, const dummy_GpFont*, const dummy_GpRectF*, const dummy_GpStringFormat*, const dummy_GpBrush*));
-    GPA(FillEllipse, (dummy_GpGraphics*, dummy_GpBrush*, float, float, float, float));
-    GPA(FillPath, (dummy_GpGraphics*, dummy_GpBrush*, dummy_GpPath*));
-    GPA(FillPie, (dummy_GpGraphics*, dummy_GpBrush*, float, float, float, float, float, float));
-    GPA(FillRectangle, (dummy_GpGraphics*, void*, float, float, float, float));
-    GPA(MeasureString, (dummy_GpGraphics*, const WCHAR*, int, const dummy_GpFont*, const dummy_GpRectF*, const dummy_GpStringFormat*, dummy_GpRectF*, int*, int*));
+    GPA(DrawArc, (c_GpGraphics*, c_GpPen*, float, float, float, float, float, float));
+    GPA(DrawImageRectRect, (c_GpGraphics*, c_GpImage*, float, float, float, float, float, float, float, float, c_GpUnit, const void*, void*, void*));
+    GPA(DrawEllipse, (c_GpGraphics*, c_GpPen*, float, float, float, float));
+    GPA(DrawLine, (c_GpGraphics*, c_GpPen*, float, float, float, float));
+    GPA(DrawPath, (c_GpGraphics*, c_GpPen*, c_GpPath*));
+    GPA(DrawPie, (c_GpGraphics*, c_GpPen*, float, float, float, float, float, float));
+    GPA(DrawRectangle, (c_GpGraphics*, void*, float, float, float, float));
+    GPA(DrawString, (c_GpGraphics*, const WCHAR*, int, const c_GpFont*, const c_GpRectF*, const c_GpStringFormat*, const c_GpBrush*));
+    GPA(FillEllipse, (c_GpGraphics*, c_GpBrush*, float, float, float, float));
+    GPA(FillPath, (c_GpGraphics*, c_GpBrush*, c_GpPath*));
+    GPA(FillPie, (c_GpGraphics*, c_GpBrush*, float, float, float, float, float, float));
+    GPA(FillRectangle, (c_GpGraphics*, void*, float, float, float, float));
+    GPA(MeasureString, (c_GpGraphics*, const WCHAR*, int, const c_GpFont*, const c_GpRectF*, const c_GpStringFormat*, c_GpRectF*, int*, int*));
 
 #undef GPA
 
@@ -309,17 +309,17 @@ no_doublebuffer:
         goto err_creategraphics;
     }
 
-    status = gdix_vtable->fn_SetPageUnit(c->graphics, dummy_UnitPixel);
+    status = gdix_vtable->fn_SetPageUnit(c->graphics, c_UnitPixel);
     if(status != 0) {
         WD_TRACE_ERR_("gdix_canvas_alloc: GdipSetPageUnit() failed.", status);
         goto err_setpageunit;
     }
 
     status = gdix_vtable->fn_SetSmoothingMode(c->graphics,      /* GDI+ 1.1 */
-                dummy_SmoothingModeAntiAlias8x8);
+                c_SmoothingModeAntiAlias8x8);
     if(status != 0) {
         gdix_vtable->fn_SetSmoothingMode(c->graphics,           /* GDI+ 1.0 */
-                    dummy_SmoothingModeHighQuality);
+                    c_SmoothingModeHighQuality);
     }
 
     /* GDI+ has, unlike D2D, a concept of pens, which are used for "draw"
@@ -328,7 +328,7 @@ no_doublebuffer:
      * Our interface works only with brushes as D2D does. Hence we create
      * a pen as part of GDI+ canvas and we update it with GdipSetPenBrushFill()
      * and GdipSetPenWidth() every time whenever we need to use a pen. */
-    status = gdix_vtable->fn_CreatePen1(0, 1.0f, dummy_UnitPixel, &c->pen);
+    status = gdix_vtable->fn_CreatePen1(0, 1.0f, c_UnitPixel, &c->pen);
     if(status != 0) {
         WD_TRACE_ERR_("gdix_canvas_alloc: GdipCreatePen1() failed.", status);
         goto err_createpen;
@@ -384,8 +384,8 @@ gdix_canvas_free(gdix_canvas_t* c)
 void
 gdix_rtl_transform(gdix_canvas_t* c)
 {
-    gdix_vtable->fn_ScaleWorldTransform(c->graphics, -1.0f, 1.0f, dummy_MatrixOrderAppend);
-    gdix_vtable->fn_TranslateWorldTransform(c->graphics, (float)(c->width-1), 0.0f, dummy_MatrixOrderAppend);
+    gdix_vtable->fn_ScaleWorldTransform(c->graphics, -1.0f, 1.0f, c_MatrixOrderAppend);
+    gdix_vtable->fn_TranslateWorldTransform(c->graphics, (float)(c->width-1), 0.0f, c_MatrixOrderAppend);
 }
 
 void
@@ -397,7 +397,7 @@ gdix_reset_transform(gdix_canvas_t* c)
 }
 
 void
-gdix_delete_matrix(dummy_GpMatrix* m)
+gdix_delete_matrix(c_GpMatrix* m)
 {
     int status = gdix_vtable->fn_DeleteMatrix(m);
     if(status != 0) {
@@ -414,41 +414,41 @@ gdix_canvas_apply_string_flags(gdix_canvas_t* c, DWORD flags)
     int trim;
 
     if(flags & WD_STR_RIGHTALIGN)
-        sfa = dummy_StringAlignmentFar;
+        sfa = c_StringAlignmentFar;
     else if(flags & WD_STR_CENTERALIGN)
-        sfa = dummy_StringAlignmentCenter;
+        sfa = c_StringAlignmentCenter;
     else
-        sfa = dummy_StringAlignmentNear;
+        sfa = c_StringAlignmentNear;
     gdix_vtable->fn_SetStringFormatAlign(c->string_format, sfa);
 
     if(flags & WD_STR_BOTTOMALIGN)
-        sfa = dummy_StringAlignmentFar;
+        sfa = c_StringAlignmentFar;
     else if(flags & WD_STR_MIDDLEALIGN)
-        sfa = dummy_StringAlignmentCenter;
+        sfa = c_StringAlignmentCenter;
     else
-        sfa = dummy_StringAlignmentNear;
+        sfa = c_StringAlignmentNear;
     gdix_vtable->fn_SetStringFormatLineAlign(c->string_format, sfa);
 
     sff = 0;
     if(c->rtl)
-        sff |= dummy_StringFormatFlagsDirectionRightToLeft;
+        sff |= c_StringFormatFlagsDirectionRightToLeft;
     if(flags & WD_STR_NOWRAP)
-        sff |= dummy_StringFormatFlagsNoWrap;
+        sff |= c_StringFormatFlagsNoWrap;
     if(flags & WD_STR_NOCLIP)
-        sff |= dummy_StringFormatFlagsNoClip;
+        sff |= c_StringFormatFlagsNoClip;
     gdix_vtable->fn_SetStringFormatFlags(c->string_format, sff);
 
     switch(flags & WD_STR_ELLIPSISMASK) {
-        case WD_STR_ENDELLIPSIS:    trim = dummy_StringTrimmingEllipsisCharacter; break;
-        case WD_STR_WORDELLIPSIS:   trim = dummy_StringTrimmingEllipsisWord; break;
-        case WD_STR_PATHELLIPSIS:   trim = dummy_StringTrimmingEllipsisPath; break;
-        default:                    trim = dummy_StringTrimmingNone; break;
+        case WD_STR_ENDELLIPSIS:    trim = c_StringTrimmingEllipsisCharacter; break;
+        case WD_STR_WORDELLIPSIS:   trim = c_StringTrimmingEllipsisWord; break;
+        case WD_STR_PATHELLIPSIS:   trim = c_StringTrimmingEllipsisPath; break;
+        default:                    trim = c_StringTrimmingNone; break;
     }
     gdix_vtable->fn_SetStringFormatTrimming(c->string_format, trim);
 }
 
 void 
-gdix_setpen(dummy_GpPen* pen, dummy_GpBrush* brush, float width, gdix_strokestyle_t* style)
+gdix_setpen(c_GpPen* pen, c_GpBrush* brush, float width, gdix_strokestyle_t* style)
 {
     if (style)
     {
@@ -466,10 +466,10 @@ gdix_setpen(dummy_GpPen* pen, dummy_GpBrush* brush, float width, gdix_strokestyl
     gdix_vtable->fn_SetPenWidth(pen, width);
 }
 
-dummy_GpBitmap*
+c_GpBitmap*
 gdix_bitmap_from_HBITMAP_with_alpha(HBITMAP bmp, BOOL has_premultiplied_alpha)
 {
-    dummy_GpBitmap* b;
+    c_GpBitmap* b;
     BITMAP bmp_desc;
     UINT stride;
     BYTE bmp_info_buffer[sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * 3];
@@ -505,7 +505,7 @@ gdix_bitmap_from_HBITMAP_with_alpha(HBITMAP bmp, BOOL has_premultiplied_alpha)
     else
         pixel_format = WD_PIXELFORMAT_B8G8R8A8;
 
-    b = (dummy_GpBitmap*) wdCreateImageFromBuffer(bmp_desc.bmWidth, bmp_desc.bmHeight,
+    b = (c_GpBitmap*) wdCreateImageFromBuffer(bmp_desc.bmWidth, bmp_desc.bmHeight,
                                                   stride, bits, pixel_format, NULL, 0);
 
     free(bits);

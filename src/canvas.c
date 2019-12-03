@@ -35,27 +35,27 @@ wdCreateCanvasWithPaintStruct(HWND hWnd, PAINTSTRUCT* pPS, DWORD dwFlags)
     GetClientRect(hWnd, &rect);
 
     if(d2d_enabled()) {
-        dummy_D2D1_RENDER_TARGET_PROPERTIES props = {
-            dummy_D2D1_RENDER_TARGET_TYPE_DEFAULT,
-            { dummy_DXGI_FORMAT_B8G8R8A8_UNORM, dummy_D2D1_ALPHA_MODE_PREMULTIPLIED },
+        c_D2D1_RENDER_TARGET_PROPERTIES props = {
+            c_D2D1_RENDER_TARGET_TYPE_DEFAULT,
+            { c_DXGI_FORMAT_B8G8R8A8_UNORM, c_D2D1_ALPHA_MODE_PREMULTIPLIED },
             0.0f, 0.0f,
             ((dwFlags & WD_CANVAS_NOGDICOMPAT) ?
-                        0 : dummy_D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE),
-            dummy_D2D1_FEATURE_LEVEL_DEFAULT
+                        0 : c_D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE),
+            c_D2D1_FEATURE_LEVEL_DEFAULT
         };
-        dummy_D2D1_HWND_RENDER_TARGET_PROPERTIES props2;
+        c_D2D1_HWND_RENDER_TARGET_PROPERTIES props2;
         d2d_canvas_t* c;
-        dummy_ID2D1HwndRenderTarget* target;
+        c_ID2D1HwndRenderTarget* target;
         HRESULT hr;
 
         props2.hwnd = hWnd;
         props2.pixelSize.width = rect.right - rect.left;
         props2.pixelSize.height = rect.bottom - rect.top;
-        props2.presentOptions = dummy_D2D1_PRESENT_OPTIONS_NONE;
+        props2.presentOptions = c_D2D1_PRESENT_OPTIONS_NONE;
 
         wd_lock();
         /* Note ID2D1HwndRenderTarget is implicitly double-buffered. */
-        hr = dummy_ID2D1Factory_CreateHwndRenderTarget(d2d_factory, &props, &props2, &target);
+        hr = c_ID2D1Factory_CreateHwndRenderTarget(d2d_factory, &props, &props2, &target);
         wd_unlock();
         if(FAILED(hr)) {
             WD_TRACE_HR("wdCreateCanvasWithPaintStruct: "
@@ -63,16 +63,16 @@ wdCreateCanvasWithPaintStruct(HWND hWnd, PAINTSTRUCT* pPS, DWORD dwFlags)
             return NULL;
         }
 
-        c = d2d_canvas_alloc((dummy_ID2D1RenderTarget*)target, D2D_CANVASTYPE_HWND,
+        c = d2d_canvas_alloc((c_ID2D1RenderTarget*)target, D2D_CANVASTYPE_HWND,
                     rect.right, (dwFlags & WD_CANVAS_LAYOUTRTL));
         if(c == NULL) {
             WD_TRACE("wdCreateCanvasWithPaintStruct: d2d_canvas_alloc() failed.");
-            dummy_ID2D1RenderTarget_Release((dummy_ID2D1RenderTarget*)target);
+            c_ID2D1RenderTarget_Release((c_ID2D1RenderTarget*)target);
             return NULL;
         }
 
         /* make sure text anti-aliasing is clear type */
-        dummy_ID2D1RenderTarget_SetTextAntialiasMode(c->target, dummy_D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
+        c_ID2D1RenderTarget_SetTextAntialiasMode(c->target, c_D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
 
         return (WD_HCANVAS) c;
     } else {
@@ -93,20 +93,20 @@ WD_HCANVAS
 wdCreateCanvasWithHDC(HDC hDC, const RECT* pRect, DWORD dwFlags)
 {
     if(d2d_enabled()) {
-        dummy_D2D1_RENDER_TARGET_PROPERTIES props = {
-            dummy_D2D1_RENDER_TARGET_TYPE_DEFAULT,
-            { dummy_DXGI_FORMAT_B8G8R8A8_UNORM, dummy_D2D1_ALPHA_MODE_PREMULTIPLIED },
+        c_D2D1_RENDER_TARGET_PROPERTIES props = {
+            c_D2D1_RENDER_TARGET_TYPE_DEFAULT,
+            { c_DXGI_FORMAT_B8G8R8A8_UNORM, c_D2D1_ALPHA_MODE_PREMULTIPLIED },
             0.0f, 0.0f,
             ((dwFlags & WD_CANVAS_NOGDICOMPAT) ?
-                        0 : dummy_D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE),
-            dummy_D2D1_FEATURE_LEVEL_DEFAULT
+                        0 : c_D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE),
+            c_D2D1_FEATURE_LEVEL_DEFAULT
         };
         d2d_canvas_t* c;
-        dummy_ID2D1DCRenderTarget* target;
+        c_ID2D1DCRenderTarget* target;
         HRESULT hr;
 
         wd_lock();
-        hr = dummy_ID2D1Factory_CreateDCRenderTarget(d2d_factory, &props, &target);
+        hr = c_ID2D1Factory_CreateDCRenderTarget(d2d_factory, &props, &target);
         wd_unlock();
         if(FAILED(hr)) {
             WD_TRACE_HR("wdCreateCanvasWithHDC: "
@@ -114,14 +114,14 @@ wdCreateCanvasWithHDC(HDC hDC, const RECT* pRect, DWORD dwFlags)
             goto err_CreateDCRenderTarget;
         }
 
-        hr = dummy_ID2D1DCRenderTarget_BindDC(target, hDC, pRect);
+        hr = c_ID2D1DCRenderTarget_BindDC(target, hDC, pRect);
         if(FAILED(hr)) {
             WD_TRACE_HR("wdCreateCanvasWithHDC: "
                         "ID2D1Factory::BindDC() failed.");
             goto err_BindDC;
         }
 
-        c = d2d_canvas_alloc((dummy_ID2D1RenderTarget*)target, D2D_CANVASTYPE_DC,
+        c = d2d_canvas_alloc((c_ID2D1RenderTarget*)target, D2D_CANVASTYPE_DC,
                 pRect->right - pRect->left, (dwFlags & WD_CANVAS_LAYOUTRTL));
         if(c == NULL) {
             WD_TRACE("wdCreateCanvasWithHDC: d2d_canvas_alloc() failed.");
@@ -129,13 +129,13 @@ wdCreateCanvasWithHDC(HDC hDC, const RECT* pRect, DWORD dwFlags)
         }
 
         /* make sure text anti-aliasing is clear type */
-        dummy_ID2D1RenderTarget_SetTextAntialiasMode(c->target, dummy_D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
+        c_ID2D1RenderTarget_SetTextAntialiasMode(c->target, c_D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
 
         return (WD_HCANVAS) c;
 
 err_d2d_canvas_alloc:
 err_BindDC:
-        dummy_ID2D1RenderTarget_Release((dummy_ID2D1RenderTarget*)target);
+        c_ID2D1RenderTarget_Release((c_ID2D1RenderTarget*)target);
 err_CreateDCRenderTarget:
         return NULL;
     } else {
@@ -164,7 +164,7 @@ wdDestroyCanvas(WD_HCANVAS hCanvas)
         if(c->gdi_interop != NULL)
             WD_TRACE("wdDestroyCanvas: Logical error: Unpaired wdStartGdi()/wdEndGdi().");
 
-        dummy_ID2D1RenderTarget_Release(c->target);
+        c_ID2D1RenderTarget_Release(c->target);
         free(c);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
@@ -190,7 +190,7 @@ wdBeginPaint(WD_HCANVAS hCanvas)
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1RenderTarget_BeginDraw(c->target);
+        c_ID2D1RenderTarget_BeginDraw(c->target);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
         SetLayout(c->dc, 0);
@@ -206,7 +206,7 @@ wdEndPaint(WD_HCANVAS hCanvas)
 
         d2d_reset_clip(c);
 
-        hr = dummy_ID2D1RenderTarget_EndDraw(c->target, NULL, NULL);
+        hr = c_ID2D1RenderTarget_EndDraw(c->target, NULL, NULL);
         if(FAILED(hr)) {
             if(hr != D2DERR_RECREATE_TARGET)
                 WD_TRACE_HR("wdEndPaint: ID2D1RenderTarget::EndDraw() failed.");
@@ -233,10 +233,10 @@ wdResizeCanvas(WD_HCANVAS hCanvas, UINT uWidth, UINT uHeight)
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
         if(c->type == D2D_CANVASTYPE_HWND) {
-            dummy_D2D1_SIZE_U size = { uWidth, uHeight };
+            c_D2D1_SIZE_U size = { uWidth, uHeight };
             HRESULT hr;
 
-            hr = dummy_ID2D1HwndRenderTarget_Resize(c->hwnd_target, &size);
+            hr = c_ID2D1HwndRenderTarget_Resize(c->hwnd_target, &size);
             if(FAILED(hr)) {
                 WD_TRACE_HR("wdResizeCanvas: "
                             "ID2D1HwndRenderTarget_Resize() failed.");
@@ -246,12 +246,12 @@ wdResizeCanvas(WD_HCANVAS hCanvas, UINT uWidth, UINT uHeight)
             /* In RTL mode, we have to update the transformation matrix
              * accordingly. */
             if(c->flags & D2D_CANVASFLAG_RTL) {
-                dummy_D2D1_MATRIX_3X2_F m;
+                c_D2D1_MATRIX_3X2_F m;
 
-                dummy_ID2D1RenderTarget_GetTransform(c->target, &m);
+                c_ID2D1RenderTarget_GetTransform(c->target, &m);
                 m._31 = m._11 * (float)(uWidth - c->width);
                 m._32 = m._12 * (float)(uWidth - c->width);
-                dummy_ID2D1RenderTarget_SetTransform(c->target, &m);
+                c_ID2D1RenderTarget_SetTransform(c->target, &m);
 
                 c->width = uWidth;
             }
@@ -274,25 +274,25 @@ wdStartGdi(WD_HCANVAS hCanvas, BOOL bKeepContents)
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1GdiInteropRenderTarget* gdi_interop;
-        dummy_D2D1_DC_INITIALIZE_MODE init_mode;
+        c_ID2D1GdiInteropRenderTarget* gdi_interop;
+        c_D2D1_DC_INITIALIZE_MODE init_mode;
         HRESULT hr;
         HDC dc;
 
-        hr = dummy_ID2D1RenderTarget_QueryInterface(c->target,
-                    &dummy_IID_ID2D1GdiInteropRenderTarget, (void**) &gdi_interop);
+        hr = c_ID2D1RenderTarget_QueryInterface(c->target,
+                    &c_IID_ID2D1GdiInteropRenderTarget, (void**) &gdi_interop);
         if(FAILED(hr)) {
             WD_TRACE_HR("wdStartGdi: ID2D1RenderTarget::"
                         "QueryInterface(IID_ID2D1GdiInteropRenderTarget) failed.");
             return NULL;
         }
 
-        init_mode = (bKeepContents ? dummy_D2D1_DC_INITIALIZE_MODE_COPY
-                        : dummy_D2D1_DC_INITIALIZE_MODE_CLEAR);
-        hr = dummy_ID2D1GdiInteropRenderTarget_GetDC(gdi_interop, init_mode, &dc);
+        init_mode = (bKeepContents ? c_D2D1_DC_INITIALIZE_MODE_COPY
+                        : c_D2D1_DC_INITIALIZE_MODE_CLEAR);
+        hr = c_ID2D1GdiInteropRenderTarget_GetDC(gdi_interop, init_mode, &dc);
         if(FAILED(hr)) {
             WD_TRACE_HR("wdStartGdi: ID2D1GdiInteropRenderTarget::GetDC() failed.");
-            dummy_ID2D1GdiInteropRenderTarget_Release(gdi_interop);
+            c_ID2D1GdiInteropRenderTarget_Release(gdi_interop);
             return NULL;
         }
 
@@ -328,8 +328,8 @@ wdEndGdi(WD_HCANVAS hCanvas, HDC hDC)
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
 
-        dummy_ID2D1GdiInteropRenderTarget_ReleaseDC(c->gdi_interop, NULL);
-        dummy_ID2D1GdiInteropRenderTarget_Release(c->gdi_interop);
+        c_ID2D1GdiInteropRenderTarget_ReleaseDC(c->gdi_interop, NULL);
+        c_ID2D1GdiInteropRenderTarget_Release(c->gdi_interop);
         c->gdi_interop = NULL;
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
@@ -345,10 +345,10 @@ wdClear(WD_HCANVAS hCanvas, WD_COLOR color)
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_D2D1_COLOR_F clr;
+        c_D2D1_COLOR_F clr;
 
         d2d_init_color(&clr, color);
-        dummy_ID2D1RenderTarget_Clear(c->target, &clr);
+        c_ID2D1RenderTarget_Clear(c->target, &clr);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
         gdix_vtable->fn_GraphicsClear(c->graphics, color);
@@ -364,11 +364,11 @@ wdSetClip(WD_HCANVAS hCanvas, const WD_RECT* pRect, const WD_HPATH hPath)
         d2d_reset_clip(c);
 
         if(hPath != NULL) {
-            dummy_ID2D1PathGeometry* g = (dummy_ID2D1PathGeometry*) hPath;
-            dummy_D2D1_LAYER_PARAMETERS layer_params;
+            c_ID2D1PathGeometry* g = (c_ID2D1PathGeometry*) hPath;
+            c_D2D1_LAYER_PARAMETERS layer_params;
             HRESULT hr;
 
-            hr = dummy_ID2D1RenderTarget_CreateLayer(c->target, NULL, &c->clip_layer);
+            hr = c_ID2D1RenderTarget_CreateLayer(c->target, NULL, &c->clip_layer);
             if(FAILED(hr)) {
                 WD_TRACE_HR("wdSetClip: ID2D1RenderTarget::CreateLayer() failed.");
                 return;
@@ -385,8 +385,8 @@ wdSetClip(WD_HCANVAS hCanvas, const WD_RECT* pRect, const WD_HPATH hPath)
                 layer_params.contentBounds.right = FLT_MAX;
                 layer_params.contentBounds.bottom = FLT_MAX;
             }
-            layer_params.geometricMask = (dummy_ID2D1Geometry*) g;
-            layer_params.maskAntialiasMode = dummy_D2D1_ANTIALIAS_MODE_PER_PRIMITIVE;
+            layer_params.geometricMask = (c_ID2D1Geometry*) g;
+            layer_params.maskAntialiasMode = c_D2D1_ANTIALIAS_MODE_PER_PRIMITIVE;
             layer_params.maskTransform._11 = 1.0f;
             layer_params.maskTransform._12 = 0.0f;
             layer_params.maskTransform._21 = 0.0f;
@@ -395,12 +395,12 @@ wdSetClip(WD_HCANVAS hCanvas, const WD_RECT* pRect, const WD_HPATH hPath)
             layer_params.maskTransform._32 = 0.0f;
             layer_params.opacity = 1.0f;
             layer_params.opacityBrush = NULL;
-            layer_params.layerOptions = dummy_D2D1_LAYER_OPTIONS_NONE;
+            layer_params.layerOptions = c_D2D1_LAYER_OPTIONS_NONE;
 
-            dummy_ID2D1RenderTarget_PushLayer(c->target, &layer_params, c->clip_layer);
+            c_ID2D1RenderTarget_PushLayer(c->target, &layer_params, c->clip_layer);
         } else if(pRect != NULL) {
-            dummy_ID2D1RenderTarget_PushAxisAlignedClip(c->target,
-                    (const dummy_D2D1_RECT_F*) pRect, dummy_D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+            c_ID2D1RenderTarget_PushAxisAlignedClip(c->target,
+                    (const c_D2D1_RECT_F*) pRect, c_D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
             c->flags |= D2D_CANVASFLAG_RECTCLIP;
         }
     } else {
@@ -412,12 +412,12 @@ wdSetClip(WD_HCANVAS hCanvas, const WD_RECT* pRect, const WD_HPATH hPath)
             return;
         }
 
-        mode = dummy_CombineModeReplace;
+        mode = c_CombineModeReplace;
 
         if(pRect != NULL) {
             gdix_vtable->fn_SetClipRect(c->graphics, pRect->x0, pRect->y0,
                              pRect->x1, pRect->y1, mode);
-            mode = dummy_CombineModeIntersect;
+            mode = c_CombineModeIntersect;
         }
 
         if(hPath != NULL)
@@ -430,7 +430,7 @@ wdRotateWorld(WD_HCANVAS hCanvas, float cx, float cy, float fAngle)
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_D2D1_MATRIX_3X2_F m;
+        c_D2D1_MATRIX_3X2_F m;
         float a_rads = fAngle * (WD_PI / 180.0f);
         float a_sin = sinf(a_rads);
         float a_cos = cosf(a_rads);
@@ -443,9 +443,9 @@ wdRotateWorld(WD_HCANVAS hCanvas, float cx, float cy, float fAngle)
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
 
-        gdix_vtable->fn_TranslateWorldTransform(c->graphics, cx, cy, dummy_MatrixOrderPrepend);
-        gdix_vtable->fn_RotateWorldTransform(c->graphics, fAngle, dummy_MatrixOrderPrepend);
-        gdix_vtable->fn_TranslateWorldTransform(c->graphics, -cx, -cy, dummy_MatrixOrderPrepend);
+        gdix_vtable->fn_TranslateWorldTransform(c->graphics, cx, cy, c_MatrixOrderPrepend);
+        gdix_vtable->fn_RotateWorldTransform(c->graphics, fAngle, c_MatrixOrderPrepend);
+        gdix_vtable->fn_TranslateWorldTransform(c->graphics, -cx, -cy, c_MatrixOrderPrepend);
     }
 }
 
@@ -454,15 +454,15 @@ wdTranslateWorld(WD_HCANVAS hCanvas, float dx, float dy)
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_D2D1_MATRIX_3X2_F m;
+        c_D2D1_MATRIX_3X2_F m;
 
-        dummy_ID2D1RenderTarget_GetTransform(c->target, &m);
+        c_ID2D1RenderTarget_GetTransform(c->target, &m);
         m._31 += dx;
         m._32 += dy;
-        dummy_ID2D1RenderTarget_SetTransform(c->target, &m);
+        c_ID2D1RenderTarget_SetTransform(c->target, &m);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
-        gdix_vtable->fn_TranslateWorldTransform(c->graphics, dx, dy, dummy_MatrixOrderAppend);
+        gdix_vtable->fn_TranslateWorldTransform(c->graphics, dx, dy, c_MatrixOrderAppend);
     }
 }
 
@@ -476,7 +476,7 @@ wdTransformWorld(WD_HCANVAS hCanvas, const WD_MATRIX* pMatrix)
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
 
-        dummy_D2D1_MATRIX_3X2_F m;
+        c_D2D1_MATRIX_3X2_F m;
 
         m._11 = pMatrix->m11;
         m._12 = pMatrix->m12;
@@ -489,7 +489,7 @@ wdTransformWorld(WD_HCANVAS hCanvas, const WD_MATRIX* pMatrix)
         int status;
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
 
-        dummy_GpMatrix* matrix;
+        c_GpMatrix* matrix;
         status = gdix_vtable->fn_CreateMatrix2(pMatrix->m11, pMatrix->m12,
                                                pMatrix->m21, pMatrix->m22,
                                                pMatrix->dx, pMatrix->dy, &matrix);
@@ -497,7 +497,7 @@ wdTransformWorld(WD_HCANVAS hCanvas, const WD_MATRIX* pMatrix)
             WD_TRACE_ERR_("wdSetWorldTransform: GdpiCreateMatrix2() failed", status);
             return;
         }
-        status = gdix_vtable->fn_MultiplyWorldTransform(c->graphics, matrix, dummy_MatrixOrderPrepend);
+        status = gdix_vtable->fn_MultiplyWorldTransform(c->graphics, matrix, c_MatrixOrderPrepend);
         if(status != 0) {
             WD_TRACE_ERR_("wdSetWorldTransform: MultiplyWorldTransform() failed", status);
             gdix_delete_matrix(matrix);

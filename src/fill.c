@@ -32,10 +32,10 @@ wdFillEllipse(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float rx
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
-        dummy_D2D1_ELLIPSE e = { { cx, cy }, rx, ry };
+        c_ID2D1Brush* b = (c_ID2D1Brush*) hBrush;
+        c_D2D1_ELLIPSE e = { { cx, cy }, rx, ry };
 
-        dummy_ID2D1RenderTarget_FillEllipse(c->target, &e, b);
+        c_ID2D1RenderTarget_FillEllipse(c->target, &e, b);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
         float dx = 2.0f * rx;
@@ -50,10 +50,10 @@ wdFillPath(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, const WD_HPATH hPath)
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1Geometry* g = (dummy_ID2D1Geometry*) hPath;
-        dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
+        c_ID2D1Geometry* g = (c_ID2D1Geometry*) hPath;
+        c_ID2D1Brush* b = (c_ID2D1Brush*) hBrush;
 
-        dummy_ID2D1RenderTarget_FillGeometry(c->target, g, b, NULL);
+        c_ID2D1RenderTarget_FillGeometry(c->target, g, b, NULL);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
 
@@ -67,8 +67,8 @@ wdFillEllipsePie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
-        dummy_ID2D1Geometry* g;
+        c_ID2D1Brush* b = (c_ID2D1Brush*) hBrush;
+        c_ID2D1Geometry* g;
 
         g = d2d_create_arc_geometry(cx, cy, rx, ry, fBaseAngle, fSweepAngle, TRUE);
         if(g == NULL) {
@@ -76,8 +76,8 @@ wdFillEllipsePie(WD_HCANVAS hCanvas, WD_HBRUSH hBrush, float cx, float cy, float
             return;
         }
 
-        dummy_ID2D1RenderTarget_FillGeometry(c->target, g, b, NULL);
-        dummy_ID2D1Geometry_Release(g);
+        c_ID2D1RenderTarget_FillGeometry(c->target, g, b, NULL);
+        c_ID2D1Geometry_Release(g);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
         float dx = 2.0f * rx;
@@ -94,10 +94,10 @@ wdFillRect(WD_HCANVAS hCanvas, WD_HBRUSH hBrush,
 {
     if(d2d_enabled()) {
         d2d_canvas_t* c = (d2d_canvas_t*) hCanvas;
-        dummy_ID2D1Brush* b = (dummy_ID2D1Brush*) hBrush;
-        dummy_D2D1_RECT_F r = { x0, y0, x1, y1 };
+        c_ID2D1Brush* b = (c_ID2D1Brush*) hBrush;
+        c_D2D1_RECT_F r = { x0, y0, x1, y1 };
 
-        dummy_ID2D1RenderTarget_FillRectangle(c->target, &r, b);
+        c_ID2D1RenderTarget_FillRectangle(c->target, &r, b);
     } else {
         gdix_canvas_t* c = (gdix_canvas_t*) hCanvas;
         float tmp;

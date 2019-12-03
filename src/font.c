@@ -100,7 +100,7 @@ wdCreateFont(const LOGFONTW* pLogFont)
         return NULL;
     } else {
         HDC dc;
-        dummy_GpFont* f;
+        c_GpFont* f;
         int status;
 
         dc = GetDC(NULL);
@@ -145,10 +145,10 @@ wdDestroyFont(WD_HFONT hFont)
     if(d2d_enabled()) {
         dwrite_font_t* font = (dwrite_font_t*) hFont;
 
-        dummy_IDWriteTextFormat_Release(font->tf);
+        c_IDWriteTextFormat_Release(font->tf);
         free(font);
     } else {
-        gdix_vtable->fn_DeleteFont((dummy_GpFont*) hFont);
+        gdix_vtable->fn_DeleteFont((c_GpFont*) hFont);
     }
 }
 
@@ -166,7 +166,7 @@ wdFontMetrics(WD_HFONT hFont, WD_FONTMETRICS* pMetrics)
         dwrite_font_t* font = (dwrite_font_t*) hFont;
         float factor;
 
-        pMetrics->fEmHeight = dummy_IDWriteTextFormat_GetFontSize(font->tf);
+        pMetrics->fEmHeight = c_IDWriteTextFormat_GetFontSize(font->tf);
 
         factor = (pMetrics->fEmHeight / (float)font->metrics.designUnitsPerEm);
 
